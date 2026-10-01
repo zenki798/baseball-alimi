@@ -1,0 +1,18 @@
+{
+  "name": "baseball-alimi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KBO 순위·팀 성적·선수 정보·야구 뉴스를 한 화면에서 보는 앱(PWA)",
+  "scripts": {
+    "start": "node server.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "collect": "node scripts/collect.js",
+    "check:sensitive": "node scripts/check-sensitive.js",
+    "make:icons": "node scripts/make-icons.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

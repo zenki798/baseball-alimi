@@ -1,0 +1,42 @@
+# 의존성
+node_modules/
+
+# Playwright 산출물
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Pages 배포용 임시 폴더 (CI 에서 생성)
+_site/
+
+# 환경변수 · 비밀정보 (AGENTS.md 규칙 2)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
+
+# 수집 중간 산출물 — 원문(위키 문서 전체·RSS 원본)을 저장소에 남기지 않는다
+cache/
+*.raw.xml
+*.raw.wiki
+
+# 개인 메모·스크린샷 (AGENTS.md 규칙 2 "기타")
+private/
+screenshots/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# 로그
+*.log
+npm-debug.log*
