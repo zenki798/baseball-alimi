@@ -169,7 +169,35 @@ function buildPlayers() {
   return copy({ version: 1, generatedAt: '2026-10-02T00:00:00.000Z', rosters, profiles: PROFILES });
 }
 
+/* 연도별 기록 (data/stats.js 모양) — 가상 선수: 가람(투수), KIA 나래(타자), LG 나래(타격·투구 둘 다). 다온은 위키 문서가 없어 기록도 없다 */
+const BAT = ['year', 'team', 'g', 'avg', 'h', 'hr', 'rbi', 'r', 'sb', 'bb', 'so'];
+const PIT = ['year', 'team', 'g', 'era', 'w', 'l', 'sv', 'hld', 'ip', 'k', 'bb'];
+const STATS = {
+  version: 1, generatedAt: '2026-10-02T00:00:00.000Z', latestSeason: 2025,
+  players: [
+    {
+      wiki: '가람 (야구 선수)', kbo: { hitter: null, pitcher: '12345' },
+      pit: {
+        cols: PIT,
+        rows: [['2024', 'KIA', '30', '3.50', '8', '6', '0', '1', '120⅓', '110', '40'], ['2025', 'KIA', '28', '2.95', '12', '5', '0', '0', '150', '140', '35']],
+        total: ['통산', '', '58', '3.20', '20', '11', '0', '1', '270⅓', '250', '75'], seasons: '2시즌',
+      },
+    },
+    {
+      wiki: '나래 (1998년)', kbo: { hitter: '54321', pitcher: null },
+      bat: { cols: BAT, rows: [['2025', 'KIA', '120', '0.290', '130', '10', '60', '70', '15', '40', '80']], total: null, seasons: null },
+    },
+    {
+      wiki: '나래 (2000년)', kbo: { hitter: '22222', pitcher: '33333' },
+      bat: { cols: BAT, rows: [['2025', 'LG', '90', '0.250', '70', '5', '30', '25', '1', '20', '50']], total: null, seasons: null },
+      pit: { cols: PIT, rows: [['2025', 'LG', '2', '0.00', '0', '0', '0', '0', '2', '1', '0']], total: null, seasons: null },
+    },
+  ],
+};
+function buildStats() { return copy(STATS); }
+
 function liveScript(live) { return dataScript('BaseballLive', live || buildLive(), '테스트 자료'); }
 function playersScript(players) { return dataScript('BaseballPlayers', players || buildPlayers(), '테스트 자료'); }
+function statsScript(stats) { return dataScript('BaseballStats', stats || buildStats(), '테스트 자료'); }
 
-module.exports = { NOW, buildLive, buildPlayers, liveScript, playersScript, GAMES, NEWS, PROFILES, COUNTS };
+module.exports = { NOW, buildLive, buildPlayers, buildStats, liveScript, playersScript, statsScript, GAMES, NEWS, PROFILES, COUNTS };

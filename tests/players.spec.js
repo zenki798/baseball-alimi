@@ -85,7 +85,8 @@ test.describe('선수 상세', () => {
     await expect(facts).toContainText('2020년 1차 지명(KIA 타이거즈)');
     await expect(page.locator('#view-players')).toContainText('테스트 상무 (2022년 ~ 2023년)');
     await expect(page.locator('#view-players')).toContainText('2025년 테스트상');
-    const wiki = page.locator('#view-players a', { hasText: '위키백과 「가람 (야구 선수)」' });
+    /* 프로필 출처 문단의 링크 (기록 카드에도 같은 문서 링크가 있다) */
+    const wiki = page.locator('#view-players .note.box a', { hasText: '위키백과 「가람 (야구 선수)」' });
     await expect(wiki).toHaveAttribute('href', 'https://ko.wikipedia.org/wiki/' + encodeURIComponent('가람_(야구_선수)'));
     await expect(wiki).toHaveAttribute('rel', 'noopener noreferrer');
     expect(errors).toEqual([]);

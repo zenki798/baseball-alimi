@@ -34,6 +34,7 @@ test('배포에는 앱 파일만 — 테스트·수집기·설정·AGENTS.md 는
   const d = job('deploy');
   expect(d).toContain('cp index.html styles.css teams.js store.js app.js sw.js manifest.webmanifest _site/');
   expect(d).toContain('cp icons/teams/*.svg icons/teams/*.png _site/icons/teams/');
+  expect(d).toContain('cp data/live.js data/players.js data/stats.js _site/data/');
   for (const bad of ['tests', 'scripts', 'package.json', 'AGENTS.md', 'server.js', 'playwright.config.js']) {
     expect(d.split('\n').filter((l) => /\bcp\b/.test(l)).join('\n'), bad).not.toContain(bad);
   }
@@ -54,4 +55,5 @@ test('저장소 사본 커밋: 하루 한 번까지, 커밋 전에 민감정보 
   expect(c).toContain('node scripts/check-sensitive.js --staged');
   expect(c).toContain('users.noreply.github.com');
   expect(c).toContain('PREV_BASE_URL');
+  expect(c).toContain('git add data/live.js data/players.js data/stats.js');
 });

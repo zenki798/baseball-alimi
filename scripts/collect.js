@@ -31,6 +31,7 @@ const ROOT = path.join(__dirname, '..');
 const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
 const LIVE_FILE = 'live.js';
 const PLAYERS_FILE = 'players.js';
+const STATS_FILE = 'stats.js';   // 연도별 기록 — 선수 화면을 열 때만 싣는다(첫 화면을 무겁게 하지 않게)
 
 /* 위키미디어 API 이용 규칙: 누가 부르는지 알 수 있는 User-Agent 를 단다(연락처는 저장소 주소). 요청은 하나씩 차례로. */
 const UA = 'baseball-alimi/0.1 (+https://github.com/zenki798/baseball-alimi; personal, non-commercial)';
@@ -441,6 +442,42 @@ function buildPlayers(o) {
   return { version: 1, generatedAt: now.toISOString(), rosters, profiles };
 }
 
+/**
+ * 연도별 기록 (data/stats.js) — 선수 문서의 「통산 기록」 표와 KBO 공식 기록 번호.
+ * buildPlayers 가 "이 구단의 그 사람" 으로 확인한 문서만 쓴다. 감독은 뺀다(선수 시절 기록이 지금 기록처럼 보인다).
+ * 선수 문서를 못 받은 차례에는 지난 기록을 그대로 쓴다.
+ * @param {object} o  { players, profilePages, profileFailed, prev, now, season }
+ */
+function buildStats(o) {
+  const log = o.log || (() => {});
+  const now = new Date(o.now || Date.now());
+  const prevBy = new Map(((o.prev && o.prev.players) || []).map(s => [s.wiki, s]));
+  const playerWikis = new Set();
+  const rosters = (o.players && o.players.rosters) || {};
+  Object.keys(rosters).forEach(id => rosters[id].players.forEach(p => { if (p.wiki) playerWikis.add(p.wiki); }));
+  const out = [];
+  let fresh = 0, kept = 0;
+  ((o.players && o.players.profiles) || []).forEach(prof => {
+    const wiki = prof.wiki;
+    if (!playerWikis.has(wiki)) return;
+    const page = o.profilePages && o.profilePages.get(wiki);
+    if (page) {
+      const st = P.parseCareerStats(page.content, o.season);
+      const kbo = P.parseKboIds(page.content);
+      if (st || kbo) { out.push(Object.assign({ wiki, kbo: kbo || null }, st || {})); fresh++; }
+      return;
+    }
+    if (!o.profilePages || o.profileFailed) {
+      const old = prevBy.get(wiki);
+      if (old) { out.push(old); kept++; }
+    }
+  });
+  let latest = 0;
+  out.forEach(s => ['bat', 'pit'].forEach(k => (s[k] ? s[k].rows : []).forEach(r => { latest = Math.max(latest, Number(r[0]) || 0); })));
+  log('  연도별 기록: 새로 ' + fresh + '명, 지난 것 ' + kept + '명 (가장 최근 시즌 ' + (latest || '-') + ')');
+  return { version: 1, generatedAt: now.toISOString(), latestSeason: latest || null, players: out };
+}
+
 /* ---------- 쓰기 ---------- */
 
 /** git 차이를 사람이 읽을 수 있게: 기사·경기·선수 하나가 한 줄 (커밋 전 diff 확인 — AGENTS.md 규칙 2) */
@@ -495,6 +532,7 @@ async function main() {
     prevLive.news = P.mergeNews(localLive.news, remoteLive.news, now);
   }
   const prevPlayers = newer(readLocal(PLAYERS_FILE, 'BaseballPlayers'), await readRemote(base, PLAYERS_FILE, 'BaseballPlayers'));
+  const prevStats = newer(readLocal(STATS_FILE, 'BaseballStats'), await readRemote(base, STATS_FILE, 'BaseballStats'));
 
   let failed = 0;
 
@@ -525,8 +563,10 @@ async function main() {
 
   /* 명단·프로필: 하루 한 번 */
   let players = prevPlayers;
+  let stats = prevStats;
   const ageH = prevPlayers ? (now - new Date(prevPlayers.generatedAt)) / 3600000 : Infinity;
-  if (force || ageH > PLAYERS_MAX_AGE_H || P.validatePlayers(prevPlayers).length) {
+  /* 연도별 기록 파일이 아직 없으면(처음 만드는 차례) 명단 주기를 기다리지 않고 받는다 */
+  if (force || ageH > PLAYERS_MAX_AGE_H || P.validatePlayers(prevPlayers).length || !prevStats) {
     let rosterPages = new Map();
     try {
       rosterPages = await wikiPages('ko.wikipedia.org', TEAMS.map(t => t.roster), false);
@@ -545,7 +585,8 @@ async function main() {
     });
     let profilePages = null, profileFailed = false;
     try {
-      profilePages = await wikiPages('ko.wikipedia.org', titles, true);
+      /* 문서 전체를 받는다 — 정보 상자(첫 부분)뿐 아니라 뒤쪽의 「통산 기록」 표와 KBO 기록 번호 틀도 쓴다 (50개씩 약 15번) */
+      profilePages = await wikiPages('ko.wikipedia.org', titles, false);
       console.log('  ok   선수 문서 ' + profilePages.size + '/' + new Set(titles).size + ' (나머지는 위키에 문서가 없다)');
     } catch (e) {
       failed++;
@@ -584,6 +625,7 @@ async function main() {
       console.warn('  명단·프로필 일부를 못 받아 지난 것을 그대로 둔다 — 다음 실행에서 다시 받는다');
     } else {
       players = buildPlayers({ rosterPages, profilePages, profileFailed, photoInfo, photoFailed, photoFallback, prev: prevPlayers, now, log: console.log });
+      stats = buildStats({ players, profilePages, profileFailed, prev: prevStats, now, season, log: console.log });
     }
   } else {
     console.log('  명단·프로필은 ' + ageH.toFixed(1) + '시간 전 것을 그대로 쓴다 (' + PLAYERS_MAX_AGE_H + '시간마다 새로 받는다)');
@@ -605,6 +647,15 @@ async function main() {
       writeData(PLAYERS_FILE, 'BaseballPlayers', players, '명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다.');
     }
   }
+  if (stats !== prevStats && stats) {
+    const statProblems = P.validateStats(stats);
+    if (statProblems.length) {
+      console.error('\n연도별 기록 검사 실패 — stats.js 는 쓰지 않는다:\n  ' + statProblems.slice(0, 20).join('\n  '));
+      failed++;
+    } else {
+      writeData(STATS_FILE, 'BaseballStats', stats, '연도별 기록은 한국어 위키백과 선수 문서의 「통산 기록」 표(CC BY-SA 4.0). KBO 기록실은 긁지 않는다 — 올 시즌 공식 기록은 KBO 페이지 링크로 본다.');
+    }
+  }
 
   const prevAsOf = prevLive && prevLive.standings ? prevLive.standings.asOf : null;
   const changed = (live.standings && live.standings.asOf) !== prevAsOf ||
@@ -623,4 +674,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildLive, buildPlayers, pickStandings, parseDataScript, dataScript, pretty, decodeXml, FEEDS, UA };
+module.exports = { buildLive, buildPlayers, buildStats, pickStandings, parseDataScript, dataScript, pretty, decodeXml, FEEDS, UA };

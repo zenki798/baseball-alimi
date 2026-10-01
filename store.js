@@ -250,6 +250,37 @@
 
   function person(id) { return (S && S.byPerson[id]) || null; }
 
+  /* ---------- 연도별 기록 (data/stats.js — 선수 화면을 열 때만 싣는다) ---------- */
+
+  var STAT_LABEL = {
+    year: '연도', team: '팀', g: '경기', avg: '타율', h: '안타', hr: '홈런', rbi: '타점', r: '득점', sb: '도루', bb: '볼넷', so: '삼진', ops: 'OPS',
+    era: '평균자책점', w: '승', l: '패', sv: '세이브', hld: '홀드', ip: '이닝', k: '탈삼진', whip: 'WHIP',
+  };
+  var KBO_RECORD = {
+    hitter: 'https://www.koreabaseball.com/Record/Player/HitterDetail/Total.aspx?playerId=',
+    pitcher: 'https://www.koreabaseball.com/Record/Player/PitcherDetail/Total.aspx?playerId=',
+  };
+  var statsIndex = null;
+  function statsLoaded() { return !!(g.BaseballStats && Array.isArray(g.BaseballStats.players)); }
+  /** 선수 → { bat, pit, kbo: { hitter, pitcher }, links: [{ kind, url }] } 또는 null. 자료가 아직 안 실렸으면 undefined */
+  function stats(p) {
+    if (!statsLoaded()) return undefined;
+    if (!statsIndex || statsIndex.src !== g.BaseballStats) {
+      var by = {};
+      g.BaseballStats.players.forEach(function (s) { if (s && s.wiki) by[s.wiki] = s; });
+      statsIndex = { src: g.BaseballStats, by: by };
+    }
+    var s = p && p.wiki ? statsIndex.by[p.wiki] : null;
+    if (!s) return null;
+    var links = [];
+    ['hitter', 'pitcher'].forEach(function (k) {
+      var id = s.kbo && s.kbo[k];
+      if (id && /^\d{4,7}$/.test(String(id))) links.push({ kind: k, url: KBO_RECORD[k] + id });
+    });
+    return { bat: s.bat || null, pit: s.pit || null, kbo: s.kbo || null, links: links };
+  }
+  function statsSeason() { return statsLoaded() ? g.BaseballStats.latestSeason || null : null; }
+
   /** 이름·초성·등번호로 찾는다. 등번호만 넣으면 그 번호의 선수 */
   function searchPeople(f) {
     f = f || {};
@@ -303,6 +334,7 @@
       pct: fmtPct, gb: fmtGb, streak: fmtStreak, record: fmtRecord, day: fmtDay, shortDay: fmtShortDay,
       time: fmtTime, rel: relTime, age: age, hands: hands,
     },
+    stats: stats, statsLoaded: statsLoaded, statsSeason: statsSeason, STAT_LABEL: STAT_LABEL,
     chosung: chosung, today: today, kstDate: kstDate,
   };
 

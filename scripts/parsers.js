@@ -674,6 +674,113 @@ function profileMatchesTeam(prof, team, number) {
   return number !== null && number !== undefined && num !== null && Number(num[0]) === number;
 }
 
+/* ---------- 연도별 기록 (선수 문서의 「통산 기록」 표) ----------
+ * 위키백과 편집자들이 시즌이 끝나면 한 줄씩 더하는 표다(2026-10-02 표본 150명 중 130명에게 있고, 2025 시즌까지 들어 있다).
+ * KBO 기록실을 긁지 않는다 — KBO 는 사전 승인 없는 자동 수집을 금지한다(AGENTS.md 4절). 올 시즌 기록은 KBO 공식 페이지 링크로 보낸다.
+ */
+
+/* 표 머리 이름 → 칸 이름. 문서마다 표기가 조금씩 다르다(세/세이브, 홀/홀드, 평균자책점/방어율, 팀명/소속팀) */
+const STAT_COMMON = { '연도': 'year', '년도': 'year', '시즌': 'year', '팀명': 'team', '팀': 'team', '소속팀': 'team', '소속': 'team', '구단': 'team', '경기': 'g', '경기수': 'g' };
+const STAT_BAT = { '타율': 'avg', '안타': 'h', '홈런': 'hr', '타점': 'rbi', '득점': 'r', '도루': 'sb', '볼넷': 'bb', '4구': 'bb', '삼진': 'so', 'OPS': 'ops' };
+const STAT_PIT = { '평균자책점': 'era', '방어율': 'era', '승': 'w', '패': 'l', '세': 'sv', '세이브': 'sv', '홀': 'hld', '홀드': 'hld', '이닝': 'ip', '투구이닝': 'ip', '탈삼진': 'k', '볼넷': 'bb', 'WHIP': 'whip' };
+/* 화면에 내는 칸과 순서 */
+const BAT_COLS = ['year', 'team', 'g', 'avg', 'h', 'hr', 'rbi', 'r', 'sb', 'bb', 'so', 'ops'];
+const PIT_COLS = ['year', 'team', 'g', 'era', 'w', 'l', 'sv', 'hld', 'ip', 'k', 'bb', 'whip'];
+/* KBO 구단(옛 이름 포함). MLB·NPB 기록 표를 KBO 기록으로 잘못 내지 않게 행의 팀 칸으로 고른다 */
+const KBO_TEAM_CELL = /KIA|기아|해태|삼성|LG|엘지|MBC|두산|OB|(?<![A-Za-z])(?:kt|KT)(?![A-Za-z])|SSG|SK|롯데|한화|빙그레|NC|키움|넥센|히어로즈|우리|현대|태평양|청보|삼미|쌍방울/;
+
+/** 표 칸 → 글자. {{Color|red|143}} 같은 꾸밈 틀은 값만 남긴다(그냥 틀을 지우면 기록이 사라진다) */
+function statCellText(raw) {
+  let s = String(raw || '');
+  s = s.replace(/\{\{\s*(?:color|colour|font color|색)\s*\|[^{}|]*\|([^{}]*)\}\}/gi, '$1');
+  s = s.replace(/\{\{\s*(?:nowrap|굵게|bold)\s*\|([^{}]*)\}\}/gi, '$1');
+  return stripWiki(s).replace(/[†‡*]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/** rowspan·colspan 을 펴서 머리 칸 수에 맞춘 격자로 */
+function alignRows(rows, ncol) {
+  const carry = new Array(ncol).fill(null);
+  return rows.map(r => {
+    const cells = r.cells.slice();
+    const line = [];
+    let k = 0;
+    for (let c = 0; c < ncol; c++) {
+      if (carry[c] && carry[c].left > 0) { line.push(carry[c].cell); carry[c].left--; continue; }
+      const cell = cells[k++];
+      if (!cell) { line.push(null); continue; }
+      line.push(cell);
+      if (cell.rowspan > 1) carry[c] = { left: cell.rowspan - 1, cell };
+      for (let s = 1; s < cell.colspan && c + 1 < ncol; s++) { c++; line.push(cell); }
+    }
+    return line;
+  });
+}
+
+/** 위키 표 하나 → { kind: 'bat'|'pit', cols, rows: [[값…]], total, seasons } 또는 null */
+function parseStatTable(tableText, maxYear) {
+  const rows = parseWikiTable(tableText);
+  const hi = rows.findIndex(r => r.cells.length >= 4 && r.cells.every(c => c.header) && r.cells.some(c => STAT_COMMON[c.text] === 'year'));
+  if (hi < 0) return null;
+  const head = rows[hi].cells.map(c => c.text.replace(/\s+/g, ''));
+  const kind = head.includes('타율') ? 'bat' : (head.includes('평균자책점') || head.includes('방어율')) ? 'pit' : null;
+  if (!kind) return null;
+  const alias = Object.assign({}, STAT_COMMON, kind === 'bat' ? STAT_BAT : STAT_PIT);
+  const keys = head.map(h => alias[h] || null);
+  const wanted = (kind === 'bat' ? BAT_COLS : PIT_COLS).filter(k => keys.includes(k));
+  if (!wanted.includes('year') || !wanted.includes('g')) return null;
+  const grid = alignRows(rows.slice(hi + 1).filter(r => r.cells.length), head.length);
+  const out = [];
+  let total = null, seasons = null;
+  grid.forEach(line => {
+    const vals = {};
+    keys.forEach((k, i) => { if (k && line[i]) vals[k] = statCellText(line[i].raw).slice(0, 12); });
+    if (/^통산|^합계|^계$/.test(vals.year || '')) {
+      total = wanted.map(k => (k === 'year' ? '통산' : k === 'team' ? '' : vals[k] || ''));
+      seasons = /\d+\s*시즌/.test(vals.team || '') ? vals.team.match(/\d+\s*시즌/)[0].replace(/\s+/g, '') : null;
+      return;
+    }
+    const y = Number((vals.year || '').match(/^\d{4}/) || NaN);
+    if (!(y >= 1982 && y <= maxYear)) return;
+    vals.year = String(y);
+    /* 편집자가 시즌 시작 때 미리 만들어 둔 자리 줄("2026 | NC | | |…", "000 | 00.00")은 뺀다 — 기록이 0 인 것처럼 보인다.
+       경기 수가 비었거나 0 이면 그해에 뛰지 않은 것으로 본다 (2026-10-02 실제 문서 10곳에서 겪음) */
+    if (!/[1-9]/.test(vals.g || '')) return;
+    out.push(wanted.map(k => vals[k] || ''));
+  });
+  if (!out.length) return null;
+  const ti = wanted.indexOf('team');
+  if (ti >= 0 && !out.some(r => KBO_TEAM_CELL.test(r[ti]))) return null;   // MLB·NPB 표
+  return { kind, cols: wanted, rows: out.slice(0, 30), total, seasons };
+}
+
+/** 선수 문서 전체 → { bat, pit } (없으면 null). 「통산 기록」 절의 표 가운데 KBO 기록 표를 쓴다 */
+function parseCareerStats(wikitext, maxYear) {
+  const text = String(wikitext || '');
+  const m = text.match(/^(==+)\s*(?:통산\s*기록|연도별\s*(?:성적|기록)|시즌별\s*(?:성적|기록)|통산\s*성적|개인\s*기록|기록)\s*\1\s*$/m);
+  if (!m) return null;
+  const start = m.index + m[0].length;
+  const rest = text.slice(start);
+  const next = rest.search(new RegExp('^={2,' + m[1].length + '}[^=]', 'm'));
+  const sec = next >= 0 ? rest.slice(0, next) : rest;
+  const out = {};
+  let from = 0, t;
+  while ((t = extractTable(sec, from))) {
+    const st = parseStatTable(t.text, maxYear || 2100);
+    if (st && !out[st.kind]) out[st.kind] = { cols: st.cols, rows: st.rows, total: st.total, seasons: st.seasons };
+    from = t.end;
+  }
+  return out.bat || out.pit ? out : null;
+}
+
+/** 문서의 {{KBO 타자|52605}}·{{KBO 투수|69446}} → KBO 공식 기록 페이지 번호. 위키백과에 적힌 번호라 KBO 를 긁지 않는다 */
+function parseKboIds(wikitext) {
+  const t = String(wikitext || '');
+  const pick = re => { const m = t.match(re); return m ? m[1] : null; };
+  const hitter = pick(/\{\{\s*KBO\s*타자\s*\|\s*(?:id\s*=\s*)?(\d{4,7})\s*[|}]/);
+  const pitcher = pick(/\{\{\s*KBO\s*투수\s*\|\s*(?:id\s*=\s*)?(\d{4,7})\s*[|}]/);
+  return hitter || pitcher ? { hitter, pitcher } : null;
+}
+
 /* ---------- 뉴스 (언론사 RSS) ---------- */
 
 /** 우리 구단과 별명이 같은 다른 리그·종목 팀. 구단을 알아보기 전에 지운다
@@ -906,7 +1013,34 @@ function validatePlayers(players) {
   return p;
 }
 
+const STAT_KEYS = new Set(BAT_COLS.concat(PIT_COLS));
+
+/** data/stats.js 검사 — 연도별 기록과 KBO 공식 기록 번호 */
+function validateStats(stats) {
+  const p = [];
+  if (!stats || typeof stats !== 'object') return ['자료가 비어 있음'];
+  if (stats.version !== 1) p.push('version');
+  if (!ISO.test(stats.generatedAt || '')) p.push('generatedAt');
+  if (!Array.isArray(stats.players)) return p.concat('players 가 배열이 아님');
+  const seen = new Set();
+  stats.players.forEach(s => {
+    if (!s || !s.wiki || seen.has(s.wiki)) p.push('선수 문서 이름 이상 ' + (s && s.wiki));
+    seen.add(s && s.wiki);
+    if (s.kbo) for (const k of ['hitter', 'pitcher']) if (s.kbo[k] !== null && !/^\d{4,7}$/.test(String(s.kbo[k]))) p.push('KBO 번호 이상 ' + s.wiki);
+    for (const kind of ['bat', 'pit']) {
+      const t = s[kind];
+      if (!t) continue;
+      if (!Array.isArray(t.cols) || t.cols[0] !== 'year' || t.cols.some(c => !STAT_KEYS.has(c))) p.push('기록 칸 이상 ' + s.wiki);
+      if (!Array.isArray(t.rows) || !t.rows.length || t.rows.some(r => !Array.isArray(r) || r.length !== t.cols.length || !/^\d{4}$/.test(r[0]))) p.push('기록 줄 이상 ' + s.wiki);
+      if (t.total && (!Array.isArray(t.total) || t.total.length !== t.cols.length)) p.push('통산 줄 이상 ' + s.wiki);
+    }
+    if (!s.bat && !s.pit && !s.kbo) p.push('빈 기록 ' + s.wiki);
+  });
+  return p;
+}
+
 module.exports = {
+  validateStats, parseCareerStats, parseStatTable, parseKboIds, statCellText, alignRows, BAT_COLS, PIT_COLS,
   decodeEntities, clean, pick, pickLink, stripByline, scrubSummary, spaceSentences, truncate,
   articleNo, canonicalUrl, hashId, isHttpUrl,
   kstDate, seasonFor, parseFeedDate, ymd,

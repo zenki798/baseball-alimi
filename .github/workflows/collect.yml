@@ -62,7 +62,7 @@ jobs:
           if [ -n "$last" ] && [ $((now - last)) -lt 72000 ]; then echo "20시간 안에 커밋했음 — 건너뜀"; exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/live.js data/players.js
+          git add data/live.js data/players.js data/stats.js
           if git diff --cached --quiet; then echo "바뀐 것 없음"; exit 0; fi
           node scripts/check-sensitive.js --staged
           git commit -m "자료 갱신: $(date -u +'%Y-%m-%d %H:%M') UTC"
@@ -132,7 +132,7 @@ jobs:
         run: |
           mkdir -p _site/data _site/icons/teams
           cp index.html styles.css teams.js store.js app.js sw.js manifest.webmanifest _site/
-          cp data/live.js data/players.js _site/data/
+          cp data/live.js data/players.js data/stats.js _site/data/
           cp icons/*.png _site/icons/
           cp icons/teams/*.svg icons/teams/*.png _site/icons/teams/
           find _site -type f

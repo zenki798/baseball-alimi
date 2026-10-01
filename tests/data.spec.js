@@ -15,14 +15,20 @@ const { open, FIX } = require('./helpers');
 const ROOT = path.resolve(__dirname, '..');
 const read = (f, name) => C.parseDataScript(fs.readFileSync(path.join(ROOT, 'data', f), 'utf8'), name);
 
-test('저장소의 실제 자료 파일이 계약을 지킨다 (live.js·players.js)', () => {
+test('저장소의 실제 자료 파일이 계약을 지킨다 (live.js·players.js·stats.js)', () => {
   const live = read('live.js', 'BaseballLive');
   const players = read('players.js', 'BaseballPlayers');
+  const stats = read('stats.js', 'BaseballStats');
   expect(live, 'data/live.js 를 읽지 못함').not.toBeNull();
   expect(players, 'data/players.js 를 읽지 못함').not.toBeNull();
+  expect(stats, 'data/stats.js 를 읽지 못함').not.toBeNull();
   expect(P.validateLive(live)).toEqual([]);
   expect(P.validatePlayers(players)).toEqual([]);
+  expect(P.validateStats(stats)).toEqual([]);
   expect(live.standings && live.standings.rows).toHaveLength(10);
+  /* 기록은 명단에 있는 선수 문서만 */
+  const wikis = new Set(players.profiles.map((p) => p.wiki));
+  expect(stats.players.filter((s) => !wikis.has(s.wiki)).map((s) => s.wiki)).toEqual([]);
 });
 
 test('실제 자료에 담지 않기로 한 것이 없다 — 기자 이메일·기사 본문 길이·신상 항목', () => {
@@ -38,6 +44,7 @@ test('실제 자료에 담지 않기로 한 것이 없다 — 기자 이메일·
 test('가짜 자료(테스트용)도 같은 계약을 지킨다', () => {
   expect(P.validateLive(FIX.buildLive())).toEqual([]);
   expect(P.validatePlayers(FIX.buildPlayers())).toEqual([]);
+  expect(P.validateStats(FIX.buildStats())).toEqual([]);
 });
 
 test('teams.js: 10개 구단, id·색·위키 이름·명단 틀·구장 토큰·엠블럼 파일', () => {

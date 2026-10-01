@@ -25,9 +25,10 @@ const KEY = { myTeam: 'baseball-alimi.myTeam', installDismissed: 'baseball-alimi
  * @param {object|null|'404'} [opt.players]  players 자료
  * @param {string} [opt.liveScript]          live.js 본문을 통째로 바꾼다
  * @param {boolean} [opt.failPhotos]         사진 요청을 실패시킨다
+ * @param {object|null|'404'} [opt.stats]    연도별 기록 자료 (선수 화면을 열 때만 실린다)
  */
 async function mockData(target, opt = {}) {
-  const calls = { live: [], players: [], photos: [], unexpected: [] };
+  const calls = { live: [], players: [], stats: [], photos: [], unexpected: [] };
   await target.route(/^https?:\/\/(?!localhost[:/])/, (route) => {
     calls.unexpected.push(route.request().url());
     return route.abort();
@@ -47,6 +48,8 @@ async function mockData(target, opt = {}) {
   const players = opt.players === undefined ? FIX.buildPlayers() : opt.players;
   await target.route(/\/data\/live\.js(\?.*)?$/, serve('live', live, () => opt.liveScript || FIX.liveScript(live)));
   await target.route(/\/data\/players\.js(\?.*)?$/, serve('players', players, () => FIX.playersScript(players)));
+  const stats = opt.stats === undefined ? FIX.buildStats() : opt.stats;
+  await target.route(/\/data\/stats\.js(\?.*)?$/, serve('stats', stats, () => FIX.statsScript(stats)));
   return calls;
 }
 

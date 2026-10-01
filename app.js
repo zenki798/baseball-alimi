@@ -54,6 +54,8 @@
     news: { topic: 'all', team: '', q: '' },
     players: { q: '', team: '', pos: '', limit: PAGE },
     lastLoad: Date.now(),
+    statKind: null,       // 연도별 기록에서 고른 종류(타격·투구) — 저장하지 않는다
+    statsFailed: false,   // data/stats.js 를 못 실었으면 true (다시 그릴 때 안내)
   };
 
   /* ---------- DOM 도우미 ---------- */
@@ -559,7 +561,7 @@
     root.appendChild(h('div', { class: 'stack' }, count, list, h('div', { style: 'text-align:center' }, more)));
     root.appendChild(h('p', { class: 'note box' },
       '명단은 한국어 위키백과의 구단별 현재 명단, 프로필은 선수 문서의 정보 상자에서 옮겼습니다(CC BY-SA 4.0). ',
-      '시즌 기록(타율·홈런·평균자책점 등)은 이용이 허용된 공개 자료를 찾지 못해 아직 보여 드리지 않습니다.'));
+      '연도별 기록은 선수 문서의 통산 기록 표(지난 시즌까지)에서, 올 시즌 기록은 선수 화면의 "KBO 공식 기록" 버튼으로 봅니다.'));
 
     function drawList() {
       Array.prototype.forEach.call(posChips.children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-pos') === f.pos)); });
@@ -652,6 +654,7 @@
       hero.appendChild(facts);
     }
     root.appendChild(hero);
+    if (p.pos !== 'M') root.appendChild(statsCard(p));   // 감독은 선수 시절 기록이 지금 기록처럼 보여 내지 않는다
 
     if (pr && (pr.career.length || pr.titles.length)) {
       /* 경력·수상이 둘 다 있을 때만 두 칸으로. 하나뿐이면 전체 폭 */
@@ -670,8 +673,97 @@
     root.appendChild(h('p', { class: 'note box' },
       p.wiki ? ['프로필 출처: ', extLink(wikiLink('ko.wikipedia.org', p.wiki), '위키백과 「' + p.wiki + '」'), ' (CC BY-SA 4.0). '] : null,
       pr ? null : '위키백과에 이 선수의 문서(정보 상자)가 아직 없어 명단 정보만 보여 드립니다. ',
-      pr && !photo ? '위키미디어 공용에 자유 이용 사진이 없는 선수는 사진 대신 등번호를 보여 드립니다. ' : null,
-      '시즌 기록(타율·홈런·평균자책점 등)은 이용이 허용된 공개 자료를 찾지 못해 아직 제공하지 않습니다.'));
+      pr && !photo ? '위키미디어 공용에 자유 이용 사진이 없는 선수는 사진 대신 등번호를 보여 드립니다. ' : null));
+  }
+
+  /* ---------- 연도별 기록 ----------
+   * 지난 시즌까지: 위키백과 「통산 기록」 표(data/stats.js — 선수 화면을 처음 열 때 한 번 싣는다).
+   * 올 시즌: KBO 공식 기록 페이지로 가는 링크. KBO 기록실은 긁지 않는다(사전 승인 없는 자동 수집 금지 — AGENTS.md 4절). */
+
+  var statsLoading = null;
+  function ensureStats() {
+    if (B.statsLoaded()) return Promise.resolve();
+    if (!statsLoading) {
+      statsLoading = loadScript('data/stats.js').then(function () { statsLoading = null; }, function () { statsLoading = null; state.statsFailed = true; });
+    }
+    return statsLoading;
+  }
+
+  function officialLinks(p, st) {
+    var season = B.season() || '';
+    var wrap = h('div', { class: 'official' });
+    var links = (st && st.links) || [];
+    links.forEach(function (l) {
+      wrap.appendChild(h('a', { class: 'btn', href: l.url, target: '_blank', rel: 'noopener noreferrer', 'data-kind': l.kind },
+        'KBO 공식 기록' + (links.length > 1 ? (l.kind === 'pitcher' ? '(투수)' : '(타자)') : '') + ' ↗'));
+    });
+    if (!links.length) {
+      var q = p.name + ' ' + B.team(p.team).short + ' 야구 기록';
+      wrap.appendChild(h('a', { class: 'btn ghost', id: 'statsSearch', href: 'https://search.naver.com/search.naver?query=' + encodeURIComponent(q), target: '_blank', rel: 'noopener noreferrer' },
+        '네이버에서 기록 찾기 ↗'));
+    }
+    wrap.appendChild(h('p', { class: 'note' }, '올 시즌' + (season ? '(' + season + ')' : '') + ' 기록은 KBO 공식 기록실에서 보세요. ',
+      '이 앱은 KBO 기록을 자동으로 모으지 않습니다(KBO 가 사전 승인 없는 자동 수집을 금지합니다).'));
+    return wrap;
+  }
+
+  function statsCard(p) {
+    var el = h('section', { class: 'card', id: 'statsCard' });
+    el.appendChild(cardHead('기록', null, 'h3'));
+    var st = B.stats(p);
+    if (st === undefined) {
+      /* 기록 파일이 아직 안 실렸다 — 싣고 나서 이 카드만 다시 그린다 */
+      if (state.statsFailed) el.appendChild(empty('연도별 기록을 불러오지 못했습니다', '인터넷 연결을 확인해 주세요.'));
+      else {
+        el.appendChild(h('p', { class: 'meta', id: 'statsLoading' }, '연도별 기록을 불러오는 중…'));
+        ensureStats().then(function () {
+          if (el.parentNode && state.route.view === 'players' && state.route.id === p.id) el.parentNode.replaceChild(statsCard(p), el);
+        });
+      }
+      el.appendChild(officialLinks(p, null));
+      return el;
+    }
+    el.appendChild(officialLinks(p, st));
+    if (!st || (!st.bat && !st.pit)) {
+      el.appendChild(h('p', { class: 'note', id: 'statsNone' }, '위키백과에 이 선수의 연도별 기록 표가 아직 없습니다.'));
+      return el;
+    }
+    var kinds = [];
+    if (st.bat) kinds.push(['bat', '타격']);
+    if (st.pit) kinds.push(['pit', '투구']);
+    var cur = state.statKind && st[state.statKind] ? state.statKind : (p.pos === 'P' && st.pit ? 'pit' : kinds[0][0]);
+    var seg = kinds.length > 1 ? h('div', { class: 'seg', role: 'group', 'aria-label': '기록 종류' }) : null;
+    var holder = h('div', { class: 'table-wrap' });
+    function draw() {
+      if (seg) Array.prototype.forEach.call(seg.children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-kind') === cur)); });
+      var t = st[cur];
+      var latest = t.rows.reduce(function (m, r) { return Math.max(m, Number(r[0]) || 0); }, 0);
+      var table = h('table', { class: 'stat-table', id: 'statTable', 'data-kind': cur },
+        h('caption', { class: 'sr-only' }, p.name + ' 연도별 ' + (cur === 'pit' ? '투구' : '타격') + ' 기록'),
+        h('thead', null, h('tr', null, t.cols.map(function (c) { return h('th', { scope: 'col', class: c === 'team' ? 'team' : null }, B.STAT_LABEL[c] || c); }))),
+        h('tbody', null, t.rows.map(function (r) {
+          return h('tr', { class: Number(r[0]) === latest ? 'latest' : null }, r.map(function (v, i) {
+            return h(i === 0 ? 'th' : 'td', { scope: i === 0 ? 'row' : null, class: t.cols[i] === 'team' ? 'team' : null }, v || '-');
+          }));
+        })),
+        t.total ? h('tfoot', null, h('tr', null, t.total.map(function (v, i) {
+          return h(i === 0 ? 'th' : 'td', { scope: i === 0 ? 'row' : null, class: t.cols[i] === 'team' ? 'team' : null },
+            i === 0 ? '통산' : t.cols[i] === 'team' ? (t.seasons || '') : (v || '-'));
+        }))) : null);
+      clear(holder).appendChild(table);
+    }
+    if (seg) {
+      kinds.forEach(function (k) {
+        seg.appendChild(h('button', { type: 'button', 'data-kind': k[0], on: { click: function () { cur = k[0]; state.statKind = k[0]; draw(); } } }, k[1]));
+      });
+      el.appendChild(seg);
+    }
+    el.appendChild(holder);
+    draw();
+    var season = B.statsSeason();
+    el.appendChild(h('p', { class: 'note' }, '연도별 기록: ', extLink(wikiLink('ko.wikipedia.org', p.wiki), '위키백과 「' + p.wiki + '」'),
+      ' 통산 기록 표 (CC BY-SA 4.0)' + (season ? ' — ' + season + ' 시즌까지' : '') + '. 위키백과 편집자가 정리한 값이라 공식 기록과 다를 수 있습니다.'));
+    return el;
   }
 
   /* ---------- 뉴스 ---------- */

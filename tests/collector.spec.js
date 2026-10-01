@@ -374,6 +374,64 @@ test.describe('조립 — buildLive · buildPlayers (collect.js)', () => {
   });
 });
 
+test.describe('연도별 기록 (선수 문서의 「통산 기록」 표)', () => {
+  test('팀 칸 rowspan·세로로 적은 줄·{{Color}} 꾸밈을 읽고, 통산 줄과 시즌 수를 따로 둔다', () => {
+    const st = P.parseCareerStats(W.CAREER, 2026);
+    expect(Object.keys(st)).toEqual(['pit']);
+    expect(st.pit.cols).toEqual(['year', 'team', 'g', 'era', 'w', 'l', 'sv', 'hld', 'ip', 'k', 'bb']);
+    expect(st.pit.rows).toEqual([
+      ['2023', 'KIA', '20', '4.10', '5', '7', '0', '1', '90', '70', '30'],
+      ['2024', 'KIA', '28', '2.95', '12', '5', '0', '0', '150⅔', '140', '35'],
+      ['2025', 'KIA', '25', '3.33', '9', '6', '0', '0', '135⅓', '120', '33'],
+    ]);
+    expect(st.pit.total).toEqual(['통산', '', '73', '3.40', '26', '18', '0', '1', '376', '330', '98']);
+    expect(st.pit.seasons).toBe('3시즌');
+  });
+
+  test('편집자가 미리 만든 빈 시즌 줄(경기 0·000)은 뺀다, MLB 만 있는 표는 KBO 기록으로 내지 않는다', () => {
+    const st = P.parseCareerStats(W.CAREER, 2026);
+    expect(st.pit.rows.map((r) => r[0])).not.toContain('2026');
+    expect(P.parseCareerStats(W.CAREER_MLB_ONLY, 2026)).toBeNull();
+    expect(P.parseCareerStats('기록 절이 없는 문서', 2026)).toBeNull();
+    /* 올해보다 뒤 연도는 받지 않는다 */
+    expect(P.parseCareerStats(W.CAREER, 2024).pit.rows.map((r) => r[0])).toEqual(['2023', '2024']);
+  });
+
+  test('KBO 공식 기록 번호: {{KBO 투수|번호}}·{{KBO 타자|id=번호|이름}}', () => {
+    expect(P.parseKboIds(W.CAREER)).toEqual({ hitter: '67890', pitcher: '12345' });
+    expect(P.parseKboIds('{{KBO 타자|52605}}')).toEqual({ hitter: '52605', pitcher: null });
+    expect(P.parseKboIds('외부 링크 없음')).toBeNull();
+  });
+
+  test('buildStats: 이 구단 선수로 확인한 문서만, 감독은 빼고, 못 받은 차례에는 지난 기록', () => {
+    const rosterPages = new Map([['틀:KIA 타이거즈 명단', { content: W.ROSTER }]]);
+    const profilePages = new Map([
+      ['가람 (야구 선수)', { content: W.INFOBOX + '\n' + W.CAREER }],
+      ['테스트감독', { content: W.INFOBOX.replace('| 선수명 = 가람', '| 선수명 = 테스트감독') + '\n' + W.CAREER }],
+    ]);
+    const players = C.buildPlayers({ rosterPages, profilePages, prev: null, now: NOW });
+    expect(players.profiles.map((p) => p.wiki).sort()).toEqual(['가람 (야구 선수)', '테스트감독']);
+    const stats = C.buildStats({ players, profilePages, prev: null, now: NOW, season: 2026 });
+    expect(stats.players.map((s) => s.wiki)).toEqual(['가람 (야구 선수)']);   // 감독 제외
+    expect(stats.players[0].kbo).toEqual({ hitter: '67890', pitcher: '12345' });
+    expect(stats.latestSeason).toBe(2025);
+    expect(P.validateStats(stats)).toEqual([]);
+    const again = C.buildStats({ players, profilePages: null, profileFailed: true, prev: stats, now: NOW, season: 2026 });
+    expect(again.players).toEqual(stats.players);
+  });
+
+  test('validateStats: 칸·줄 모양과 KBO 번호를 검사한다', () => {
+    const ok = { version: 1, generatedAt: NOW.toISOString(), latestSeason: 2025, players: [{ wiki: 'a', kbo: { hitter: '1234', pitcher: null }, bat: { cols: ['year', 'g'], rows: [['2025', '10']], total: null } }] };
+    expect(P.validateStats(ok)).toEqual([]);
+    const bad = JSON.parse(JSON.stringify(ok));
+    bad.players[0].bat.rows[0] = ['20xx', '10'];
+    bad.players[0].kbo.hitter = 'abc';
+    bad.players.push({ wiki: 'b', kbo: null });
+    expect(P.validateStats(bad).join()).toMatch(/기록 줄 이상.*KBO 번호 이상|KBO 번호 이상.*기록 줄 이상/);
+    expect(P.validateStats(bad).join()).toContain('빈 기록 b');
+  });
+});
+
 test.describe('자료 파일 쓰기·읽기', () => {
   test('dataScript → parseDataScript 왕복, 기사·선수 하나가 한 줄 (git 차이를 사람이 읽을 수 있게)', () => {
     const payload = { version: 1, list: [{ a: 1 }, { a: 2 }], nested: { rows: [{ b: 1 }] } };

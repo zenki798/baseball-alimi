@@ -608,3 +608,18 @@ html.lb-open, html.lb-open body { overflow: hidden; }
   background: var(--surface); font-size: 15px;
 }
 .owner-row input:focus { outline: none; border-color: var(--link); }
+
+/* 연도별 기록 (선수 화면) */
+.official { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.official .note { flex-basis: 100%; margin: 2px 0 0; }
+.stat-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.stat-table th, .stat-table td { padding: 7px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.stat-table thead th { font-size: 12px; color: var(--faint); font-weight: 700; background: var(--surface-2); }
+.stat-table .team { text-align: left; color: var(--dim); }
+/* 좁은 화면에서 옆으로 밀어도 연도 칸은 남는다 */
+.stat-table tr > :first-child { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; font-weight: 800; }
+.stat-table thead tr > :first-child { background: var(--surface-2); }
+.stat-table tbody tr.latest td, .stat-table tbody tr.latest th { font-weight: 800; color: var(--tx); }
+.stat-table tbody tr.latest th { box-shadow: inset 3px 0 0 var(--win); }
+.stat-table tfoot th, .stat-table tfoot td { font-weight: 800; border-top: 2px solid var(--line-strong); border-bottom: 0; }
+#statsCard .seg { max-width: 240px; }
