@@ -234,8 +234,12 @@
 
   function renderStandings(root) {
     clear(root);
-    var layout = h('div', { class: 'st-layout' });
+    /* 정규시즌이 끝나면 휴대폰에서 가을야구 대진을 순위표보다 위에 둔다 */
+    var ph = B.phase();
+    var layout = h('div', { class: 'st-layout' + (ph === 'set' || ph === 'ps' || ph === 'done' ? ' ps-first' : '') });
     layout.appendChild(h('div', { class: 'a-mine' }, myTeamCard()));
+    var ps = postseasonCard();
+    if (ps) layout.appendChild(h('div', { class: 'a-ps' }, ps));
     layout.appendChild(h('div', { class: 'a-table' }, standingsCard()));
     layout.appendChild(h('div', { class: 'a-games' }, gamesCard()));
     root.appendChild(layout);
@@ -248,10 +252,10 @@
     }
     var season = B.season();
     var head = h('div', { class: 'card-head' },
-      h('h2', null, (season ? season + ' ' : '') + '정규시즌 순위'),
-      h('span', { class: 'meta', id: 'standingsAsOf' }, F.day(st.asOf) + ' 경기까지'));
+      h('h2', null, (season ? season + ' ' : '') + '정규시즌 ' + (st.final ? '최종 순위' : '순위')),
+      h('span', { class: 'meta', id: 'standingsAsOf' }, st.final ? '144경기 모두 끝남' : F.day(st.asOf) + ' 경기까지'));
     var table = h('table', { class: 'st-table', id: 'standingsTable' },
-      h('caption', { class: 'sr-only' }, (season || '') + ' KBO 정규시즌 순위, ' + F.day(st.asOf, false) + ' 기준'),
+      h('caption', { class: 'sr-only' }, (season || '') + ' KBO 정규시즌 ' + (st.final ? '최종 순위' : '순위, ' + F.day(st.asOf, false) + ' 기준')),
       h('thead', null, h('tr', null,
         h('th', { class: 'rank', scope: 'col' }, '순위'),
         h('th', { class: 'l', scope: 'col' }, '팀'),
@@ -271,13 +275,12 @@
       if (i === B.POSTSEASON_CUT - 1) cls.push('cut');
       if (r.team === state.myTeam) cls.push('mine');
       var form = B.teamGames(r.team, 5).slice().reverse();
+      var badge = raceBadge(r.team);
       var teamCell = h('div', { class: 'team-cell' },
         teamLogo(r.team, 26),
         h('a', { href: '#team/' + r.team, class: 'nm' }, t.short),
         h('span', { class: 'full' }, t.name.split(' ').slice(1).join(' ') || ''),
-        r.status === 'in' ? h('span', { class: 'badge-st', title: '가을야구(포스트시즌) 진출 확정' }, 'PS') : null,
-        r.status === 'first' ? h('span', { class: 'badge-st first', title: '정규시즌 1위 확정' }, '1위 확정') : null,
-        r.status === 'out' ? h('span', { class: 'badge-st out', title: '가을야구 탈락 확정' }, '탈락') : null,
+        badge ? h('span', { class: 'badge-st' + (badge.cls ? ' ' + badge.cls : ''), title: badge.title }, badge.text) : null,
         r.team === state.myTeam ? h('span', { class: 'badge-mine' }, '내 팀') : null);
       tbody.appendChild(h('tr', { class: cls.join(' ') || null, 'data-team': r.team },
         h('td', { class: 'rank n' }, r.rank),
@@ -327,6 +330,8 @@
       teamLogo(id, 48),
       h('div', null, h('div', { class: 'ttl' }, t.name), h('div', { class: 'meta' }, '내 팀')),
       r ? h('div', { class: 'rank' }, r.rank, h('small', null, '위')) : null));
+    var line = psStatus(id);
+    if (line) el.appendChild(h('p', { class: 'ps-line ' + line.tone, id: 'myTeamPs' }, line.text));
     if (r) el.appendChild(statTiles(id, r, true));
     var recent = B.teamGames(id, 3);
     if (recent.length) {
@@ -346,11 +351,13 @@
     tile('승률', F.pct(r.pct));
     tile(r.rank === 1 ? '2위와' : '1위와', r.rank === 1 ? gapText(B.gamesAhead(r, B.rowAtRank(2) || r)) : F.gb(r.gb) + ' 경기 뒤',
       r.rank === 1 ? '경기차' : null, r.rank === 1 ? 'up' : null);
-    if (cut) {
+    /* 정규시즌이 끝나면 진출선까지의 거리·남은 경기는 뜻이 없다 */
+    var fin = B.isFinal();
+    if (cut && !fin) {
       tile(cut.inside ? cut.vs + '위와' : cut.vs + '위와', gapText(cut.gap), cut.inside ? '가을야구 안정권까지' : '가을야구 진출선까지',
         cut.gap > 0 ? 'up' : cut.gap < 0 ? 'down' : null);
     }
-    if (!compact || rem !== null) tile('남은 경기', rem === null ? '-' : rem + '경기', B.SEASON_GAMES + '경기 중');
+    if (!fin && (!compact || rem !== null)) tile('남은 경기', rem === null ? '-' : rem + '경기', B.SEASON_GAMES + '경기 중');
     tile('연속', F.streak(r.streak), null, r.streak && r.streak.type === 'W' ? 'up' : r.streak && r.streak.type === 'L' ? 'down' : null);
     return tiles;
   }
@@ -411,6 +418,207 @@
       h('div', { class: 'where' }, (g.stadium ? g.stadium : '') + (homeName ? ' · ' + homeName + ' 홈' : '') + (left.s === right.s ? ' · 무승부' : '')));
   }
 
+  /* ---------- 가을야구 ----------
+   * 정규시즌 중: "가을야구 레이스" — 1~5위 자리와 그 자리에서 시작하는 라운드, 진출 확정·경쟁·탈락, 최종 순위로 가능한 범위
+   * 정규시즌 뒤: 대진 — 와일드카드 → 준플레이오프 → 플레이오프 → 한국시리즈, 시리즈 승수·경기 결과, 우승팀
+   * 단계는 B.phase() 가 자료로 정한다. 해마다 같은 화면이다(연도는 자료의 시즌).
+   */
+  var SEED_PATH = { 1: '한국시리즈 직행', 2: '플레이오프 직행', 3: '준플레이오프부터', 4: '와일드카드 · 1승 안고 홈', 5: '와일드카드 · 2승 필요' };
+  var SEED_CHIP = { 1: 'KS 직행', 2: 'PO 직행', 3: '준PO', 4: 'WC', 5: 'WC' };
+
+  /** 순위표 줄의 진출 배지 { text, cls, title }. 아직 경쟁 중이면 null */
+  function raceBadge(id) {
+    var x = B.race(id);
+    if (!x) return null;
+    var b = B.bracket();
+    if (b && b.champion === id) return { text: '우승', cls: 'champ', title: (b.season || '') + ' 한국시리즈 우승' };
+    if (x.status === 'out') return { text: '탈락', cls: 'out', title: '가을야구 탈락 확정' };
+    if (x.status !== 'in') return null;
+    if (B.isFinal() && x.seed) return { text: SEED_CHIP[x.seed], cls: x.seed === 1 ? 'first' : '', title: '정규시즌 ' + x.seed + '위 — ' + SEED_PATH[x.seed] };
+    if (x.seed === 1) return { text: '1위 확정', cls: 'first', title: '정규시즌 1위 확정 — 한국시리즈 직행' };
+    return { text: 'PS', cls: '', title: '가을야구(포스트시즌) 진출 확정' + (x.best !== x.worst ? ' · 최종 ' + x.best + '~' + x.worst + '위' : '') };
+  }
+
+  function rangeText(x) { return x.best === x.worst ? x.best + '위 확정' : x.best + '~' + x.worst + '위 가능'; }
+
+  /** 내 팀 카드·팀 화면 머리에 넣는 가을야구 한 줄 { tone, text } — tone: good·bad·race·live·wait·champ */
+  function psStatus(id) {
+    var ph = B.phase();
+    var r = B.row(id);
+    if (ph === 'none' || !r) return null;
+    if (ph === 'race') {
+      var x = B.race(id);
+      if (x.status === 'out') return { tone: 'bad', text: '가을야구 탈락이 확정됐습니다' };
+      if (x.status === 'in') {
+        if (x.seed === 1) return { tone: 'good', text: '가을야구 진출 확정 · 정규시즌 1위 확정 (한국시리즈 직행)' };
+        return { tone: 'good', text: '가을야구 진출 확정 · 최종 ' + rangeText(x) };
+      }
+      var cut = B.cutDistance(id);
+      var rem = B.remaining(id);
+      return { tone: 'race', text: '가을야구 경쟁 중' + (cut ? ' · ' + (cut.inside ? '6위와 ' : '5위와 ') + gapText(cut.gap) : '') + (rem !== null ? ' · 남은 ' + rem + '경기' : '') };
+    }
+    var p = B.teamPs(id);
+    var season = B.season() || '';
+    if (!p || p.result === 'none') return { tone: 'bad', text: season + ' 가을야구에 나가지 못했습니다 (정규시즌 ' + r.rank + '위)' };
+    var opp = p.opp && p.opp.team ? B.team(p.opp.team).short : null;
+    var score = p.me && p.opp ? p.me.wins + '승 ' + p.opp.wins + '패' : '';
+    if (p.result === 'champion') return { tone: 'champ', text: season + ' 한국시리즈 우승! (' + (opp ? opp + ' 상대 ' : '') + score + ')' };
+    if (p.result === 'runnerUp') return { tone: 'good', text: season + ' 한국시리즈 준우승 (' + (opp ? opp + ' 상대 ' : '') + score + ')' };
+    if (p.result === 'out') return { tone: 'bad', text: p.round.name + '에서 탈락 (' + (opp ? opp + ' 상대 ' : '') + score + ')' };
+    if (p.result === 'live') return { tone: 'live', text: p.round.name + ' 진행 중 · ' + (opp ? opp + ' 상대 ' : '') + score };
+    var start = p.seed ? '정규시즌 ' + p.seed + '위 · ' : '';
+    return { tone: 'wait', text: start + p.round.name + (opp ? ' · 상대 ' + opp : ' · ' + prevRound(p.round.key).name + ' 승자를 기다립니다') };
+  }
+
+  function prevRound(key) {
+    var list = B.POSTSEASON;
+    for (var i = 1; i < list.length; i++) if (list[i].key === key) return list[i - 1];
+    return list[0];
+  }
+
+  function postseasonCard() {
+    var ph = B.phase();
+    if (ph === 'none') return null;
+    var el = h('section', { class: 'card ps-card', id: 'psCard', 'data-phase': ph });
+    if (ph === 'race') raceBody(el);
+    else bracketBody(el, ph);
+    return el;
+  }
+
+  function raceBody(el) {
+    var rows = B.standings().rows;
+    var cut = B.POSTSEASON_CUT;
+    var nIn = rows.filter(function (r) { return B.race(r.team).status === 'in'; }).length;
+    el.appendChild(cardHead('가을야구 레이스', h('span', { class: 'meta', id: 'psPhase' },
+      nIn >= cut ? '진출 ' + cut + '팀 확정 · 순위 다툼 중' : '진출 확정 ' + nIn + '팀 · 남은 자리 ' + (cut - nIn))));
+    var ladder = h('ol', { class: 'ps-ladder', id: 'psLadder' });
+    rows.slice(0, cut).forEach(function (r, i) {
+      var x = B.race(r.team);
+      ladder.appendChild(h('li', { class: 'ps-slot' + (r.team === state.myTeam ? ' mine' : ''), 'data-team': r.team, 'data-slot': i + 1 },
+        h('span', { class: 'slot-no' }, (i + 1) + '위'),
+        h('span', { class: 'slot-team' }, teamLogo(r.team, 22), h('a', { href: '#team/' + r.team, class: 'nm' }, B.team(r.team).short)),
+        h('span', { class: 'ps-chip ' + x.status }, x.status === 'in' ? '확정' : x.status === 'out' ? '탈락' : '경쟁'),
+        h('span', { class: 'slot-sub' }, SEED_PATH[i + 1] + ' · ' + rangeText(x))));
+    });
+    el.appendChild(ladder);
+    var chasers = rows.slice(cut).filter(function (r) { return B.race(r.team).status !== 'out'; });
+    if (chasers.length) {
+      el.appendChild(h('p', { class: 'ps-cutline' }, '5위 진출선'));
+      el.appendChild(h('ul', { class: 'ps-chasers', id: 'psChasers' }, chasers.map(function (r) {
+        var x = B.race(r.team);
+        var c = B.cutDistance(r.team);
+        return h('li', { class: r.team === state.myTeam ? 'mine' : null, 'data-team': r.team },
+          h('span', { class: 'slot-no' }, r.rank + '위'),
+          h('span', { class: 'slot-team' }, teamLogo(r.team, 22), h('a', { href: '#team/' + r.team, class: 'nm' }, B.team(r.team).short)),
+          h('span', { class: 'ps-chip race' }, '경쟁'),
+          h('span', { class: 'slot-sub' }, (c ? '5위와 ' + gapText(c.gap) + ' · ' : '') + '남은 ' + B.remaining(r.team) + '경기 · 최고 ' + x.best + '위'));
+      })));
+    }
+    var out = rows.filter(function (r) { return B.race(r.team).status === 'out'; });
+    if (out.length) {
+      el.appendChild(h('p', { class: 'ps-out', id: 'psOut' }, h('span', { class: 'ps-chip out' }, '탈락'),
+        out.map(function (r) { return B.team(r.team).short; }).join(' · ')));
+    }
+    el.appendChild(h('p', { class: 'note' }, '1~5위가 가을야구에 나갑니다. 남은 경기를 모두 이기거나 모두 질 때로 따진 범위라 맞대결은 반영하지 않습니다 — ' +
+      '실제보다 늦게 확정될 수는 있어도 틀리게 확정하지는 않습니다. 위키백과 편집자가 표시한 진출 여부를 먼저 따릅니다.'));
+  }
+
+  function bracketBody(el, ph) {
+    var b = B.bracket();
+    var season = b.season || B.season() || '';
+    var cur = null;
+    b.rounds.forEach(function (r) { if (r.key === b.current) cur = r; });
+    var meta = ph === 'done' ? '우승 ' + B.team(b.champion).short :
+      ph === 'ps' ? (cur ? cur.name + ' 진행 중' : '진행 중') : '정규시즌 끝 · ' + (cur ? cur.name + '부터' : '대진 정리 중');
+    el.appendChild(cardHead(season + ' 가을야구', h('span', { class: 'meta', id: 'psPhase' }, meta)));
+    if (ph === 'done') el.appendChild(champBanner(b));
+    el.appendChild(h('ol', { class: 'ps-bracket', id: 'psBracket' }, b.rounds.map(function (r) { return roundItem(r, b); })));
+    if (B.isOffseason()) {
+      el.appendChild(h('p', { class: 'note', id: 'offseasonNote' }, (Number(season) + 1) + ' 시즌 순위는 개막 뒤 첫 경기 결과가 나오면 저절로 바뀝니다. 그때까지 ' + season + ' 시즌 기록을 보여 드립니다.'));
+    }
+    var note = h('p', { class: 'note' }, '대진·경기 기록: ');
+    if (b.sources.length) b.sources.forEach(function (s, i) { append(note, [i ? ' · ' : '', extLink(s.url, s.name)]); });
+    else append(note, '정규시즌 최종 순위로 정한 대진');
+    append(note, ' (CC BY-SA 4.0) · 연합뉴스 전적 기사 제목. 경기가 끝나고 30분~1시간 안에 바뀝니다.');
+    el.appendChild(note);
+  }
+
+  function champBanner(b) {
+    var ks = b.rounds[b.rounds.length - 1];
+    var w = ks.sides.filter(function (s) { return s.team === b.champion; })[0];
+    var l = ks.sides.filter(function (s) { return s.team !== b.champion; })[0];
+    return h('div', { class: 'ps-champ', team: b.champion, id: 'psChampion' },
+      teamLogo(b.champion, 48),
+      h('div', null,
+        h('div', { class: 'k' }, (b.season || '') + ' 한국시리즈 우승'),
+        h('div', { class: 'v' }, B.team(b.champion).name),
+        h('div', { class: 's' }, (l && l.team ? B.team(l.team).short + ' 상대 ' : '') + w.wins + '승 ' + (l ? l.wins : 0) + '패' + (b.mvp ? ' · 시리즈 MVP ' + b.mvp : ''))));
+  }
+
+  function roundItem(r, b) {
+    var li = h('li', { class: 'ps-round ' + r.state + (r.key === b.current ? ' current' : ''), 'data-round': r.key, 'data-state': r.state });
+    li.appendChild(h('div', { class: 'ps-round-head' },
+      h('h3', null, r.name),
+      h('span', { class: 'meta' }, r.key === 'wc' ? '최대 2경기 · 4위 1승 안고 시작' : r.bestOf + '전 ' + r.need + '선승'),
+      h('span', { class: 'ps-state' }, r.state === 'done' ? '끝' : r.state === 'live' ? '진행 중' : '예정')));
+    li.appendChild(h('div', { class: 'ps-match' }, r.sides.map(function (s, k) { return sideRow(r, s, k); })));
+    var line = roundLine(r);
+    if (line) li.appendChild(h('p', { class: 'ps-sum' }, line));
+    if (r.games.length) {
+      var games = h('ul', { class: 'ps-games' }, r.games.map(psGameItem));
+      li.appendChild(r.state === 'live' || r.key === b.current ? games :
+        h('details', { class: 'ps-more' }, h('summary', null, '경기 결과 ' + r.games.length + '경기'), games));
+    }
+    return li;
+  }
+
+  function sideRow(r, s, k) {
+    var win = !!r.winner && s.team === r.winner;
+    var lose = !!r.winner && !!s.team && s.team !== r.winner;
+    var cls = 'ps-side' + (win ? ' win' : '') + (lose ? ' lose' : '') + (s.team && s.team === state.myTeam ? ' mine' : '');
+    var who = s.team
+      ? [teamLogo(s.team, 22), h('a', { class: 'nm', href: '#team/' + s.team }, B.team(s.team).short)]
+      : h('span', { class: 'nm tbd' }, k === 1 && r.key !== 'wc' ? prevRound(r.key).short + ' 승자' : '미정');
+    return h('div', { class: cls, 'data-team': s.team || null },
+      h('span', { class: 'seed' }, s.seed ? s.seed + '위' : ''),
+      h('span', { class: 'who' }, who),
+      h('span', { class: 'w' }, s.team && r.state !== 'wait' ? String(s.wins) : ''));
+  }
+
+  /** 시리즈 한 줄 요약 — 끝났으면 누가 올라갔는지, 진행 중이면 누가 앞서는지 */
+  function roundLine(r) {
+    var a = r.sides[0], c = r.sides[1];
+    if (!a.team || !c.team) return null;
+    var name = function (s) { return B.team(s.team).short; };
+    if (r.state === 'done') {
+      var w = r.winner === a.team ? a : c, l = w === a ? c : a;
+      return name(w) + (r.key === 'ks' ? ' 우승' : ' 진출') + ' (' + w.wins + '승 ' + l.wins + '패' +
+        (r.key === 'wc' && w.seed && l.seed && w.seed < l.seed && w.wins < 2 ? ' · 1승 어드밴티지' : '') + ')';
+    }
+    if (r.key === 'wc') {
+      var hi = (c.seed || 9) < (a.seed || 9) ? c : a, lo = hi === a ? c : a;
+      if (r.state === 'wait') return name(hi) + '(4위)는 한 번만 이기거나 비겨도, ' + name(lo) + '(5위)는 두 번 다 이겨야 올라갑니다';
+      return '2차전에서 ' + name(lo) + ' 승리면 ' + name(lo) + ', 그 밖에는 ' + name(hi) + ' 진출';
+    }
+    if (r.state === 'wait') return null;
+    if (a.wins === c.wins) return a.wins + '승 ' + c.wins + '패 동률';
+    var lead = a.wins > c.wins ? a : c, trail = lead === a ? c : a;
+    return name(lead) + ' ' + lead.wins + '승 ' + trail.wins + '패로 앞섬 · ' + (r.key === 'ks' ? '우승' : '진출') + '까지 ' + (r.need - lead.wins) + '승';
+  }
+
+  function psGameItem(g) {
+    /* 원정 팀을 왼쪽, 홈 팀을 오른쪽에(위키 경기). 연합뉴스로만 아는 경기는 홈을 몰라 기사 순서(이긴 팀 먼저)대로 */
+    var left = { id: g.t1, s: g.s1 }, right = { id: g.t2, s: g.s2 };
+    if (g.home === g.t1) { left = { id: g.t2, s: g.s2 }; right = { id: g.t1, s: g.s1 }; }
+    var side = function (x, o) { return h('span', { class: 't' + (x.s > o.s ? ' win' : '') }, B.team(x.id).short); };
+    var pit = g.wp || g.lp ? (g.wp ? '승 ' + g.wp : '') + (g.lp ? (g.wp ? ' · ' : '') + '패 ' + g.lp : '') + (g.sv ? ' · 세 ' + g.sv : '') : '';
+    return h('li', { class: 'ps-game', 'data-n': g.n },
+      h('span', { class: 'n' }, g.n + '차전'),
+      h('span', { class: 'd' }, F.shortDay(g.date)),
+      h('span', { class: 'sc' }, side(left, right), h('b', null, left.s + ' : ' + right.s), side(right, left)),
+      g.venue || pit ? h('span', { class: 'sub' }, [g.venue, pit].filter(Boolean).join(' · ')) : null);
+  }
+
   /* ---------- 팀 ---------- */
 
   function renderTeam(root, id) {
@@ -433,10 +641,8 @@
       hero.appendChild(h('div', { class: 'split' },
         h('div', { class: 'tile' }, h('div', { class: 'k' }, '홈'), h('div', { class: 'v' }, r.home ? r.home.w + '승 ' + r.home.d + '무 ' + r.home.l + '패' : '-')),
         h('div', { class: 'tile' }, h('div', { class: 'k' }, '원정'), h('div', { class: 'v' }, r.away ? r.away.w + '승 ' + r.away.d + '무 ' + r.away.l + '패' : '-'))));
-      if (r.status) {
-        hero.appendChild(h('p', { class: 'note' }, r.status === 'out' ? '가을야구(포스트시즌) 진출이 무산됐습니다.' :
-          r.status === 'first' ? '정규시즌 1위가 확정됐습니다.' : '가을야구(포스트시즌) 진출이 확정됐습니다.'));
-      }
+      var line = psStatus(id);
+      if (line) hero.appendChild(h('p', { class: 'ps-line ' + line.tone, id: 'teamPs' }, line.text));
     } else {
       hero.appendChild(h('p', { class: 'note' }, '순위 자료가 아직 없습니다.'));
     }
@@ -895,7 +1101,7 @@
     }
     var news = (B.sources().news || []).join('·');
     foot.appendChild(h('p', null,
-      '자료: 순위표 — 위키백과(영문), 명단·선수 정보 — 위키백과(한국어), ',
+      '자료: 순위표 — 위키백과(영문), 명단·선수 정보·가을야구 대진 — 위키백과(한국어), ',
       extLink('https://creativecommons.org/licenses/by-sa/4.0/deed.ko', 'CC BY-SA 4.0'),
       '. 뉴스·경기 결과 — ' + (news || '언론사') + ' RSS (기사 저작권은 각 언론사에 있습니다).'));
     foot.appendChild(h('p', { id: 'logoNotice' }, '구단 엠블럼은 위키미디어 공용의 퍼블릭 도메인 파일(단순 글자 로고)이며, 상표권은 각 구단에 있습니다. ',

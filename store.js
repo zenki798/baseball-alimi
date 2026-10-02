@@ -170,6 +170,187 @@
     return r ? Math.max(0, T.SEASON_GAMES - r.games) : null;
   }
 
+  /* ---------- 가을야구 ----------
+   * 정규시즌 중: 남은 경기로 본 최종 순위 범위 → 진출 확정·탈락·경쟁 (위키 편집자가 적은 진출 여부를 먼저 믿는다)
+   * 정규시즌 뒤: 수집기가 만든 대진(live.postseason) — 와일드카드 → 준플레이오프 → 플레이오프 → 한국시리즈 → 우승팀
+   * 라운드 방식은 teams.js POSTSEASON 에 있다. 해마다 같은 코드로 돈다(시즌 연도는 자료에서 온다).
+   */
+  var PS = T.POSTSEASON;
+  var CUT = T.POSTSEASON_CUT;
+  var WIKI_SEED = { ks: 1, po: 2, spo: 3 };
+
+  /** 정규시즌이 끝났나 — 수집기가 단 final, 또는 모든 팀이 144경기를 다 치름 */
+  function isFinal() {
+    if (!S.standings || !S.rows.length) return false;
+    return S.standings.final === true || S.rows.every(function (r) { return r.games >= T.SEASON_GAMES; });
+  }
+
+  /* 분수 [분자, 분모] 끼리 비교 — 부동소수점 오차 없이. 분모가 0 이면 0 으로 본다 */
+  function frac(n, d) { return d > 0 ? [n, d] : [0, 1]; }
+  function cmpFrac(a, b) { return a[0] * b[1] - b[0] * a[1]; }
+
+  /**
+   * 남은 경기를 다 이길 때·다 질 때의 승률로 본 최종 순위 범위 { best, worst }.
+   * 맞대결은 따지지 않으므로 늘 안전한 쪽이다(확정·탈락 모두 실제보다 늦게 나올 수는 있어도 틀리지는 않는다).
+   * 승률이 같아질 수 있으면 앞설 수 있는 것으로 센다(1위·5위는 순위 결정전).
+   */
+  function ranges() {
+    if (S.ranges) return S.ranges;
+    var fin = isFinal();
+    var info = S.rows.map(function (r) {
+      var rem = fin ? 0 : Math.max(0, T.SEASON_GAMES - r.games);
+      var den = r.win + r.loss + rem;
+      return { id: r.team, hi: frac(r.win + rem, den), lo: frac(r.win, den) };
+    });
+    var out = {};
+    info.forEach(function (a) {
+      var best = 1, worst = 1;
+      info.forEach(function (b) {
+        if (a === b) return;
+        if (cmpFrac(b.lo, a.hi) > 0) best++;
+        if (cmpFrac(b.hi, a.lo) >= 0) worst++;
+      });
+      out[a.id] = { best: best, worst: worst };
+    });
+    S.ranges = out;
+    return out;
+  }
+
+  /** 수집기가 만든 가을야구 자료 — 같은 시즌 것만 */
+  function psSource() {
+    var ps = S.live && S.live.postseason;
+    return ps && typeof ps === 'object' && ps.season === (S.live && S.live.season) ? ps : null;
+  }
+
+  /**
+   * 한 구단의 가을야구 자리 { team, rank, status: 'in'|'out'|'race', seed, best, worst }
+   *   seed: 정해진 시드(1~5). 위키 편집자가 순위표에 적은 진출 여부(Clinched first place·Qualified·Eliminated,
+   *   시즌 뒤에는 Korean Series·Playoff …)를 먼저 믿고, 없으면 ranges() 로 계산한다.
+   *   포스트시즌 문서의 「진출팀」 목록(postseason.qualified)은 쓰지 않는다 — 편집자가 지난해 문서를 베껴 새 문서를 만들면
+   *   지난해 팀이 그대로 남아 있을 수 있다. 순위표의 진출 여부 칸은 같은 표의 숫자와 함께 고쳐진다.
+   */
+  function race(id) {
+    if (!S.race) {
+      var rg = ranges();
+      var fin = isFinal();
+      var taken = {};
+      S.rows.forEach(function (r) { var s = WIKI_SEED[r.status]; if (s) taken[s] = r.team; });
+      var out = {};
+      S.rows.forEach(function (r) {
+        var x = rg[r.team] || { best: r.rank, worst: r.rank };
+        var best = x.best, worst = x.worst;
+        while (taken[best] && taken[best] !== r.team && best < worst) best++;   // 다른 팀에게 정해진 시드는 건너뛴다
+        var st = r.status;
+        var status = st === 'out' ? 'out' : st ? 'in' : worst <= CUT ? 'in' : best > CUT ? 'out' : 'race';
+        if (status === 'in') worst = Math.min(worst, CUT);
+        if (status === 'out') best = Math.max(best, CUT + 1);
+        var seed = WIKI_SEED[st] || null;
+        if (seed) best = worst = seed;
+        else if (status === 'in' && best === worst) seed = best;
+        else if (fin && status === 'in' && x.best === x.worst) seed = x.best;
+        if (best > worst) best = worst;
+        out[r.team] = { team: r.team, rank: r.rank, status: status, seed: seed, best: best, worst: worst };
+      });
+      /* 다섯 팀이 확정되면 나머지는 탈락, 탈락하지 않은 팀이 다섯뿐이면 모두 진출 */
+      var list = Object.keys(out).map(function (k) { return out[k]; });
+      var nIn = list.filter(function (x) { return x.status === 'in'; }).length;
+      var nAlive = list.filter(function (x) { return x.status !== 'out'; }).length;
+      list.forEach(function (x) {
+        if (nIn >= CUT && x.status !== 'in') { x.status = 'out'; x.best = Math.max(x.best, CUT + 1); if (x.worst < x.best) x.worst = x.best; }
+        else if (nAlive <= CUT && x.status === 'race') { x.status = 'in'; x.worst = Math.min(x.worst, CUT); if (x.best > x.worst) x.best = x.worst; }
+      });
+      S.race = out;
+    }
+    return S.race[id] || null;
+  }
+
+  /**
+   * 가을야구 대진 — 수집기가 만든 live.postseason 을 쓰고, 없으면 정규시즌 최종 순위로 시드만 채운다. 정규시즌 중이고 대진에 팀이 없으면 null.
+   * { season, rounds, champion, mvp, started, current, sources }
+   *   라운드: { key, name, short, bestOf, need, sides: [{ team, seed, wins }], winner, games, state: 'wait'|'live'|'done' }
+   *   need = 이기는 데 필요한 승수 (와일드카드는 4위 1승·5위 2승이라 따로 다룬다)
+   */
+  function bracket() {
+    if (S.bracket !== undefined) return S.bracket;
+    var src = psSource();
+    var fin = isFinal();
+    if (!src && !fin) { S.bracket = null; return null; }
+    var seedTeam = {};
+    if (fin) {
+      S.rows.forEach(function (r) {
+        var same = S.rows.filter(function (o) { return o.rank === r.rank; }).length;
+        if (same === 1 && r.rank <= CUT) seedTeam[r.rank] = r.team;
+      });
+    }
+    var prevWinner = null, prevSeed = null;
+    var rounds = PS.map(function (def, i) {
+      var r = src && Array.isArray(src.rounds) && src.rounds[i] && src.rounds[i].key === def.key ? src.rounds[i] : null;
+      var sides = [0, 1].map(function (k) {
+        var s = r && Array.isArray(r.sides) ? r.sides[k] : null;
+        return { team: s && BY_ID[s.team] ? s.team : null, seed: (s && s.seed) || null, wins: (s && s.wins) || 0 };
+      });
+      if (!sides[0].team && seedTeam[def.top] && !sides.some(function (s) { return s.team === seedTeam[def.top]; })) sides[0] = { team: seedTeam[def.top], seed: def.top, wins: 0 };
+      if (def.low && !sides[1].team && seedTeam[def.low]) sides[1] = { team: seedTeam[def.low], seed: def.low, wins: 0 };
+      if (prevWinner && !sides[1].team && !sides.some(function (s) { return s.team === prevWinner; })) sides[1] = { team: prevWinner, seed: prevSeed, wins: 0 };
+      var winner = r && r.winner && sides.some(function (s) { return s.team === r.winner; }) ? r.winner : null;
+      var games = arr(r && r.games).filter(function (g) {
+        return g && BY_ID[g.t1] && BY_ID[g.t2] && /^\d{4}-\d{2}-\d{2}$/.test(g.date || '') && typeof g.s1 === 'number' && typeof g.s2 === 'number';
+      }).slice().sort(function (a, b) { return a.n - b.n; });
+      var w = winner ? sides.filter(function (s) { return s.team === winner; })[0] : null;
+      prevWinner = winner;
+      prevSeed = w ? w.seed : null;
+      return {
+        key: def.key, name: def.name, short: def.short, bestOf: def.bestOf, need: Math.floor(def.bestOf / 2) + 1, low: def.low || null,
+        sides: sides, winner: winner, games: games, state: winner ? 'done' : games.length ? 'live' : 'wait',
+      };
+    });
+    if (!rounds.some(function (r) { return r.sides.some(function (s) { return s.team; }); })) { S.bracket = null; return null; }
+    var cur = rounds.filter(function (r) { return r.state === 'live'; })[0] ||
+      rounds.filter(function (r) { return r.state === 'wait' && r.sides[0].team && r.sides[1].team; })[0] || null;
+    var champion = src && src.champion && rounds[rounds.length - 1].winner === src.champion ? src.champion : null;
+    S.bracket = {
+      season: (src && src.season) || (S.live && S.live.season) || null,
+      rounds: rounds, champion: champion, mvp: champion && src && typeof src.mvp === 'string' ? src.mvp : null,
+      started: rounds.some(function (r) { return r.state !== 'wait'; }), current: cur ? cur.key : null,
+      sources: arr(src && src.sources).filter(function (s) { return s && /^https?:\/\//.test(s.url || ''); }),
+    };
+    return S.bracket;
+  }
+
+  /** 'none'(순위 자료 없음) · 'race'(정규시즌) · 'set'(정규시즌 끝, 가을야구 전) · 'ps'(가을야구 중) · 'done'(우승팀 확정) */
+  function phase() {
+    if (!S.rows.length) return 'none';
+    var b = bracket();
+    if (b && b.champion) return 'done';
+    if (b && b.started) return 'ps';
+    return isFinal() ? 'set' : 'race';
+  }
+
+  /**
+   * 대진 속 한 구단 { seed, round(마지막으로 나온 라운드), me, opp, result }
+   *   result: 'none'(못 나감) · 'wait'(기다리는 중) · 'live'(시리즈 중) · 'out'(그 라운드에서 짐) · 'runnerUp' · 'champion'
+   */
+  function teamPs(id) {
+    var b = bracket();
+    if (!b) return null;
+    var last = null, seed = null;
+    b.rounds.forEach(function (r) {
+      r.sides.forEach(function (s) { if (s.team === id) { last = r; seed = seed || s.seed; } });
+    });
+    if (!last) return { seed: null, round: null, me: null, opp: null, result: 'none' };
+    var me = last.sides.filter(function (s) { return s.team === id; })[0];
+    var opp = last.sides.filter(function (s) { return s.team !== id; })[0];
+    var result = last.winner === id ? (last.key === 'ks' ? 'champion' : 'wait') :
+      last.winner ? (last.key === 'ks' ? 'runnerUp' : 'out') : last.state;
+    return { seed: seed, round: last, me: me, opp: opp, result: result };
+  }
+
+  /** 지난 시즌을 보여 주는 중인가 (새해가 됐는데 새 시즌 개막 전 — 수집기가 지난 시즌 자료를 그대로 둔다) */
+  function isOffseason() {
+    var s = S.live && S.live.season;
+    return !!s && Number(today().slice(0, 4)) > s;
+  }
+
   /* ---------- 경기 ---------- */
 
   function gameDates() {
@@ -323,9 +504,10 @@
     playersGeneratedAt: function () { return (S.players && S.players.generatedAt) || null; },
     sources: function () { return (S.live && S.live.sources) || { news: [] }; },
     standings: function () {
-      return S.standings ? { asOf: S.standings.asOf, source: S.standings.source || null, rows: S.rows } : null;
+      return S.standings ? { asOf: S.standings.asOf, final: isFinal(), source: S.standings.source || null, rows: S.rows } : null;
     },
     row: row, rowAtRank: rowAtRank, gamesAhead: gamesAhead, cutDistance: cutDistance, remaining: remaining,
+    POSTSEASON: PS, isFinal: isFinal, ranges: ranges, race: race, bracket: bracket, phase: phase, teamPs: teamPs, isOffseason: isOffseason,
     games: function () { return S.games; },
     gameDates: gameDates, gamesOn: gamesOn, teamGames: teamGames,
     news: news, personNews: personNews,

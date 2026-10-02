@@ -54,11 +54,13 @@
 ### 이 프로젝트에서 반드시 검증되는 항목
 
 모든 화면 테스트는 데스크톱(1280×900)·모바일(Pixel 5) 두 환경에서 돈다. 화면과 상관없는 검사(수집기·자료 계약·위생·배포 설정)는
-한 번만 돈다(`playwright.config.js` 의 `testIgnore`). 2026-10-02 기준 **249개**.
+한 번만 돈다(`playwright.config.js` 의 `testIgnore` — 파일 이름이 `collector|data|hygiene|workflow.spec.js` 로 끝나면). 2026-10-02 기준 **298개**.
 
 | 검증 항목 | 통과 기준 | 테스트 파일 |
 |---|---|---|
 | 순위표 | 10개 구단 순위대로, 승률·게임차, 승률이 같으면 공동 순위, 가을야구권(1~5위)·5위 경계·진출 배지, 연속·최근 5경기, 기준일·출처 링크 | `standings.spec.js` |
+| 가을야구 화면 | 정규시즌 중 레이스(1~5위 자리·시작 라운드·확정/경쟁/탈락·가능한 최종 순위·진출선 밖 팀), 정규시즌 뒤 대진(WC → 준PO → PO → KS, 시드·승수·경기 결과·구장·투수, 끝난 라운드 접기), 우승 배너·MVP, 순위표 시드·우승 배지, 내 팀·팀 화면 한 줄, 다음 해 겨울 안내, 휴대폰에서 대진을 순위표 위로, 글자로만(XSS), 망가진 자료, 가로 넘침 없음(320px) | `postseason.spec.js` |
+| 가을야구 수집 | 최종 순위표 판정("final" 문장·144경기)·진출 여부 칸(시즌 중·뒤 표기), 위키 대진표(굵은 팀=승자)·경기 기록(◄ 있는 경기만, 자리 표시·앞날·다른 해 제외), 와일드카드 1승 어드밴티지, 한국시리즈 문서·정보 상자, 연합뉴스 PS 전적(위키가 우선), 지난 자료 이어 쓰기, 검사, 시즌 넘기기(`chooseSeason`)·문서 받는 때(`wantPostseason`) | `postseason-collector.spec.js` (네트워크 없음) |
 | 경기 결과 | 가장 최근 날짜, 원정 왼쪽·홈 오른쪽, 잠실 LG–두산은 홈 표시 없음, 무승부, 날짜 넘기기 | `standings.spec.js` |
 | 자료 없음·깨짐 | 자료 파일이 없거나 문법 오류여도 네 화면이 뜨고 안내가 나온다 | `standings.spec.js`, `file-protocol.spec.js` |
 | 바닥글 | 마지막 수집 시각(한국 시각), 6시간 넘게 멈추면 경고, 출처·라이선스·엠블럼 상표 안내 | `standings.spec.js` |
@@ -161,17 +163,18 @@ const browser = await chromium.launch({ channel: 'msedge' });   // 창 없이(he
 
 ## 3. 프로젝트 개요
 
-KBO 리그 **순위·구단별 성적·선수 정보·야구 뉴스**를 보는 정적 페이지이자 설치형 앱(PWA)이다. 서버·빌드 과정·API 키가 없다.
+KBO 리그 **순위·구단별 성적·선수 정보·야구 뉴스·가을야구(포스트시즌)** 를 보는 정적 페이지이자 설치형 앱(PWA)이다. 서버·빌드 과정·API 키가 없다.
+**해마다 저절로 넘어간다** — 시즌 연도를 코드에 박지 않는다. 새 시즌 개막 전(겨울·초봄)에는 지난 시즌의 최종 순위·가을야구 결과를 그대로 보여 준다(6절).
 머리띠 제목은 **"야구알리미"** 이고, 기기마다 '내 팀' 창에서 **제목 뒤에 이름을 붙일 수 있다**("야구알리미 for ○○" — 그 기기의 localStorage 에만).
 공개 사이트·저장소에는 사람 이름을 넣지 않는다(사용자 결정 — 9절).
 
 ```
 index.html            화면 골격 (일반 <script> 로 잇는다 — ES 모듈 금지)
 styles.css            스타일 (밝은·어두운 화면)
-teams.js              10개 구단 고정 정보 — 화면과 수집기가 함께 쓴다 (window.BaseballTeams / require)
-store.js              데이터 계층 — window.Baseball (5절 계약을 읽어 화면에 맞게 정리)
-app.js                화면 로직 — 순위·팀·선수·뉴스, 내 팀, 사진 확대, 설치 안내, 새로고침
-data/live.js          자동 생성: 순위표·경기 결과·뉴스  (직접 고치지 않는다)
+teams.js              10개 구단 고정 정보·가을야구 방식(POSTSEASON) — 화면과 수집기가 함께 쓴다 (window.BaseballTeams / require)
+store.js              데이터 계층 — window.Baseball (5절 계약을 읽어 화면에 맞게 정리, 가을야구 레이스·대진 계산)
+app.js                화면 로직 — 순위·가을야구·팀·선수·뉴스, 내 팀, 사진 확대, 설치 안내, 새로고침
+data/live.js          자동 생성: 순위표·경기 결과·뉴스·가을야구 대진  (직접 고치지 않는다)
 data/players.js       자동 생성: 명단·프로필·사진 정보   (직접 고치지 않는다)
 data/stats.js         자동 생성: 연도별 기록·KBO 기록 번호 (선수 화면에서만 싣는다)
 icons/                앱 아이콘 (npm run make:icons) · icons/teams/ 구단 엠블럼 (README.md 에 출처)
@@ -189,7 +192,8 @@ tests/                Playwright 테스트 · tests/fixtures/ 가짜 자료와 �
 
 | 무엇 | 출처 | 조건·주의 |
 |---|---|---|
-| 정규시즌 순위표 | 영문 위키백과 「`<시즌>` KBO League season」 (MediaWiki API) | CC BY-SA 4.0 — 화면에 출처·라이선스 표기. 표 아래 "Statistics are correct as of …" 를 기준일로 쓴다 |
+| 정규시즌 순위표 | 영문 위키백과 「`<시즌>` KBO League season」 (MediaWiki API) | CC BY-SA 4.0 — 화면에 출처·라이선스 표기. 표 아래 "Statistics are correct as of …" 를 기준일로 쓴다. 시즌이 끝나면 그 줄 대신 표 위에 "These are the final … standings." 가 붙고 진출 여부 칸이 Korean Series·Playoff·Semi-playoff·Wild Card 로 바뀐다(2025 문서로 확인) — 그때 기준일은 그 판을 고친 날 |
+| 가을야구 대진 | 한국어 위키백과 「`<시즌>`년 KBO 포스트시즌」·「`<시즌>`년 한국시리즈」 (두 문서를 한 번에) | CC BY-SA 4.0. 대진표 틀 `{{5강 플레이오프/한국프로야구}}`(올라간 팀은 굵게)와 시리즈 절의 "N차전" 아래 `{{라인스코어}}`(이긴 팀 옆 ◄). 한국시리즈 경기는 한국시리즈 문서의 "한국시리즈 경기" 절. 경기 전 문서에는 자리 표시("정규 시즌 5위팀", "10월 ??일", 0:0)가 미리 있다(2026 문서) — **◄ 가 있고 점수와 맞는 경기만** 끝난 경기로 센다(경기 중에 점수를 고치는 편집자 대비). 팀당 남은 경기 20 이하부터 받고, 우승팀이 정해진 뒤에는 하루 한 번 |
 | 구단 명단 | 한국어 위키백과 「틀:`<구단>` 명단」 (kt 는 「틀:KT 위즈 명단」) | CC BY-SA 4.0. 1군 등록이 아니라 구단 소속 전체(육성선수 포함) |
 | 선수 프로필 | 선수 문서 첫 부분의 「야구 선수 정보」 상자 (50명씩 한 번에, `rvsection=0`) | **출신지·연봉·계약금·본명·가족은 꺼내지 않는다** (규칙 2). 동명이인 문서는 구단·등번호로 거른다 |
 | 선수 연도별 기록 | 선수 문서 뒤쪽 「통산 기록」 절의 표 (문서 전체를 50개씩 받는다) | CC BY-SA 4.0. **지난 시즌까지**(편집자가 시즌 뒤에 더한다). 편집자가 미리 만든 빈 줄(경기 0·`000`)은 뺀다. MLB·NPB 표는 팀 칸으로 걸러 쓰지 않는다. 감독은 내지 않는다 |
@@ -197,7 +201,7 @@ tests/                Playwright 테스트 · tests/fixtures/ 가짜 자료와 �
 | 선수 사진 | 정보 상자의 사진 칸 → 없으면 위키데이터 대표 사진(P18) → 위키미디어 공용 imageinfo | **자유 이용 라이선스만**(`FREE_LICENSE`: CC0·CC BY·CC BY-SA·PD·GFDL). 작성자·라이선스·원본 링크를 사진 아래와 확대 화면에 **반드시** 표기. 사진 파일은 저장소에 넣지 않고 위키미디어에서 불러온다. 폭은 표준 폭 330·960 만 |
 | 구단 엠블럼 | 위키미디어 공용의 퍼블릭 도메인(PD-textlogo) 파일 → `icons/teams/` | 저작권은 없으나 **상표권은 각 구단**. 어느 팀인지 알아보는 표시로만. 비자유 로고는 쓰지 않는다 (`icons/teams/README.md`) |
 | 뉴스 | 언론사 RSS 8곳 (`collect.js` 의 `FEEDS`) | 제목·원문 링크·RSS 가 주는 발췌(160자)·출처·시각만. 기자 머리말·이메일을 지운다. 사흘치만 둔다 |
-| 경기 결과 | 연합뉴스 스포츠 RSS 의 "[프로야구 ○○전적] A 7-5 B" 제목 | 제목만 읽는다(본문 안 받음). 이긴 팀이 앞, 홈은 구장으로 |
+| 경기 결과 | 연합뉴스 스포츠 RSS 의 "[프로야구 ○○전적] A 7-5 B" 제목 | 제목만 읽는다(본문 안 받음). 이긴 팀이 앞, 홈은 구장으로. 가을야구는 "[프로야구 준PO 2차전 전적] kt 2-0 키움" 모양(지난 시즌 기사로 확인) — 정규시즌 목록이 아니라 대진으로 보내고, 같은 경기가 위키에 올라오면 위키 것을 쓴다. WC·KS 제목은 아직 못 봐서 "WC·KS·와일드카드·한국시리즈" 를 모두 받는다 |
 | **쓰지 않는 것** | KBO 공식(koreabaseball.com)·네이버 스포츠 | robots.txt 로 금지 — KBO: "본 사이트의 데이터를 사전 승인 없이 자동 수집·크롤링·복제하는 행위를 금지합니다", 네이버: `Disallow: /` (2026-10-01 확인). 우회하지 않는다 |
 
 **제공하지 못하는 것** (이용이 허용된 무료 출처를 못 찾음, 2026-10-02): **올 시즌 실시간 개인 기록**(앱 안에서는 지난 시즌까지 — 올 시즌은 KBO 링크),
@@ -232,12 +236,22 @@ tests/                Playwright 테스트 · tests/fixtures/ 가짜 자료와 �
 ```js
 window.BaseballLive = {
   version: 1, season: 2026, generatedAt: ISO,
-  standings: { asOf: 'YYYY-MM-DD', fetchedAt: ISO, source: { name, url, license, revision },
+  standings: { asOf: 'YYYY-MM-DD', final: true|false, fetchedAt: ISO, source: { name, url, license, revision },
                rows: [{ team, rank, games, win, loss, draw, pct, gb, streak: { type: 'W'|'L'|'D', n },
-                        home: { w, d, l } | null, away: { w, d, l } | null, status: 'first'|'in'|'out'|null }] } | null,
-  games: [{ id, date, stadium, home: 구단|null, t1, s1, t2, s2, source }],      // t1 이 기사 제목 앞(이긴) 팀
+                        home: { w, d, l } | null, away: { w, d, l } | null,
+                        status: 'ks'|'po'|'spo'|'wc'|'in'|'out'|null }] } | null,   // 위키 진출 여부 칸 (ks = 1위·한국시리즈 직행)
+  games: [{ id, date, stadium, home: 구단|null, t1, s1, t2, s2, source }],      // 정규시즌만. t1 이 기사 제목 앞(이긴) 팀
   news:  [{ id, title, summary, url, source, publishedAt, topics: ['kbo'|'abroad'|'national'], teams: [구단] }],
   sources: { news: [언론사], games },
+  postseason?: {                                   // 정규시즌 막바지부터. 같은 season 것만 쓴다
+    season, fetchedAt: ISO|null, sources: [{ name, url, license, revision }],
+    qualified: [구단],                              // 위키 「진출팀」 절. 화면 계산에는 쓰지 않는다(지난해 문서를 베껴 만들면 지난해 팀이 남는다)
+    rounds: [{ key: 'wc'|'spo'|'po'|'ks', name, short, bestOf,   // 이 순서 그대로 넷
+               sides: [{ team: 구단|null, seed: 1~5|null, wins }, …],  // [0] 기다리던 높은 순위, [1] 도전자
+               winner: 구단|null,
+               games: [{ n, date, t1, s1, t2, s2, home, venue, wp, lp, sv, src: 'wiki'|'news', url? }] }],  // 위키 경기는 t1 원정·t2 홈
+    champion: 구단|null, mvp: 이름|null,
+  },
 };
 window.BaseballPlayers = {
   version: 1, generatedAt: ISO,
@@ -253,7 +267,10 @@ window.BaseballStats = {          // data/stats.js — 선수 화면을 처음 �
               pit?: { cols: ['year','team','g','era',…], rows, total, seasons } }],
 };
 ```
-- `scripts/parsers.js` 의 `validateLive`·`validatePlayers` 가 이 계약의 기준이다. 수집기는 **쓰기 전에** 검사하고, 걸리면 쓰지 않는다.
+- `scripts/parsers.js` 의 `validateLive`(가을야구는 `validatePostseason`)·`validatePlayers` 가 이 계약의 기준이다. 수집기는 **쓰기 전에** 검사하고, 걸리면 쓰지 않는다.
+- 가을야구 단계는 화면(`store.js` 의 `B.phase()`)이 자료로 정한다: `race`(정규시즌 중) → `set`(정규시즌 끝, 대진만) → `ps`(경기 시작) → `done`(우승팀).
+  정규시즌 중 진출 확정·탈락은 **위키 진출 여부 칸을 먼저 믿고**, 없으면 남은 경기를 다 이기거나 다 질 때의 승률로 계산한다(`ranges()` — 맞대결 미반영이라 늦을 수는 있어도 틀리지 않는다).
+  와일드카드는 4위가 1승을 안고 시작한다(4위 1승·무승부면 진출, 5위는 2승). 대진 자료가 없어도 정규시즌이 끝났으면 최종 순위로 시드를 채운다(같은 순위가 있으면 비운다 — 순위 결정전).
 - 파일은 JSON 이 아니라 `.js` 다(`file://` 에서 fetch 는 막히고 `<script src>` 는 된다). 기사·경기·선수 하나가 한 줄 — git 차이를 사람이 읽을 수 있게.
 
 ## 6. 수집·배포 (GitHub Actions + Pages)
@@ -261,6 +278,10 @@ window.BaseballStats = {          // data/stats.js — 선수 화면을 처음 �
 - `.github/workflows/collect.yml`: 30분마다(예약은 보장되지 않는다) **수집 → 전체 테스트 → 통과하면 배포**. 실패하면 이전 사이트가 남는다.
 - 경기 결과·뉴스는 피드에 하루치뿐이라 **지난 자료와 합친다**: 저장소 사본 + 배포된 사이트(`PREV_BASE_URL`).
 - 명단·프로필·사진은 20시간마다 새로 받는다(`FORCE_PLAYERS=1` 이면 바로). 순위표는 검사(리그 전체 승 = 패 등)를 통과할 때만 바꾼다.
+- **시즌은 해마다 저절로 넘어간다**(`P.chooseSeason`): 올해 「`<올해>` KBO League season」 문서에 경기를 치른 순위표가 있으면 올해, 없으면(개막 전) 지난해.
+  문서를 받지 못한 차례에는 보던 시즌을 그대로 둔다. 시즌이 바뀌면 순위·경기·가을야구는 새로 시작하고 뉴스는 이어 간다. 시험할 때는 `SEASON=2025`.
+- 가을야구 문서는 팀당 남은 경기 20 이하·정규시즌 끝·진행 중일 때 받고, 우승팀이 정해진 뒤에는 하루 한 번(`wantPostseason`, `FORCE_PS=1` 이면 바로).
+  위키를 못 받은 차례에는 지난 대진·경기를 그대로 쓰고, 연합뉴스 PS 전적으로 빈 경기를 채운다.
 - 저장소 사본(`data/*.js`)은 **하루 한 번**만 커밋한다(git 은 지울 수 없다). 커밋 전에 민감정보 검사를 돌린다.
 - 저장소: **https://github.com/zenki798/baseball-alimi** (공개, 2026-10-02 사용자 승인으로 생성) · 사이트: **https://zenki798.github.io/baseball-alimi/**
   첫 push 전에 `gh api -X POST repos/zenki798/baseball-alimi/pages -f build_type=workflow` 로 Pages 를 켜 두어 첫 실행부터 배포됐다.
@@ -297,7 +318,9 @@ window.BaseballStats = {          // data/stats.js — 선수 화면을 처음 �
 | 2026-10-02 | 정보가 바뀌면 자동으로 받아 오기 — GitHub Actions 로 한다. 원격 저장소는 아직 없다(만들지는 사용자 승인 후) |
 | 2026-10-02 | **제목 뒤 이름 넣는 메뉴는 건드리지 않는다** (사용자 지시: "이름 넣는 메뉴 확인했어. 그건 건드리지마"). 이름을 기본값으로 다시 넣거나 메뉴를 바꾸지 않는다 |
 | 2026-10-02 | 선수 시즌 기록 — 지난 시즌까지는 위키백과 통산 기록 표, 올 시즌은 KBO 공식 기록 링크. KBO 자동 수집은 하지 않는다(4절) |
-| 2026-10-02 | 구단 대표 엠블럼 — 공개 사이트에서는 지금의 퍼블릭 도메인 마크만. 대표 엠블럼(비공개 배포·구단 허락)은 사용자 답을 기다린다(4절) |
+| 2026-10-02 | 구단 대표 엠블럼 — 공개 사이트에서는 지금의 퍼블릭 도메인 마크만(사용자 선택: "지금 마크 유지") |
+| 2026-10-02 | **가을야구 진출 여부 표기 + 가을시즌이 시작되면 한국시리즈까지 계속 볼 수 있게** (사용자 지시). 순위표 배지·가을야구 카드(레이스 → 대진 → 우승)·내 팀 한 줄 |
+| 2026-10-02 | **2026년에만 한정하지 않고 매년 시즌을 계속 보여 준다** (사용자 지시: "매년 시즌 계속 보여주는 거야"). 시즌 연도·대진 방식을 코드에 박지 않는다 — 연도는 자료에서, 방식은 `teams.js` POSTSEASON 한 곳 |
 
 ---
 

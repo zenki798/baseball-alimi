@@ -4,8 +4,12 @@
    수집기 — GitHub Actions 가 주기적으로 실행한다 (이 PC 에서는 `npm run collect`)
    ---------------------------------------------------------
    만드는 것
-     data/live.js     순위표·경기 결과·뉴스      (실행할 때마다)
+     data/live.js     순위표·경기 결과·뉴스·가을야구 대진 (실행할 때마다. 가을야구는 정규시즌 막바지부터)
      data/players.js  구단별 명단·선수 프로필     (20시간에 한 번 — 하루에 한 번이면 충분하다)
+     data/stats.js    선수 연도별 기록            (명단과 함께)
+
+   시즌은 해마다 저절로 넘어간다: 올해 시즌 문서에 경기를 치른 순위표가 생기면 올해, 그 전에는 지난해 (P.chooseSeason).
+   이 PC 에서 특정 시즌을 시험하려면 SEASON=2025 처럼 준다.
 
    왜 이런 구조인가 (AGENTS.md 4절)
    1. 브라우저에서 위키백과·RSS 를 직접 부르면 CORS 에 막히고, 열 때마다 남의 서버를 두드린다.
@@ -25,7 +29,7 @@
 const fs = require('fs');
 const path = require('path');
 const P = require('./parsers.js');
-const { TEAMS } = require('../teams.js');
+const { TEAMS, SEASON_GAMES } = require('../teams.js');
 
 const ROOT = path.join(__dirname, '..');
 const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
@@ -39,6 +43,8 @@ const TIMEOUT_MS = 20000;
 const PLAYERS_MAX_AGE_H = 20;
 const WIKI_BATCH = 50;          // 한 번에 받는 문서 수 (위키 API 상한)
 const WIKI_PAUSE_MS = 300;      // 위키 요청 사이 쉬는 시간
+const PS_FETCH_FROM_LEFT = 20;  // 팀당 남은 경기가 이만큼 이하로 줄면 가을야구 문서를 받기 시작한다 (9월 무렵)
+const PS_DONE_REFRESH_H = 24;   // 우승팀이 정해진 뒤에는 가을야구 문서를 하루 한 번만 받는다
 
 /* 2026-10-01 실제로 받아 내용까지 확인한 피드만 넣었다 (AGENTS.md 4절 표). 추측으로 넣지 않는다.
  * games: 이 피드의 "[프로야구 ○○전적]" 제목에서 경기 결과를 읽는다 (연합뉴스만 이 모양을 쓴다). */
@@ -283,6 +289,45 @@ function pickStandings(fresh, prev, log) {
   return prev || null;
 }
 
+/** 가을야구 문서를 받을 때인가: 팀당 남은 경기가 PS_FETCH_FROM_LEFT 이하이거나 정규시즌이 끝났을 때.
+ *  우승팀까지 정해진 뒤에는 하루 한 번만(겨울 내내 30분마다 같은 문서를 두드리지 않게) */
+function wantPostseason(standings, prevPs, now) {
+  if (process.env.FORCE_PS === '1') return true;
+  if (prevPs && prevPs.champion && prevPs.fetchedAt && now - new Date(prevPs.fetchedAt) < PS_DONE_REFRESH_H * 3600000) return false;
+  if (prevPs || (standings && standings.final)) return true;
+  const rows = (standings && standings.rows) || [];
+  return rows.length > 0 && Math.min.apply(null, rows.map(r => r.games)) >= SEASON_GAMES - PS_FETCH_FROM_LEFT;
+}
+
+/** 가을야구 대진 — 위키 두 문서·순위표·연합뉴스 PS 전적·지난 자료를 합친다(P.buildPostseason). 검사에 걸리면 지난 것을 쓴다 */
+function pickPostseason(o, standings, psGames, prevPs, now, log) {
+  const pages = o.psPages || null;
+  const season = o.season;
+  let ps;
+  try {
+    ps = P.buildPostseason({
+      season, standings, newsGames: psGames, prev: prevPs, today: P.kstDate(now),
+      psText: pages && pages.ps ? pages.ps.content : null,
+      ksText: pages && pages.ks ? pages.ks.content : null,
+    });
+  } catch (e) {
+    log('  포스트시즌 읽기 실패 — 지난 것 유지: ' + why(e));
+    return prevPs || null;
+  }
+  if (!ps) return null;
+  const problems = P.validatePostseason(ps);
+  if (problems.length) {
+    log('  포스트시즌 검사 실패 — 지난 것 유지: ' + problems.join(' / '));
+    return prevPs || null;
+  }
+  const got = pages ? [pages.ps && [season + '년 KBO 포스트시즌', pages.ps], pages.ks && [season + '년 한국시리즈', pages.ks]].filter(Boolean) : [];
+  ps.fetchedAt = got.length ? now.toISOString() : (prevPs && prevPs.fetchedAt) || null;
+  ps.sources = got.length
+    ? got.map(([title, pg]) => ({ name: '위키백과(한국어) 「' + title + '」', url: wikiUrl('ko.wikipedia.org', title), license: 'CC BY-SA 4.0', revision: pg.timestamp || null }))
+    : (prevPs && prevPs.sources) || [];
+  return ps;
+}
+
 /**
  * @param {object} o
  * @param {string|null} o.wikiText     영문 위키 시즌 문서 원문 (못 받았으면 null)
@@ -291,11 +336,13 @@ function pickStandings(fresh, prev, log) {
  * @param {object|null} o.prev          지난 live 자료
  * @param {Date} o.now
  * @param {number} o.season
+ * @param {{ps, ks}|null} o.psPages     한국어 위키 「<시즌>년 KBO 포스트시즌」·「<시즌>년 한국시리즈」 (안 받았으면 null, 문서가 없으면 그 칸이 null)
  */
 function buildLive(o) {
   const log = o.log || (() => {});
   const now = new Date(o.now || Date.now());
   const season = o.season;
+  /* 순위표·경기 결과·가을야구는 같은 시즌 것만 이어 쓴다. 뉴스는 시즌과 관계없이 이어 간다(새 시즌으로 넘어가는 날에도 사흘치가 남게) */
   const prev = o.prev && o.prev.season === season ? o.prev : null;
 
   let fresh = null;
@@ -303,7 +350,9 @@ function buildLive(o) {
     const parsed = P.parseStandings(o.wikiText);
     const title = season + ' KBO League season';
     fresh = {
-      asOf: parsed.asOf,
+      /* 시즌이 끝난 표에는 "as of" 날짜가 없다 — 그 판을 고친 날(한국 날짜)을 기준일로 쓴다 */
+      asOf: parsed.asOf || (parsed.final ? P.kstDate(o.wikiRevision || now) : null),
+      final: parsed.final,
       fetchedAt: now.toISOString(),
       source: {
         name: '위키백과(영문) 「' + title + '」',
@@ -316,16 +365,20 @@ function buildLive(o) {
     };
   }
   const standings = pickStandings(fresh, prev && prev.standings, log);
-  if (standings) delete standings.problems;
+  if (standings) {
+    delete standings.problems;
+    if (typeof standings.final !== 'boolean') standings.final = false;   // final 칸이 생기기 전에 만든 지난 자료
+  }
 
   const games = [];
+  const psGames = [];   // 포스트시즌 전적 — 정규시즌 경기 목록이 아니라 가을야구 대진으로 간다
   const news = [];
   const seen = new Set();
   (o.feeds || []).forEach(({ feed, xml }) => {
     P.parseFeed(xml, feed, now).forEach(it => {
       if (feed.games) {
         const g = P.parseGameTitle(it.title, it.publishedAt, it.rawSummary);
-        if (g) { games.push(Object.assign(g, { source: it.url })); return; }
+        if (g) { (g.stage ? psGames : games).push(Object.assign(g, { source: it.url })); return; }
       }
       if (P.isListArticle(it.title) || !P.isBaseball(it.title, it.summary)) return;
       const id = P.hashId(P.canonicalUrl(it.url));
@@ -341,18 +394,22 @@ function buildLive(o) {
     });
   });
 
-  return {
+  const postseason = pickPostseason(o, standings, P.mergeGames([], psGames, season, now), prev && prev.postseason, now, log);
+
+  const out = {
     version: 1,
     season,
     generatedAt: now.toISOString(),
     standings: standings || null,
     games: P.mergeGames(prev && prev.games, games, season, now),
-    news: P.mergeNews(prev && prev.news, news, now),
+    news: P.mergeNews(o.prev && o.prev.news, news, now),
     sources: {
       news: Array.from(new Set((o.feeds || []).map(f => f.feed.source))),
       games: '연합뉴스 전적 기사 제목',
     },
   };
+  if (postseason) out.postseason = postseason;
+  return out;
 }
 
 /**
@@ -518,37 +575,67 @@ function writeData(file, name, payload, note) {
 
 async function main() {
   const now = new Date();
-  const season = Number(process.env.SEASON) || P.seasonFor(now);
   const force = process.env.FORCE_PLAYERS === '1';
   const base = process.env.PREV_BASE_URL || '';
-  console.log('야구알리미 수집 — 시즌 ' + season + ', ' + now.toISOString());
+  console.log('야구알리미 수집 — ' + now.toISOString());
 
   const localLive = readLocal(LIVE_FILE, 'BaseballLive');
   const remoteLive = await readRemote(base, LIVE_FILE, 'BaseballLive');
   const prevLive = newer(localLive, remoteLive);
-  /* 경기·뉴스는 두 사본을 합친다 — 한쪽이 놓친 것이 있을 수 있다 */
-  if (localLive && remoteLive) {
-    prevLive.games = P.mergeGames(localLive.games, remoteLive.games, season, now);
-    prevLive.news = P.mergeNews(localLive.news, remoteLive.news, now);
-  }
   const prevPlayers = newer(readLocal(PLAYERS_FILE, 'BaseballPlayers'), await readRemote(base, PLAYERS_FILE, 'BaseballPlayers'));
   const prevStats = newer(readLocal(STATS_FILE, 'BaseballStats'), await readRemote(base, STATS_FILE, 'BaseballStats'));
 
   let failed = 0;
 
-  /* 순위표 */
+  /* 시즌과 순위표. 해마다 저절로 넘어간다: 올해 문서에 경기를 치른 순위표가 생기면(3월 개막) 올해,
+     그 전(겨울·초봄)에는 지난해 시즌의 최종 순위와 가을야구 결과를 그대로 보여 준다 (P.chooseSeason) */
+  const year = Number(P.kstDate(now).slice(0, 4));
+  let season = Number(process.env.SEASON) || null;
   let wikiText = null, wikiRevision = null;
   try {
-    const title = season + ' KBO League season';
-    const pages = await wikiPages('en.wikipedia.org', [title], false);
-    const page = pages.get(title);
-    if (!page) throw new Error('문서 없음: ' + title);
-    wikiText = page.content;
-    wikiRevision = page.timestamp;
-    console.log('  ok   순위표 원문 (' + page.timestamp + ')');
+    const want = season || year;
+    const title = want + ' KBO League season';
+    const page = (await wikiPages('en.wikipedia.org', [title], false)).get(title) || null;
+    if (!season) season = P.chooseSeason(page ? page.content : null, now, prevLive && prevLive.season);
+    let use = season === want ? page : null;
+    if (season !== want) {
+      console.log('  ' + want + ' 시즌은 아직 경기를 치르지 않았다 — ' + season + ' 시즌을 그대로 보여 준다');
+      const t2 = season + ' KBO League season';
+      await sleep(WIKI_PAUSE_MS);
+      use = (await wikiPages('en.wikipedia.org', [t2], false)).get(t2) || null;
+    }
+    if (!use) throw new Error('문서 없음: ' + season + ' KBO League season');
+    wikiText = use.content;
+    wikiRevision = use.timestamp;
+    console.log('  ok   순위표 원문 ' + season + ' (' + use.timestamp + ')');
   } catch (e) {
     failed++;
+    if (!season) season = P.chooseSeason(undefined, now, prevLive && prevLive.season);
     console.warn('  FAIL 순위표 원문: ' + why(e));
+  }
+  console.log('  시즌 ' + season);
+
+  /* 경기·뉴스는 두 사본을 합친다 — 한쪽이 놓친 것이 있을 수 있다 */
+  if (localLive && remoteLive) {
+    prevLive.games = P.mergeGames(localLive.games, remoteLive.games, season, now);
+    prevLive.news = P.mergeNews(localLive.news, remoteLive.news, now);
+  }
+
+  /* 가을야구 문서 (한국어 위키) — 정규시즌 막바지부터. 두 문서를 한 번에 묻는다. 아직 없는 문서는 빠진다 */
+  let psPages = null;
+  const parsedSt = wikiText ? P.parseStandings(wikiText) : null;
+  const stNow = parsedSt && parsedSt.rows.length ? parsedSt : prevLive && prevLive.season === season ? prevLive.standings : null;
+  const prevPs = prevLive && prevLive.season === season ? prevLive.postseason || null : null;
+  if (wantPostseason(stNow, prevPs, now)) {
+    const titles = [season + '년 KBO 포스트시즌', season + '년 한국시리즈'];
+    try {
+      const pages = await wikiPages('ko.wikipedia.org', titles, false);
+      psPages = { ps: pages.get(titles[0]) || null, ks: pages.get(titles[1]) || null };
+      console.log('  ok   가을야구 문서 ' + titles.filter(t => pages.get(t)).map(t => '「' + t + '」').join('·') + (pages.size ? '' : ' (아직 없음)'));
+    } catch (e) {
+      failed++;
+      console.warn('  FAIL 가을야구 문서: ' + why(e));
+    }
   }
 
   /* 피드 — 서로 다른 언론사 서버라 나란히 받는다 */
@@ -559,7 +646,7 @@ async function main() {
     else { failed++; console.warn('  FAIL ' + FEEDS[i].source + ': ' + why(r.reason) + '  ' + FEEDS[i].url); }
   });
 
-  const live = buildLive({ wikiText, wikiRevision, feeds, prev: prevLive, now, season, log: console.log });
+  const live = buildLive({ wikiText, wikiRevision, feeds, psPages, prev: prevLive, now, season, log: console.log });
 
   /* 명단·프로필: 하루 한 번 */
   let players = prevPlayers;
@@ -658,12 +745,16 @@ async function main() {
   }
 
   const prevAsOf = prevLive && prevLive.standings ? prevLive.standings.asOf : null;
-  const changed = (live.standings && live.standings.asOf) !== prevAsOf ||
-    live.games.length !== ((prevLive && prevLive.games) || []).length || players !== prevPlayers;
+  const psMark = ps => (ps ? ps.rounds.map(r => r.games.length + (r.winner || '')).join('/') + (ps.champion || '') : '');
+  const changed = (live.standings && live.standings.asOf) !== prevAsOf || live.season !== (prevLive && prevLive.season) ||
+    live.games.length !== ((prevLive && prevLive.games) || []).length || players !== prevPlayers ||
+    psMark(live.postseason) !== psMark(prevPs);
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, 'failed=' + failed + '\nchanged=' + changed + '\n');
 
-  console.log('\n수집 완료 — 순위표 기준 ' + (live.standings ? live.standings.asOf : '없음') +
+  const ps = live.postseason;
+  console.log('\n수집 완료 — 시즌 ' + live.season + ' · 순위표 기준 ' + (live.standings ? live.standings.asOf + (live.standings.final ? '(최종)' : '') : '없음') +
     ' · 경기 ' + live.games.length + ' · 뉴스 ' + live.news.length +
+    (ps ? ' · 가을야구 ' + ps.rounds.map(r => r.short + ' ' + r.sides.map(s => s.wins).join('-')).join(', ') + (ps.champion ? ' · 우승 ' + ps.champion : '') : '') +
     ' · 명단 ' + (players ? Object.keys(players.rosters).length : 0) + '팀 · 출처 실패 ' + failed);
 }
 
@@ -674,4 +765,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildLive, buildPlayers, buildStats, pickStandings, parseDataScript, dataScript, pretty, decodeXml, FEEDS, UA };
+module.exports = { buildLive, buildPlayers, buildStats, pickStandings, wantPostseason, parseDataScript, dataScript, pretty, decodeXml, FEEDS, UA };

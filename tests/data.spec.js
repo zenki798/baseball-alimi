@@ -45,6 +45,13 @@ test('가짜 자료(테스트용)도 같은 계약을 지킨다', () => {
   expect(P.validateLive(FIX.buildLive())).toEqual([]);
   expect(P.validatePlayers(FIX.buildPlayers())).toEqual([]);
   expect(P.validateStats(FIX.buildStats())).toEqual([]);
+  for (const kind of ['set', 'live', 'done']) expect(P.validateLive(FIX.buildLivePs(kind)), kind).toEqual([]);
+});
+
+test('teams.js 가을야구 방식: 와일드카드 → 준PO → PO → KS, 기다리는 순위 4·3·2·1, 최대 경기 2·5·5·7', () => {
+  expect(T.POSTSEASON.map((r) => [r.key, r.top, r.bestOf])).toEqual([['wc', 4, 2], ['spo', 3, 5], ['po', 2, 5], ['ks', 1, 7]]);
+  expect(T.POSTSEASON[0].low).toBe(5);
+  expect(T.POSTSEASON_CUT).toBe(5);
 });
 
 test('teams.js: 10개 구단, id·색·위키 이름·명단 틀·구장 토큰·엠블럼 파일', () => {
@@ -115,6 +122,48 @@ test.describe('store.js — 화면 쪽 계산', () => {
       games: [['2026-10-01', 'kt', 3, 5, 'L', '홈'], ['2026-09-30', 'kt', 2, 1, 'W', '홈']],
       derby: [['D', '']],
     });
+  });
+
+  test('가을야구 계산: 남은 경기로 본 최종 순위 범위, 위키 표시를 먼저 믿는 진출 확정·탈락·시드', async ({ page }) => {
+    await open(page);
+    const r = await page.evaluate(() => ({
+      phase: Baseball.phase(), final: Baseball.isFinal(), bracket: Baseball.bracket(),
+      ranges: Baseball.ranges(),
+      race: ['kt', 'kia', 'doosan', 'nc', 'ssg'].map((id) => Baseball.race(id)),
+    }));
+    expect(r).toMatchObject({ phase: 'race', final: false, bracket: null });
+    /* 계산만으로는 kt 가 1위를 확정하지 못했다(4위까지 내려갈 수 있다) — 위키의 "Clinched first place" 를 믿는다 */
+    expect(r.ranges.kt).toEqual({ best: 1, worst: 4 });
+    expect(r.race).toEqual([
+      { team: 'kt', rank: 1, status: 'in', seed: 1, best: 1, worst: 1 },
+      { team: 'kia', rank: 4, status: 'in', seed: null, best: 2, worst: 5 },
+      { team: 'doosan', rank: 5, status: 'race', seed: null, best: 2, worst: 8 },
+      { team: 'nc', rank: 6, status: 'race', seed: null, best: 3, worst: 9 },
+      { team: 'ssg', rank: 8, status: 'out', seed: null, best: 6, worst: 9 },
+    ]);
+  });
+
+  test('가을야구 계산: 위키 표시가 없어도 계산으로 확정·탈락, 다섯 팀이 확정되면 나머지는 탈락', async ({ page }) => {
+    const live = FIX.buildLive();
+    /* 위키 표시를 모두 지우고 팀마다 8경기를 더 치른 것으로(4승 4패) — 남은 경기 2 */
+    live.standings.rows.forEach((x) => { x.status = null; x.games += 8; x.win += 4; x.loss += 4; });
+    await open(page, { live });
+    expect(await page.evaluate(() => ['kt', 'samsung', 'lg', 'kia', 'doosan', 'nc', 'lotte', 'ssg', 'hanwha', 'kiwoom'].map((id) => Baseball.race(id).status)))
+      .toEqual(['in', 'in', 'in', 'in', 'in', 'out', 'out', 'out', 'out', 'out']);
+    /* 위키가 다섯 팀 확정을 먼저 적으면 계산과 상관없이 나머지는 탈락 */
+    const live2 = FIX.buildLive();
+    live2.standings.rows.find((x) => x.team === 'doosan').status = 'in';
+    await open(page, { live: live2 });
+    expect(await page.evaluate(() => ['nc', 'lotte'].map((id) => Baseball.race(id).status))).toEqual(['out', 'out']);
+  });
+
+  test('가을야구 계산: 최종 순위에 같은 승률이 있으면 그 자리 시드는 비워 둔다(순위 결정전)', async ({ page }) => {
+    const live = FIX.buildLivePs('set');
+    const rows = live.standings.rows;
+    rows.find((x) => x.team === 'doosan').rank = rows.find((x) => x.team === 'kia').rank;   // 4위 공동
+    await open(page, { live, now: '2026-10-05T03:00:00Z' });
+    expect(await page.evaluate(() => Baseball.bracket().rounds[0].sides.map((s) => s.team))).toEqual([null, null]);
+    await expect(page.locator('#psBracket > li[data-round="wc"] .ps-side .tbd')).toHaveText(['미정', '미정']);
   });
 
   test('자료가 망가진 줄(모르는 구단·주소 없는 기사)은 화면에 내지 않는다', async ({ page }) => {

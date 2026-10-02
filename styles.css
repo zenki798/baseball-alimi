@@ -19,6 +19,8 @@
   --draw: #8a94a6;
   --ps: rgba(29, 95, 216, .06);
   --mine: rgba(215, 38, 61, .08);
+  --gold: #b7791f;
+  --gold-bg: rgba(183, 121, 31, .1);
   --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 1px 3px rgba(16, 24, 40, .06);
   --radius: 14px;
   --tabbar-h: 62px;
@@ -42,6 +44,8 @@
     --draw: #8a94a6;
     --ps: rgba(110, 162, 255, .07);
     --mine: rgba(255, 84, 104, .11);
+    --gold: #d69e2e;
+    --gold-bg: rgba(214, 158, 46, .14);
     --shadow: none;
   }
 }
@@ -290,6 +294,7 @@ main:focus { outline: none; }
 }
 .badge-st.out { color: var(--faint); }
 .badge-st.first { color: var(--accent); }
+.badge-st.champ { color: #fff; background: var(--gold); border-color: var(--gold); }
 .badge-mine { font-size: 10.5px; font-weight: 800; color: var(--accent); }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 10px 16px 14px; color: var(--faint); font-size: 12.5px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
@@ -352,6 +357,79 @@ main:focus { outline: none; }
 .tile .v.up { color: var(--win); }
 .tile .v.down { color: var(--loss); }
 .tile .s { color: var(--dim); font-size: 12px; }
+
+/* ---------- 가을야구 ---------- */
+
+/* 내 팀 카드·팀 화면 머리의 한 줄 */
+.ps-line { margin: 10px 0 0; font-weight: 800; font-size: 14px; border-radius: 10px; padding: 7px 11px; background: var(--surface-2); border: 1px solid var(--line); }
+.ps-line.good { color: var(--win); background: var(--ps); }
+.ps-line.bad { color: var(--dim); }
+.ps-line.race, .ps-line.wait { color: var(--tx); }
+.ps-line.live { color: var(--accent); background: var(--mine); }
+.ps-line.champ { color: var(--gold); background: var(--gold-bg); border-color: var(--gold); }
+
+.ps-chip { display: inline-block; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 1px 6px; border: 1px solid currentColor; white-space: nowrap; line-height: 1.45; }
+.ps-chip.in { color: var(--win); }
+.ps-chip.race { color: var(--accent); }
+.ps-chip.out { color: var(--faint); }
+
+/* 정규시즌 중: 1~5위 자리 */
+.ps-ladder, .ps-chasers { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ps-ladder > li, .ps-chasers > li {
+  display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; align-items: center; column-gap: 8px; row-gap: 1px;
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2);
+}
+.ps-ladder > li.mine, .ps-chasers > li.mine { background: var(--mine); border-color: var(--accent); }
+.slot-no { font-weight: 900; font-size: 14px; text-align: center; grid-row: span 2; }
+.slot-team { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.slot-team .nm { color: var(--tx); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slot-sub { grid-column: 2 / -1; color: var(--dim); font-size: 12px; min-width: 0; }
+.ps-cutline { display: flex; align-items: center; gap: 8px; margin: 10px 0 8px; color: var(--faint); font-size: 12px; font-weight: 700; }
+.ps-cutline::before, .ps-cutline::after { content: ""; flex: 1; border-top: 2px dashed var(--line-strong); }
+.ps-out { margin: 10px 0 0; color: var(--dim); font-size: 13px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* 정규시즌 뒤: 대진 */
+.ps-champ {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 12px;
+  border-radius: 14px; background: var(--gold-bg); border: 1px solid var(--gold);
+}
+.ps-champ .k { color: var(--gold); font-weight: 800; font-size: 12.5px; }
+.ps-champ .v { font-size: 19px; font-weight: 900; letter-spacing: -.3px; }
+.ps-champ .s { color: var(--dim); font-size: 12.5px; }
+.ps-bracket { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ps-round { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: var(--surface-2); min-width: 0; }
+.ps-round.current { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.ps-round-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.ps-round-head h3 { margin: 0; font-size: 15px; }
+.ps-round-head .meta { font-size: 12px; }
+.ps-state { margin-left: auto; font-size: 11.5px; font-weight: 800; color: var(--faint); }
+.ps-round.live .ps-state { color: var(--accent); }
+.ps-round.done .ps-state { color: var(--win); }
+.ps-match { display: grid; gap: 4px; }
+.ps-side { display: grid; grid-template-columns: 30px minmax(0, 1fr) 28px; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 9px; background: var(--surface); }
+.ps-side .seed { color: var(--faint); font-size: 11.5px; font-weight: 800; }
+.ps-side .who { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.ps-side .nm { color: var(--tx); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ps-side .nm.tbd { color: var(--faint); font-weight: 600; font-size: 13px; }
+.ps-side .w { text-align: right; font-weight: 900; font-size: 17px; font-variant-numeric: tabular-nums; }
+.ps-side.win .nm, .ps-side.win .w { color: var(--win); }
+.ps-side.lose { opacity: .62; }
+.ps-side.mine { box-shadow: inset 3px 0 0 var(--accent); }
+.ps-sum { margin: 6px 0 0; font-size: 12.5px; color: var(--dim); font-weight: 700; }
+.ps-games { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+.ps-game {
+  display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; column-gap: 8px;
+  font-size: 13px; padding: 5px 8px; border-radius: 9px; background: var(--surface); border: 1px solid var(--line);
+}
+.ps-game .n { font-weight: 800; }
+.ps-game .d { color: var(--faint); font-size: 12px; }
+.ps-game .sc { display: flex; gap: 6px; align-items: center; justify-content: flex-end; min-width: 0; white-space: nowrap; }
+.ps-game .sc .t { color: var(--dim); font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.ps-game .sc .t.win { color: var(--tx); font-weight: 800; }
+.ps-game .sc b { font-variant-numeric: tabular-nums; }
+.ps-game .sub { grid-column: 1 / -1; color: var(--faint); font-size: 11.5px; min-width: 0; overflow-wrap: anywhere; }
+.ps-more { margin-top: 6px; }
+.ps-more summary { cursor: pointer; color: var(--link); font-size: 12.5px; font-weight: 700; }
 
 /* ---------- 팀 화면 ---------- */
 
@@ -517,9 +595,12 @@ details.more-box .staff { margin-top: 8px; }
 }
 
 /* ---------- 화면 배치 ----------
-   좁은 화면: 한 줄로 쌓는다(내 팀 → 순위표 → 경기 결과). 넓은 화면: 순위표 왼쪽, 내 팀·경기 결과 오른쪽 */
-.st-layout { display: grid; gap: 16px; grid-template-areas: "mine" "table" "games"; }
+   좁은 화면: 한 줄로 쌓는다(내 팀 → 순위표 → 가을야구 → 경기 결과). 정규시즌이 끝나면(ps-first) 가을야구 대진이 순위표 위로.
+   넓은 화면: 순위표 왼쪽, 내 팀·가을야구·경기 결과 오른쪽 */
+.st-layout { display: grid; gap: 16px; grid-template-areas: "mine" "table" "ps" "games"; }
+.st-layout.ps-first { grid-template-areas: "mine" "ps" "table" "games"; }
 .st-layout > .a-mine { grid-area: mine; min-width: 0; }
+.st-layout > .a-ps { grid-area: ps; min-width: 0; }
 .st-layout > .a-table { grid-area: table; min-width: 0; }
 .st-layout > .a-games { grid-area: games; min-width: 0; }
 .team-layout { display: grid; gap: 16px; grid-template-areas: "recent" "news" "roster" "staff"; }
@@ -528,10 +609,10 @@ details.more-box .staff { margin-top: 8px; }
 .team-layout > .a-roster { grid-area: roster; min-width: 0; }
 .team-layout > .a-staff { grid-area: staff; min-width: 0; }
 @media (min-width: 960px) {
-  .st-layout {
+  .st-layout, .st-layout.ps-first {
     grid-template-columns: minmax(0, 1fr) 340px;
-    grid-template-areas: "table mine" "table games";
-    grid-template-rows: auto 1fr; align-items: start;
+    grid-template-areas: "table mine" "table ps" "table games";
+    grid-template-rows: auto auto 1fr; align-items: start;
   }
   .team-layout {
     grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);

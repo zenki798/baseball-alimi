@@ -7,7 +7,7 @@
  */
 'use strict';
 
-const { TEAMS } = require('../../teams.js');
+const { TEAMS, POSTSEASON: T_POSTSEASON } = require('../../teams.js');
 const P = require('../../scripts/parsers.js');
 const { dataScript } = require('../../scripts/collect.js');
 
@@ -17,11 +17,11 @@ function split(n) { return [Math.ceil(n / 2), Math.floor(n / 2)]; }
 
 /* [구단, 승, 패, 무, 연속, 진출 여부] — NC·롯데는 승률이 같아 공동 6위 */
 const RAW = [
-  ['kt', 79, 53, 2, { type: 'W', n: 3 }, 'first'],
+  ['kt', 79, 53, 2, { type: 'W', n: 3 }, 'ks'],
   ['samsung', 77, 54, 3, { type: 'W', n: 1 }, 'in'],
   ['lg', 73, 59, 2, { type: 'L', n: 2 }, 'in'],
   ['kia', 70, 62, 2, { type: 'L', n: 1 }, 'in'],
-  ['doosan', 68, 63, 3, { type: 'W', n: 2 }, 'in'],
+  ['doosan', 68, 63, 3, { type: 'W', n: 2 }, null],   // 5위 자리는 아직 NC·롯데와 다툰다
   ['nc', 64, 68, 2, { type: 'L', n: 3 }, null],
   ['lotte', 64, 68, 2, { type: 'W', n: 1 }, null],
   ['ssg', 59, 72, 3, { type: 'D', n: 1 }, 'out'],
@@ -29,8 +29,8 @@ const RAW = [
   ['kiwoom', 49, 84, 1, { type: 'W', n: 1 }, 'out'],
 ];
 
-function standingsRows() {
-  return P.computeStandings(RAW.map(([team, win, loss, draw, streak, status]) => {
+function standingsRows(raw) {
+  return P.computeStandings((raw || RAW).map(([team, win, loss, draw, streak, status]) => {
     const [hw, aw] = split(win), [hl, al] = split(loss), [hd, ad] = split(draw);
     return {
       team, games: win + loss + draw, win, loss, draw, streak,
@@ -196,8 +196,86 @@ const STATS = {
 };
 function buildStats() { return copy(STATS); }
 
+/* ---------- 가을야구 견본 ----------
+ * 정규시즌 최종 순위: 모든 팀 144경기, 리그 전체 승 = 패 = 704, 무 32. 1~5위 kt·삼성·LG·KIA·두산 (승률이 모두 달라 시드가 정해진다).
+ * 가을야구 경기는 지어낸 가상 경기다 — 점수도, 투수·MVP 이름("KT투수1")도 가상이다.
+ */
+const RAW_FINAL = [
+  ['kt', 83, 57, 4, { type: 'W', n: 2 }, 'ks'],
+  ['samsung', 81, 60, 3, { type: 'L', n: 1 }, 'po'],
+  ['lg', 77, 65, 2, { type: 'W', n: 1 }, 'spo'],
+  ['kia', 74, 67, 3, { type: 'W', n: 4 }, 'wc'],
+  ['doosan', 72, 68, 4, { type: 'L', n: 2 }, 'wc'],
+  ['nc', 70, 71, 3, { type: 'W', n: 1 }, 'out'],
+  ['lotte', 68, 73, 3, { type: 'L', n: 3 }, 'out'],
+  ['ssg', 64, 77, 3, { type: 'W', n: 2 }, 'out'],
+  ['hanwha', 60, 81, 3, { type: 'L', n: 1 }, 'out'],
+  ['kiwoom', 55, 85, 4, { type: 'D', n: 1 }, 'out'],
+];
+
+/* [몇 차전, 날짜, 원정, 원정 점수, 홈, 홈 점수, 승리 투수, 패전 투수, 세이브] */
+const PS_GAMES = {
+  /* 진행 중(10월 10일 밤): 5위 두산이 와일드카드 두 경기를 다 이겨 올라갔고, 준플레이오프는 LG 와 1승 1패 */
+  live: {
+    wc: [[1, '2026-10-06', 'doosan', 5, 'kia', 3, '두산투수1', 'KIA투수1'], [2, '2026-10-07', 'doosan', 4, 'kia', 2, '두산투수2', 'KIA투수2', '두산투수3']],
+    spo: [[1, '2026-10-09', 'doosan', 2, 'lg', 6, 'LG투수1', '두산투수4'], [2, '2026-10-10', 'doosan', 3, 'lg', 1, '두산투수1', 'LG투수2']],
+  },
+  /* 끝: 4위 KIA 가 와일드카드 1차전을 이겨 바로 올라가고(1승 안고 시작), 준PO LG 3승 1패, PO 삼성 3승 2패, KS kt 4승 2패 우승 */
+  done: {
+    wc: [[1, '2026-10-06', 'doosan', 1, 'kia', 4, 'KIA투수1', '두산투수1']],
+    spo: [
+      [1, '2026-10-08', 'kia', 2, 'lg', 5, 'LG투수1', 'KIA투수2'], [2, '2026-10-09', 'kia', 6, 'lg', 3, 'KIA투수3', 'LG투수2'],
+      [3, '2026-10-11', 'lg', 4, 'kia', 1, 'LG투수3', 'KIA투수1'], [4, '2026-10-12', 'lg', 7, 'kia', 6, 'LG투수4', 'KIA투수4', 'LG투수5'],
+    ],
+    po: [
+      [1, '2026-10-15', 'lg', 3, 'samsung', 8, '삼성투수1', 'LG투수1'], [2, '2026-10-16', 'lg', 5, 'samsung', 2, 'LG투수2', '삼성투수2'],
+      [3, '2026-10-18', 'samsung', 4, 'lg', 3, '삼성투수3', 'LG투수3', '삼성투수4'], [4, '2026-10-19', 'samsung', 0, 'lg', 2, 'LG투수4', '삼성투수1'],
+      [5, '2026-10-21', 'lg', 1, 'samsung', 6, '삼성투수2', 'LG투수1'],
+    ],
+    ks: [
+      [1, '2026-10-24', 'samsung', 2, 'kt', 7, 'KT투수1', '삼성투수1'], [2, '2026-10-25', 'samsung', 3, 'kt', 4, 'KT투수2', '삼성투수2', 'KT투수3'],
+      [3, '2026-10-27', 'kt', 1, 'samsung', 5, '삼성투수3', 'KT투수4'], [4, '2026-10-28', 'kt', 9, 'samsung', 2, 'KT투수1', '삼성투수4'],
+      [5, '2026-10-29', 'kt', 3, 'samsung', 4, '삼성투수2', 'KT투수2'], [6, '2026-10-31', 'samsung', 1, 'kt', 3, 'KT투수5', '삼성투수1', 'KT투수3'],
+    ],
+  },
+};
+
+/** 가을야구 자료 (live.postseason 모양) — 수집기와 같은 조립 함수(P.buildPostseason)로 만들어 계약을 그대로 지킨다 */
+function postseasonFor(kind) {
+  const rows = standingsRows(RAW_FINAL);
+  const stadium = id => TEAMS.find(t => t.id === id).stadium;
+  const rounds = T_POSTSEASON.map(d => ({
+    key: d.key,
+    sides: [{ team: null, seed: null, wins: 0 }, { team: null, seed: null, wins: 0 }],
+    winner: null,
+    games: ((PS_GAMES[kind] || {})[d.key] || []).map(([n, date, away, as, home, hs, wp, lp, sv]) => ({
+      n, date, t1: away, s1: as, t2: home, s2: hs, home, venue: stadium(home), wp, lp, sv: sv || null, src: 'wiki',
+    })),
+  }));
+  const ps = P.buildPostseason({
+    season: 2026, standings: { final: true, rows }, today: '2026-12-31',
+    prev: { season: 2026, rounds, qualified: ['kt', 'samsung', 'lg', 'kia', 'doosan'], mvp: kind === 'done' ? 'KT내야수2' : null },
+  });
+  ps.fetchedAt = '2026-11-01T00:00:00.000Z';
+  ps.sources = [{ name: '위키백과(한국어) 「2026년 KBO 포스트시즌」', url: 'https://ko.wikipedia.org/wiki/' + encodeURIComponent('2026년_KBO_포스트시즌'), license: 'CC BY-SA 4.0', revision: '2026-10-31T15:00:00Z' }];
+  return ps;
+}
+
+/** 정규시즌이 끝난 뒤의 live 자료. kind: 'set'(가을야구 전 — 대진 자료 없음) · 'live'(진행 중) · 'done'(우승팀 확정) */
+function buildLivePs(kind) {
+  const live = buildLive();
+  live.standings.rows = standingsRows(RAW_FINAL);
+  live.standings.asOf = '2026-10-04';
+  live.standings.final = true;
+  if (kind !== 'set') live.postseason = postseasonFor(kind);
+  return copy(live);
+}
+
 function liveScript(live) { return dataScript('BaseballLive', live || buildLive(), '테스트 자료'); }
 function playersScript(players) { return dataScript('BaseballPlayers', players || buildPlayers(), '테스트 자료'); }
 function statsScript(stats) { return dataScript('BaseballStats', stats || buildStats(), '테스트 자료'); }
 
-module.exports = { NOW, buildLive, buildPlayers, buildStats, liveScript, playersScript, statsScript, GAMES, NEWS, PROFILES, COUNTS };
+module.exports = {
+  NOW, buildLive, buildPlayers, buildStats, liveScript, playersScript, statsScript, GAMES, NEWS, PROFILES, COUNTS,
+  buildLivePs, postseasonFor, RAW_FINAL, PS_GAMES, standingsRows,
+};

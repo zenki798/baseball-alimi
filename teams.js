@@ -2,7 +2,7 @@
  *
  * - 브라우저에서는 window.BaseballTeams, Node 에서는 require('./teams.js') 로 같은 목록을 받는다.
  *   ES 모듈로 바꾸지 않는다: index.html 을 더블클릭(file://)하면 모듈이 막힌다 (AGENTS.md 8절).
- * - 구단 로고는 상표라서 쓰지 않는다. 화면의 구단 표시는 짧은 이름 + 구단 색 배지다.
+ * - 구단 엠블럼은 퍼블릭 도메인 글자 로고만 쓴다(아래 LOGOS). 그림을 못 읽으면 짧은 이름 + 구단 색 배지다.
  * - 순서는 KBO 가 목록에 쓰는 순서(영문 이름 먼저, 그다음 가나다)를 따른다.
  *
  * 각 칸
@@ -109,7 +109,18 @@
   var SEASON_GAMES = 144;
   var POSTSEASON_CUT = 5;
 
-  var api = { TEAMS: TEAMS, SEASON_GAMES: SEASON_GAMES, POSTSEASON_CUT: POSTSEASON_CUT };
+  /* 가을야구 대진 (2015년부터 같은 방식, 2026-10-02 확인). KBO 가 방식을 바꾸면 여기 한 곳만 고친다.
+   *   top      이 라운드에서 기다리는 정규시즌 순위 (상대는 앞 라운드 승자 — 와일드카드만 5위)
+   *   bestOf   최대 경기 수. 이기는 데 필요한 승수 = bestOf 를 반으로 나눠 버리고 1 을 더한 수 (무승부는 승수에 들지 않는다)
+   *   와일드카드는 4위가 1승을 안고 시작한다: 4위는 한 번 이기거나 비기면, 5위는 두 번 다 이겨야 올라간다 */
+  var POSTSEASON = [
+    { key: 'wc', name: '와일드카드 결정전', short: 'WC', bestOf: 2, top: 4, low: 5 },
+    { key: 'spo', name: '준플레이오프', short: '준PO', bestOf: 5, top: 3 },
+    { key: 'po', name: '플레이오프', short: 'PO', bestOf: 5, top: 2 },
+    { key: 'ks', name: '한국시리즈', short: 'KS', bestOf: 7, top: 1 },
+  ];
+
+  var api = { TEAMS: TEAMS, SEASON_GAMES: SEASON_GAMES, POSTSEASON_CUT: POSTSEASON_CUT, POSTSEASON: POSTSEASON };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.BaseballTeams = api;
 })(this);

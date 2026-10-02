@@ -38,7 +38,7 @@ test.describe('정규시즌 순위표 (영문 위키백과 표)', () => {
 
   test('진출 여부: 1위 확정 · rowspan 으로 아래 줄까지 이어지는 칸 · 빈칸', () => {
     const st = Object.fromEntries(parsed.rows.map(r => [r.team, r.status]));
-    expect(st).toEqual({ kt: 'first', samsung: 'in', lg: 'in', kia: 'in', doosan: 'in', nc: null, lotte: null, ssg: 'out', hanwha: 'out', kiwoom: 'out' });
+    expect(st).toEqual({ kt: 'ks', samsung: 'in', lg: 'in', kia: 'in', doosan: 'in', nc: null, lotte: null, ssg: 'out', hanwha: 'out', kiwoom: 'out' });
   });
 
   test('순위·승률·게임차는 다시 계산한다: 승률이 같으면 공동 순위, 게임차는 1위 기준', () => {

@@ -7,10 +7,11 @@
    다루는 원문
    - 영문 위키백과 「<시즌> KBO League season」 문서의 정규시즌 순위표 (위키 문법)
    - 한국어 위키백과 「틀:<구단> 명단」 (현재 선수단)과 선수 문서 첫 부분의 「야구 선수 정보」 상자
+   - 한국어 위키백과 「<시즌>년 KBO 포스트시즌」·「<시즌>년 한국시리즈」 (가을야구 대진표·경기 기록)
    - 언론사 RSS (제목·링크·짧은 발췌·시각) — 연합뉴스 전적 기사 제목에서 경기 결과를 읽는다
    =========================================================== */
 
-const { TEAMS, SEASON_GAMES } = require('../teams.js');
+const { TEAMS, SEASON_GAMES, POSTSEASON, POSTSEASON_CUT } = require('../teams.js');
 
 /* ---------- 글자 다루기 (작업4 뉴스알리미에서 검증된 것을 그대로 옮겼다) ---------- */
 
@@ -348,17 +349,27 @@ function splitHomeAway(h, r, totals) {
   return null;
 }
 
+/**
+ * 순위표 "진출 여부" 칸 → 'ks'(1위 · 한국시리즈 직행) · 'po'(2위 · 플레이오프 직행) · 'spo'(3위 · 준플레이오프)
+ * · 'wc'(4·5위 · 와일드카드 결정전) · 'in'(가을야구 확정, 자리 미정) · 'out'(탈락).
+ * 시즌 중에는 "Qualified"·"Clinched first place", 시즌이 끝나면 "Korean Series·Playoff·Semi-playoff·Wild Card" 가 적힌다(2025 표).
+ * "Clinched playoff berth" 같은 말은 2위가 아니라 그냥 진출이다 — 그래서 berth·qualif 를 단계 이름보다 먼저 본다.
+ */
 function statusOf(text) {
-  const t = String(text || '').toLowerCase();
+  const t = String(text || '').toLowerCase().replace(/\s+/g, ' ');
   if (!t) return null;
   if (/did not|eliminat|not qualif/.test(t)) return 'out';
-  if (/clinch(ed)?\s+(first|1st|regular season|pennant|korean series|ks)|korean series berth/.test(t)) return 'first';
-  if (/qualif|clinch|advance|berth/.test(t)) return 'in';
+  if (/korean series|clinch(ed)? (first|1st|regular season|pennant)/.test(t)) return 'ks';
+  if (/berth|qualif|clinch|advance/.test(t)) return 'in';
+  if (/semi[- ]?play-?off/.test(t)) return 'spo';
+  if (/play-?off/.test(t)) return 'po';
+  if (/wild ?card/.test(t)) return 'wc';
   return null;
 }
 
 /**
- * 영문 위키백과 시즌 문서 → { asOf, rows: [{ team, games, win, loss, draw, streak, home, away, status }], problems }
+ * 영문 위키백과 시즌 문서 → { asOf, final, rows: [{ team, games, win, loss, draw, streak, home, away, status }], problems }
+ * final: 정규시즌이 끝난 최종 순위표 ("final … regular season standings" 문장, 또는 모든 팀이 144경기를 다 치름)
  * 순위·승률·게임차는 여기서 다시 계산한다(computeStandings). 위키 표의 순위 칸은 공동 순위가 rowspan 으로
  * 합쳐져 있어 칸 수가 줄마다 다르다. 그래서 칸 위치가 아니라 "구단 칸 뒤의 숫자 넷 = 경기·승·패·무"처럼 모양으로 읽는다.
  */
@@ -380,7 +391,10 @@ function parseStandings(wikitext) {
   const after = text.slice(table.end, table.end + 600);
   const am = after.match(/correct as of\s+([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/i);
   const asOf = am && MONTHS[am[1].toLowerCase()] ? ymd(am[3], MONTHS[am[1].toLowerCase()], am[2]) : null;
-  if (!asOf) problems.push('"Statistics are correct as of" 날짜가 없다');
+  /* 시즌이 끝나면 "as of" 줄 대신 "These are the final 2025 KBO League regular season standings." 가 표 위에 붙는다 */
+  const around = text.slice(Math.max(0, table.start - 500), table.start) + after;
+  let final = /final\s+(?:\d{4}\s+)?KBO League regular season standings|final (?:regular season )?standings/i.test(around);
+  if (!asOf && !final) problems.push('"Statistics are correct as of" 날짜가 없다');
 
   const rows = [];
   let carry = null;   // rowspan 으로 아래 줄까지 이어지는 진출 여부 칸
@@ -428,7 +442,10 @@ function parseStandings(wikitext) {
       status,
     });
   }
-  return { asOf, rows, problems };
+  /* 모든 팀이 정규시즌 경기를 다 치렀으면 최종이다 ("final" 문장이 아직 없어도) */
+  if (rows.length && rows.every(r => r.games >= SEASON_GAMES)) final = true;
+  if (final) for (let i = problems.length - 1; i >= 0; i--) if (/as of/.test(problems[i])) problems.splice(i, 1);
+  return { asOf, final, rows, problems };
 }
 
 /** 승률(무승부 제외)·순위(승률이 같으면 공동)·게임차(1위 기준)를 매긴다. 표 순서는 순위 → 승 → 원래 순서 */
@@ -772,6 +789,362 @@ function parseCareerStats(wikitext, maxYear) {
   return out.bat || out.pit ? out : null;
 }
 
+/* ---------- 포스트시즌 (한국어 위키백과 「<시즌>년 KBO 포스트시즌」·「<시즌>년 한국시리즈」) ----------
+ * 2025년 문서(끝난 가을야구)와 2026년 문서(시작 전)를 받아 모양을 맞췄다(2026-10-02).
+ * - 대진표 틀 {{5강 플레이오프/한국프로야구}}: RDn-seedk·RDn-teamk·RDn-scorek (n = 1 와일드카드 … 4 한국시리즈).
+ *   다음 라운드로 올라간 팀은 굵게(''') 적는다. 1번 칸이 기다리던 높은 순위 팀, 2번 칸이 도전자다.
+ * - 시리즈 절(== 준플레이오프 ==)마다 "=== N차전 ===" 아래에 날짜 줄("2025년 10월 9일 - [[구장]]")과 {{라인스코어}}. 이긴 팀 옆에 ◄.
+ *   한국시리즈 경기는 따로 있는 「<시즌>년 한국시리즈」 문서의 "== 한국시리즈 경기 ==" 절에 있다.
+ * - 경기 전 문서에는 자리 표시("정규 시즌 5위팀", "10월 ??일", 점수 0)가 미리 들어 있다. 경기 중에 점수를 고쳐 가는 편집자도 있어서
+ *   이긴 팀 표시(◄)가 있고 점수와 맞는 경기만 끝난 경기로 본다. 무승부는 연합뉴스 전적 기사로만 받는다.
+ * 해마다 문서 이름의 연도만 바뀐다(collect.js 가 시즌 연도로 부른다). 라운드 방식(최대 경기 수)은 teams.js POSTSEASON 한 곳에 있다.
+ */
+const PS_HEADING = { wc: /^와일드카드\s*결정전$/, spo: /^준\s*플레이오프$/, po: /^플레이오프$/, ks: /^한국\s*시리즈$/ };
+const PS_DATE = /(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/;
+/* 같은 라운드의 같은 N차전이 여러 곳에 있으면: 이번에 받은 위키 > 이번에 받은 연합뉴스 > 지난 자료 */
+const RANK_WIKI = 3, RANK_NEWS = 2, RANK_PREV = 1;
+
+/** 대진표·라인스코어의 팀 칸 → 구단 id. "정규 시즌 5위팀"·"와일드카드 결정전 승리팀" 같은 자리 표시는 null */
+function psTeam(raw) {
+  const ids = teamsOf(stripWiki(String(raw || '').replace(/◄/g, ' ')));
+  return ids.length === 1 ? ids[0] : null;
+}
+
+/** "== 이름 ==" 절의 본문 (아래 단계 절 포함, 같거나 높은 단계의 다음 절 전까지). 없으면 null */
+function sectionOf(text, headingRe) {
+  const t = String(text || '');
+  const re = /^(==+)\s*([^=\n]+?)\s*\1\s*$/gm;
+  let m;
+  while ((m = re.exec(t))) {
+    if (!headingRe.test(m[2].trim())) continue;
+    const rest = t.slice(m.index + m[0].length);
+    const next = rest.search(new RegExp('^={2,' + m[1].length + '}[^=]', 'm'));
+    return next >= 0 ? rest.slice(0, next) : rest;
+  }
+  return null;
+}
+
+/** 승리·패전·세이브 투수, 시리즈 MVP 칸 → 이름 (링크·틀을 걷어 낸 것) */
+function personName(v) {
+  const s = stripWiki(v || '').replace(/\s+/g, ' ').trim();
+  return s && s.length <= 20 ? s : null;
+}
+
+/** 한 시리즈 절 → 끝난 경기 [{ n, date, t1(원정), s1, t2(홈), s2, home, venue, wp, lp, sv, src }]. today 보다 뒤 날짜는 뺀다 */
+function parseSeriesGames(secText, season, today) {
+  const text = String(secText || '');
+  const re = /^===\s*(\d{1,2})\s*차전\s*===\s*$/gm;
+  const marks = [];
+  let m;
+  while ((m = re.exec(text))) marks.push({ n: Number(m[1]), head: m.index, body: m.index + m[0].length });
+  const games = [];
+  marks.forEach((mk, i) => {
+    const chunk = text.slice(mk.body, i + 1 < marks.length ? marks[i + 1].head : text.length);
+    /* 날짜 줄: "2025년 10월 11일<ref>우천 연기 …</ref> - [[인천SSG랜더스필드]]" — 주석을 걷어 내고 읽는다 */
+    const line = chunk.split('\n').find(l => PS_DATE.test(stripWiki(l))) || '';
+    const plain = stripWiki(line);
+    const dm = plain.match(PS_DATE);
+    const date = dm ? ymd(dm[1], dm[2], dm[3]) : null;
+    if (!date || Number(date.slice(0, 4)) !== Number(season) || (today && date > today)) return;
+    const ls = findTemplate(chunk, /^라인스코어$/);
+    if (!ls) return;
+    const q = templateParams(ls).named;
+    const away = psTeam(q['원정팀']);
+    const home = psTeam(q['홈팀']);
+    const as = Number(stripWiki(q['원정팀득점'] || '') || NaN);
+    const hs = Number(stripWiki(q['홈팀득점'] || '') || NaN);
+    if (!away || !home || away === home || !Number.isInteger(as) || !Number.isInteger(hs) || as === hs) return;
+    const mark = /◄/.test(q['원정팀'] || '') ? away : /◄/.test(q['홈팀'] || '') ? home : null;
+    if (mark !== (as > hs ? away : home)) return;   // 이긴 팀 표시가 없거나 점수와 어긋나면 아직 덜 적힌 경기
+    const vm = plain.slice(dm.index + dm[0].length).match(/^\s*[-–—]\s*(.+)$/);
+    const venue = vm ? truncate(vm[1].trim(), 30) : '';
+    games.push({
+      n: mk.n, date, t1: away, s1: as, t2: home, s2: hs, home,
+      venue: /[가-힣A-Za-z]/.test(venue) && !/\?/.test(venue) ? venue : null,
+      wp: personName(q['승리투수']), lp: personName(q['패전투수']), sv: personName(q['세이브투수']), src: 'wiki',
+    });
+  });
+  return games;
+}
+
+/** 대진표 틀 → 라운드마다 두 칸 [{ team, seed, wins(대진표에 적힌 승수 또는 null), bold }]. 틀이 없으면 null */
+function parseBracket(text) {
+  const body = findTemplate(text || '', /^5강\s*플레이오프\s*\/\s*한국\s*프로\s*야구$/);
+  if (!body) return null;
+  const p = templateParams(body).named;
+  return POSTSEASON.map((r, i) => [1, 2].map(k => {
+    const raw = p['RD' + (i + 1) + '-team' + k] || '';
+    const seed = stripWiki(p['RD' + (i + 1) + '-seed' + k] || '');
+    const score = stripWiki(p['RD' + (i + 1) + '-score' + k] || '');
+    const team = psTeam(raw);
+    return { team, seed: /^[1-5]$/.test(seed) ? Number(seed) : null, wins: /^\d$/.test(score) ? Number(score) : null, bold: !!team && /'''/.test(raw) };
+  }));
+}
+
+/** 「진출팀」 절의 "* [[kt 위즈]]" 줄 → 가을야구 진출이 확정된 구단 (편집자가 확정될 때마다 한 줄씩 더한다) */
+function parseQualified(text) {
+  const sec = sectionOf(text, /^진출\s*팀$/);
+  if (!sec) return [];
+  const out = [];
+  sec.split('\n').forEach(l => {
+    if (!/^\s*\*\s*\[\[/.test(l)) return;   // 설명 문단에 나오는 다른 구단 이름은 보지 않는다
+    const t = psTeam(l.replace(/^\s*\*/, ''));
+    if (t && !out.includes(t)) out.push(t);
+  });
+  return out.length <= POSTSEASON_CUT ? out : [];
+}
+
+/** 「<시즌>년 한국시리즈」 정보 상자 → { champion, wins, otherWins, mvp } (시리즈가 끝나면 편집자가 채운다) */
+function parseKsInfo(text) {
+  const body = findTemplate(text || '', /^한국\s*시리즈\s*정보$/);
+  if (!body) return null;
+  const p = templateParams(body).named;
+  const num = k => { const n = Number(stripWiki(p[k] || '') || NaN); return Number.isInteger(n) && n >= 0 && n <= 9 ? n : null; };
+  return { champion: psTeam(p['우승 팀']), wins: num('우승 팀 승리 수'), otherWins: num('상대 팀 승리 수'), mvp: personName(p['MVP']) };
+}
+
+function psSide(team, seed) { return { team: team || null, seed: seed || null, wins: 0 }; }
+
+/** 빈 대진 (라운드 넷, 팀 없음) */
+function emptyPostseason(season) {
+  return {
+    season: Number(season), qualified: [], champion: null, mvp: null,
+    rounds: POSTSEASON.map(d => ({ key: d.key, name: d.name, short: d.short, bestOf: d.bestOf, sides: [psSide(), psSide()], winner: null, games: [] })),
+  };
+}
+
+/** 라운드에 경기 하나를 넣는다. 같은 N차전이 이미 있으면 더 믿을 만한 쪽(rank)을 남긴다 */
+function putGame(r, g, rank) {
+  if (!g || !Number.isInteger(g.n) || g.n < 1 || g.n > 9) return;
+  const i = r.games.findIndex(x => x.n === g.n);
+  const row = Object.assign({}, g, { _rank: rank });
+  if (i < 0) r.games.push(row);
+  else if (rank > (r.games[i]._rank || 0)) r.games[i] = row;
+}
+
+function gameWinner(g) { return g.s1 > g.s2 ? g.t1 : g.s2 > g.s1 ? g.t2 : null; }
+
+/** 위키 두 문서 → 아직 정리하지 않은 대진 (settlePostseason 이 승수·승자를 매긴다) */
+function parsePostseason(psText, ksText, season, today) {
+  const ps = emptyPostseason(season);
+  const bracket = parseBracket(psText) || parseBracket(ksText);
+  ps.rounds.forEach((r, i) => {
+    if (bracket) r.sides = bracket[i].map(s => Object.assign(psSide(s.team, s.seed), { bold: s.bold, bwins: s.wins }));
+    const sec = r.key === 'ks'
+      ? sectionOf(ksText, /^한국\s*시리즈\s*경기$/) || sectionOf(psText, PS_HEADING.ks)
+      : sectionOf(psText, PS_HEADING[r.key]);
+    parseSeriesGames(sec, season, today).forEach(g => putGame(r, g, RANK_WIKI));
+  });
+  ps.qualified = parseQualified(psText);
+  const info = parseKsInfo(ksText);
+  if (info) ps.ksInfo = info;
+  return ps;
+}
+
+/** 정규시즌이 끝났으면 최종 순위로 기다리는 자리(1~4위)와 5위를 채운다. 순위가 같은 팀이 있으면(순위 결정전 전) 비워 둔다 */
+function seedPostseason(ps, standings) {
+  if (!standings || !standings.final || !Array.isArray(standings.rows)) return ps;
+  const at = rank => {
+    const list = standings.rows.filter(r => r.rank === rank);
+    return list.length === 1 ? list[0].team : null;
+  };
+  const used = new Set();
+  ps.rounds.forEach(r => r.sides.forEach(s => { if (s.team) used.add(s.team); }));
+  POSTSEASON.forEach((def, i) => {
+    const r = ps.rounds[i];
+    [[0, def.top], [1, def.low]].forEach(([k, rank]) => {
+      if (!rank) return;
+      const team = at(rank);
+      const s = r.sides[k];
+      if (s.team) { if (s.team === team && !s.seed) s.seed = rank; return; }
+      if (team && !used.has(team)) { s.team = team; s.seed = rank; used.add(team); }
+    });
+  });
+  return ps;
+}
+
+/** 연합뉴스 PS 전적(parseGameTitle 의 stage·n) → 그 라운드의 N차전. 이미 아는 팀과 맞지 않으면 버린다.
+ *  라운드를 안 밝힌 제목(stage 'ps')은 두 팀이 다 들어 있는 가장 늦은 라운드로 보낸다 */
+function addNewsGame(ps, g, rank) {
+  const both = x => x.sides.some(s => s.team === g.t1) && x.sides.some(s => s.team === g.t2);
+  const r = g.stage === 'ps' ? ps.rounds.slice().reverse().find(both) : ps.rounds.find(x => x.key === g.stage);
+  if (!r || !Number.isInteger(g.n)) return false;
+  const known = r.sides.map(s => s.team).filter(Boolean);
+  if (!known.every(t => t === g.t1 || t === g.t2)) return false;
+  putGame(r, {
+    n: g.n, date: g.date, t1: g.t1, s1: g.s1, t2: g.t2, s2: g.s2, home: g.home || null,
+    venue: null, wp: null, lp: null, sv: null, src: 'news', url: isHttpUrl(g.source) ? g.source : null,
+  }, rank || RANK_NEWS);
+  return true;
+}
+
+/**
+ * 와일드카드: 4위(시드 숫자가 작은 쪽)는 1승을 안고 시작한다 — 한 번 이기거나 비기면 진출, 5위는 두 번 다 이겨야 진출.
+ * 나머지: (최대 경기 수 ÷ 2 의 몫 + 1)승을 먼저 한 팀. 위키 대진표에서 한 팀만 굵으면 그 팀을 따른다.
+ */
+function seriesWinner(def, r) {
+  const bold = r.sides.filter(s => s.bold && s.team);
+  if (bold.length === 1) return bold[0].team;
+  const [x, y] = r.sides;
+  if (!x.team || !y.team) return null;
+  if (def.key === 'wc') {
+    const hi = (y.seed || 9) < (x.seed || 9) ? y : x;
+    const lo = hi === x ? y : x;
+    if (hi.wins >= 1 || r.games.some(g => gameWinner(g) === null)) return hi.team;
+    return lo.wins >= 2 ? lo.team : null;
+  }
+  const need = Math.floor(def.bestOf / 2) + 1;
+  return x.wins >= need ? x.team : y.wins >= need ? y.team : null;
+}
+
+/**
+ * 대진 정리: 다음 라운드에 이름이 있으면 앞 라운드 승자 → 빈 자리는 앞 라운드 승자 → 두 팀의 경기만 남기고 → 승수 → 승자 → 우승팀.
+ * 승수는 경기 기록이 있으면 경기에서 세고, 없으면 대진표에 적힌 승수를 쓴다.
+ */
+function settlePostseason(ps) {
+  const R = ps.rounds;
+  R.forEach((r, i) => {
+    const next = R[i + 1];
+    if (!next || r.sides.some(s => s.bold)) return;
+    /* 다음 라운드에서 기다리는 팀(1~3위)은 앞 라운드에 나오지 않는다 — 두 라운드에 다 있는 팀은 앞 라운드를 이긴 팀이다 */
+    r.sides.forEach(s => { if (s.team && next.sides.some(o => o.team === s.team)) s.bold = true; });
+  });
+  R.forEach((r, i) => {
+    const def = POSTSEASON[i];
+    const prev = R[i - 1];
+    if (prev && prev.winner && !r.sides.some(s => s.team === prev.winner)) {
+      const k = !r.sides[1].team ? 1 : !r.sides[0].team ? 0 : -1;
+      if (k >= 0) {
+        const from = prev.sides.find(s => s.team === prev.winner);
+        Object.assign(r.sides[k], { team: prev.winner, seed: r.sides[k].seed || (from && from.seed) || null });
+      }
+    }
+    /* 대진표보다 경기 기록이 먼저 올라온 경우: 이 라운드 경기의 팀으로 빈 자리를 채운다 */
+    if (r.sides.some(s => !s.team) && r.games.length) {
+      const known = r.sides.map(s => s.team).filter(Boolean);
+      const g0 = r.games.find(g => known.every(t => t === g.t1 || t === g.t2));
+      if (g0) r.sides.forEach(s => { if (!s.team) s.team = [g0.t1, g0.t2].find(t => !r.sides.some(o => o.team === t)) || null; });
+    }
+    const a = r.sides[0].team, b = r.sides[1].team;
+    r.games = r.games
+      .filter(g => a && b && ((g.t1 === a && g.t2 === b) || (g.t1 === b && g.t2 === a)))
+      .sort((x, y) => x.n - y.n)
+      .map(g => { const c = Object.assign({}, g); delete c._rank; return c; });
+    r.sides.forEach(s => {
+      s.wins = !s.team ? 0 : r.games.length ? r.games.filter(g => gameWinner(g) === s.team).length : (Number.isInteger(s.bwins) ? s.bwins : 0);
+    });
+    let winner = seriesWinner(def, r);
+    const info = ps.ksInfo;
+    if (!winner && def.key === 'ks' && info && info.champion && r.sides.some(s => s.team === info.champion) && info.wins >= Math.floor(def.bestOf / 2) + 1) {
+      winner = info.champion;
+      /* 경기 기록도 대진표 승수도 없으면 정보 상자의 승수를 쓴다 */
+      if (!r.games.length && r.sides.every(s => !s.wins)) r.sides.forEach(s => { s.wins = s.team === winner ? info.wins : (info.otherWins || 0); });
+    }
+    r.winner = winner;
+    r.name = def.name; r.short = def.short; r.bestOf = def.bestOf;
+    r.sides = r.sides.map(s => ({ team: s.team, seed: s.seed, wins: s.wins }));
+  });
+  ps.champion = R[R.length - 1].winner || null;
+  const info = ps.ksInfo;
+  ps.mvp = !ps.champion ? null : info && info.champion === ps.champion && info.mvp ? info.mvp : ps.mvp || null;
+  delete ps.ksInfo;
+  return ps;
+}
+
+/**
+ * 포스트시즌 자료 한 벌 (live.postseason). 위키 두 문서(못 받았으면 null)·정규시즌 순위표·연합뉴스 PS 전적·지난 자료를 합친다.
+ * 아무것도 없으면 null — 아직 가을야구 철이 아니다.
+ * @param {object} o { season, psText, ksText, standings, newsGames, prev, today }
+ */
+function buildPostseason(o) {
+  const season = Number(o.season);
+  const prev = o.prev && o.prev.season === season && Array.isArray(o.prev.rounds) ? o.prev : null;
+  const fetched = !!(o.psText || o.ksText);
+  const final = !!(o.standings && o.standings.final);
+  const news = (o.newsGames || []).filter(g => g && g.stage && String(g.date).slice(0, 4) === String(season));
+  if (!fetched && !prev && !final && !news.length) return null;
+  const ps = fetched ? parsePostseason(o.psText, o.ksText, season, o.today) : emptyPostseason(season);
+  if (prev) {
+    ps.rounds.forEach((r, i) => {
+      const pr = prev.rounds[i];
+      if (!pr || pr.key !== r.key || !Array.isArray(pr.sides)) return;
+      r.sides.forEach((s, k) => {
+        const ps2 = pr.sides[k];
+        if (s.team || !ps2 || !ps2.team || r.sides.some(x => x.team === ps2.team)) return;
+        s.team = ps2.team;
+        s.seed = s.seed || ps2.seed || null;
+        if (!Number.isInteger(s.bwins)) s.bwins = ps2.wins;
+      });
+      /* 이번에 위키를 못 받았으면 지난번에 정한 승자를 그대로 믿는다 */
+      if (!fetched && pr.winner) r.sides.forEach(s => { if (s.team === pr.winner) s.bold = true; });
+      (pr.games || []).forEach(g => putGame(r, g, RANK_PREV));
+    });
+    if (!ps.qualified.length && Array.isArray(prev.qualified)) ps.qualified = prev.qualified.slice();
+    if (prev.mvp && !ps.mvp) ps.mvp = prev.mvp;
+  }
+  seedPostseason(ps, o.standings);
+  /* 도전자를 아직 모르는 라운드(와일드카드가 끝나기 전의 준플레이오프)는 아는 팀과 맞는 경기를 일단 받아 두고,
+     settlePostseason 이 앞 라운드 승자로 자리를 채운 뒤 두 팀의 경기만 남긴다 */
+  news.forEach(g => addNewsGame(ps, g, RANK_NEWS));
+  return settlePostseason(ps);
+}
+
+const PS_KEYS = POSTSEASON.map(r => r.key);
+
+/** live.postseason 검사 */
+function validatePostseason(ps) {
+  const p = [];
+  if (!ps || typeof ps !== 'object') return ['포스트시즌 자료가 비어 있음'];
+  if (!Number.isInteger(ps.season)) p.push('시즌 연도');
+  if (!Array.isArray(ps.qualified) || ps.qualified.length > POSTSEASON_CUT || ps.qualified.some(t => !TEAMS.some(x => x.id === t))) p.push('진출팀 목록 이상');
+  if (!Array.isArray(ps.rounds) || ps.rounds.map(r => r.key).join() !== PS_KEYS.join()) return p.concat('라운드 구성 이상');
+  ps.rounds.forEach((r, i) => {
+    if (!Array.isArray(r.sides) || r.sides.length !== 2) { p.push(r.key + ' 두 팀이 아님'); return; }
+    r.sides.forEach(s => {
+      if (s.team !== null && !TEAMS.some(t => t.id === s.team)) p.push(r.key + ' 구단 이상 ' + s.team);
+      if (!(Number.isInteger(s.wins) && s.wins >= 0 && s.wins <= 9)) p.push(r.key + ' 승수 이상');
+      if (s.seed !== null && !(Number.isInteger(s.seed) && s.seed >= 1 && s.seed <= POSTSEASON_CUT)) p.push(r.key + ' 시드 이상');
+    });
+    if (r.sides[0].team && r.sides[0].team === r.sides[1].team) p.push(r.key + ' 같은 팀끼리');
+    if (r.winner !== null && !r.sides.some(s => s.team === r.winner)) p.push(r.key + ' 승자가 두 팀에 없음');
+    if (r.bestOf !== POSTSEASON[i].bestOf) p.push(r.key + ' 최대 경기 수 이상');
+    const ns = new Set();
+    (r.games || []).forEach(g => {
+      if (!Number.isInteger(g.n) || g.n < 1 || g.n > 9 || ns.has(g.n)) p.push(r.key + ' 경기 번호 이상');
+      ns.add(g.n);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(g.date || '') || Number(String(g.date).slice(0, 4)) !== ps.season) p.push(r.key + ' 경기 날짜 이상');
+      if (!r.sides.some(s => s.team === g.t1) || !r.sides.some(s => s.team === g.t2) || g.t1 === g.t2) p.push(r.key + ' 경기 팀이 시리즈 팀이 아님');
+      if (!(Number.isInteger(g.s1) && Number.isInteger(g.s2) && g.s1 >= 0 && g.s2 >= 0 && g.s1 < 60 && g.s2 < 60)) p.push(r.key + ' 경기 점수 이상');
+      if (g.home !== null && g.home !== g.t1 && g.home !== g.t2) p.push(r.key + ' 경기 홈 팀 이상');
+      if (!['wiki', 'news'].includes(g.src)) p.push(r.key + ' 경기 출처 이상');
+      if (g.url !== undefined && g.url !== null && !isHttpUrl(g.url)) p.push(r.key + ' 경기 기사 주소 이상');
+      ['venue', 'wp', 'lp', 'sv'].forEach(k => { if (g[k] !== null && g[k] !== undefined && (typeof g[k] !== 'string' || g[k].length > 30)) p.push(r.key + ' 경기 ' + k + ' 이상'); });
+    });
+    const next = ps.rounds[i + 1];
+    if (next && r.winner) {
+      r.sides.forEach(s => { if (s.team && s.team !== r.winner && next.sides.some(o => o.team === s.team)) p.push(r.key + ' 에서 진 팀이 다음 라운드에 있음'); });
+    }
+  });
+  if (ps.champion !== ps.rounds[ps.rounds.length - 1].winner) p.push('우승팀이 한국시리즈 승자와 다름');
+  if (ps.mvp !== null && ps.mvp !== undefined && (typeof ps.mvp !== 'string' || ps.mvp.length > 20)) p.push('MVP 이상');
+  return p;
+}
+
+/**
+ * 보여 줄 시즌. 올해 시즌 문서에 경기를 치른 순위표가 있으면 올해, 없으면(새 시즌 개막 전 겨울·초봄) 지난해.
+ * 문서를 받지 못했으면(texts 가 null) 지난 자료의 시즌을 그대로 쓴다 — 한 번 실패했다고 시즌이 뒤로 돌아가지 않게.
+ * @param {string|null|undefined} thisYearText  올해 「<연도> KBO League season」 원문 (문서가 없으면 null, 받기 실패면 undefined)
+ */
+function chooseSeason(thisYearText, now, prevSeason) {
+  const y = Number(kstDate(now || Date.now()).slice(0, 4));
+  if (thisYearText === undefined) return prevSeason || seasonFor(now || Date.now());
+  if (thisYearText) {
+    const st = parseStandings(thisYearText);
+    if (st.rows.length >= TEAMS.length && st.rows.some(r => r.games > 0)) return y;
+  }
+  return y - 1;
+}
+
 /** 문서의 {{KBO 타자|52605}}·{{KBO 투수|69446}} → KBO 공식 기록 페이지 번호. 위키백과에 적힌 번호라 KBO 를 긁지 않는다 */
 function parseKboIds(wikitext) {
   const t = String(wikitext || '');
@@ -863,8 +1236,17 @@ function parseFeed(xml, feed, now) {
 
 /* 연합뉴스 전적 기사 제목: "[프로야구 광주전적] kt 7-5 KIA" — 이긴 팀이 앞, 무승부면 같은 점수.
  * 홈 팀은 구장 이름으로 정한다(광주 = KIA). 잠실을 함께 쓰는 LG·두산끼리의 경기는 홈을 비워 둔다.
- * 포스트시즌 제목 모양은 아직 실제로 보지 못했다(2026-10-01) — 모르는 모양이면 null 로 두고 넘어간다. */
+ * 포스트시즌: "[프로야구 준PO 2차전 전적] kt 2-0 키움", "[프로야구 PO 2차전 전적] 삼성 7-3 한화" (지난 시즌 기사, 2026-10-02 검색으로 확인).
+ * 와일드카드·한국시리즈 제목은 찾지 못해 "WC"·"KS"·우리말 이름을 모두 받는다. 이런 제목은 stage(라운드)·n(몇 차전)을 달아 돌려주고
+ * 정규시즌 경기 목록이 아니라 포스트시즌 대진(buildPostseason)으로 간다. "N차전"을 더블헤더로 읽지 않는다. */
 const GAME_TITLE = /^\[\s*(?:프로야구|KBO)?\s*([^\]]*?)\s*전적\s*\]\s*(\S+)\s+(\d{1,2})\s*[-–:]\s*(\d{1,2})\s+(\S+)\s*$/;
+const PS_STAGE = [
+  ['wc', /와일드\s*카드|(?<![A-Za-z])WC(?![A-Za-z])/i],
+  ['spo', /준\s*(?:PO|플레이오프)/i],
+  ['po', /(?<![A-Za-z])PO(?![A-Za-z])|플레이오프/i],
+  ['ks', /(?<![A-Za-z])KS(?![A-Za-z])|한국\s*시리즈/i],
+  ['ps', /(?<![A-Za-z])PS(?![A-Za-z])|포스트\s*시즌|가을\s*야구/i],   // 라운드를 안 밝힌 제목 — 두 팀으로 라운드를 찾는다
+];
 
 function teamByTitleName(s) {
   const n = String(s || '').trim();
@@ -892,9 +1274,19 @@ function parseGameTitle(title, publishedAt, rawSummary) {
     if (day > Number(pub.slice(8, 10))) { mo -= 1; if (mo < 1) { mo = 12; y -= 1; } }
     date = ymd(y, mo, day) || pub;
   }
+  const pair = [t1.id, t2.id].sort().join('-');
+  const stage = (PS_STAGE.find(([, re]) => re.test(where)) || [null])[0];
+  if (stage) {
+    const nm = where.match(/(\d{1,2})\s*차전/);
+    const n = nm ? Number(nm[1]) : null;
+    return {
+      id: date + '-' + pair + '-' + stage + (n || ''), stage, n,
+      date, stadium: token, home,
+      t1: t1.id, s1: Number(m[3]), t2: t2.id, s2: Number(m[4]),
+    };
+  }
   const dhm = (where + ' ' + (rawSummary || '')).match(/([12])\s*차전/);
   const dh = dhm ? Number(dhm[1]) : 0;
-  const pair = [t1.id, t2.id].sort().join('-');
   return {
     id: date + '-' + pair + (dh ? '-' + dh : ''),
     date, stadium: token, home,
@@ -947,6 +1339,13 @@ function validateLive(live) {
       if (!(r.pct >= 0 && r.pct <= 1)) p.push('순위표: ' + r.team + ' 승률 이상');
     });
     if (!live.standings.source || !isHttpUrl(live.standings.source.url)) p.push('순위표 출처 주소 없음');
+    if (live.standings.final !== undefined && typeof live.standings.final !== 'boolean') p.push('순위표: final 이 참·거짓이 아님');
+  }
+  if (live.postseason) {
+    validatePostseason(live.postseason).forEach(x => p.push('포스트시즌: ' + x));
+    if (live.postseason.season !== live.season) p.push('포스트시즌: 시즌이 순위표 시즌과 다름');
+    const src = live.postseason.source;
+    if (src && !isHttpUrl(src.url)) p.push('포스트시즌 출처 주소 이상');
   }
   if (!Array.isArray(live.games)) p.push('games 가 배열이 아님');
   else {
@@ -1045,7 +1444,9 @@ module.exports = {
   articleNo, canonicalUrl, hashId, isHttpUrl,
   kstDate, seasonFor, parseFeedDate, ymd,
   matchBraces, findTemplate, splitTopLevel, templateParams, stripWiki, listItems,
-  parseWikiTable, extractTable, teamByWikiEn, parseStandings, computeStandings, validateStandings, statusOf,
+  parseWikiTable, extractTable, teamByWikiEn, parseStandings, computeStandings, validateStandings, statusOf, chooseSeason,
+  sectionOf, parseSeriesGames, parseBracket, parseQualified, parseKsInfo, parsePostseason, emptyPostseason,
+  seedPostseason, settlePostseason, buildPostseason, validatePostseason, gameWinner,
   groupKind, parseRosterLine, parseRoster, validateRoster,
   parseBirth, handOf, parseProfile, profileMatchesTeam, photoFileName, parseImageInfo, parseImageSize, FREE_LICENSE, IMAGE_HOST,
   teamsOf, isBaseball, topicsOf, isListArticle, parseFeed, parseGameTitle, teamByTitleName,

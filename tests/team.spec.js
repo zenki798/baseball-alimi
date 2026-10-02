@@ -18,7 +18,7 @@ test('구단 칩 10개(엠블럼), 고른 구단 머리: 이름·연고지·구�
   await expect(hero).toContainText('0.530');
   await expect(hero).toContainText('9.0 경기 뒤');
   await expect(hero).toContainText('6.0 경기 앞');
-  await expect(hero).toContainText('가을야구(포스트시즌) 진출이 확정됐습니다');
+  await expect(hero.locator('#teamPs')).toHaveText('가을야구 진출 확정 · 최종 2~5위 가능');   // 1위는 kt 로 정해져 2위부터
   expect(errors).toEqual([]);
   expect(calls.unexpected).toEqual([]);
 });
@@ -28,7 +28,7 @@ test('홈·원정 성적, 탈락 팀 안내, 한화는 큰 글자 로고', async
   await expect(page.locator('#teamHero .split')).toContainText('39승 2무 27패');
   await expect(page.locator('#teamHero .split')).toContainText('38승 1무 27패');
   await page.goto('/#team/hanwha');
-  await expect(page.locator('#teamHero')).toContainText('가을야구(포스트시즌) 진출이 무산됐습니다');
+  await expect(page.locator('#teamPs')).toHaveText('가을야구 탈락이 확정됐습니다');
   await expect(page.locator('#teamHero img.tl.wide')).toHaveAttribute('src', 'icons/teams/hanwha.png');
 });
 
