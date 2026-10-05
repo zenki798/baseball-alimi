@@ -115,6 +115,34 @@ test.describe('정규시즌 뒤 — 대진', () => {
     expect(errors).toEqual([]);
   });
 
+  test('가을야구 경기도 첫 화면 「경기 결과」(날짜별)와 팀 「최근 경기」에 라운드·차전과 함께 나온다, 순위표 최근 5경기는 정규시즌만', async ({ page }) => {
+    const errors = collectErrors(page);
+    await open(page, { live: FIX.buildLivePs('live'), myTeam: 'doosan', now: '2026-10-10T14:00:00Z' });
+    await expect(page.locator('#gamesDay')).toHaveText('10월 10일 (토)');
+    const g = page.locator('#gamesList .game');
+    await expect(g).toHaveCount(1);
+    await expect(g.locator('.side .nm')).toHaveText(['두산', 'LG']);   // 원정 왼쪽, 홈 오른쪽
+    await expect(g.locator('.score')).toHaveText('3 : 1');
+    await expect(g.locator('.where')).toHaveText('준PO 2차전 · 잠실야구장 · LG 홈');
+    /* 이전 날짜로 넘기면 와일드카드 → 정규시즌 마지막 경기 순서 */
+    await page.getByRole('button', { name: '이전 날짜' }).click();
+    await expect(page.locator('#gamesList .game .where')).toHaveText('준PO 1차전 · 잠실야구장 · LG 홈');
+    /* 내 팀 카드·팀 화면 최근 경기 */
+    const mine = page.locator('#myTeamCard .tg-row');
+    await expect(mine).toHaveCount(3);
+    await expect(mine.locator('.stage')).toHaveText(['준PO 2차전', '준PO 1차전', 'WC 2차전']);
+    await expect(mine.first().locator('.res')).toHaveText('승');
+    await expect(page.locator('tr[data-team="doosan"] .form .res')).toHaveText(['패', '무']);
+    await page.goto('/#team/doosan');
+    const rows = page.locator('#recentList .tg-row');
+    await expect(rows).toHaveCount(6);
+    await expect(rows.nth(3).locator('.stage')).toHaveText('WC 1차전');
+    await expect(rows.nth(3).locator('.sc')).toHaveText('5 : 3');
+    await expect(rows.nth(4).locator('.stage')).toHaveCount(0);   // 정규시즌 경기
+    expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1);
+    expect(errors).toEqual([]);
+  });
+
   test('우승: 우승 배너(상대·승패·MVP), 순위표의 "우승" 배지, 준우승·우승 한 줄, 와일드카드 어드밴티지 표시', async ({ page }) => {
     const errors = collectErrors(page);
     await open(page, { live: FIX.buildLivePs('done'), myTeam: 'samsung', now: '2026-11-01T03:00:00Z' });

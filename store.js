@@ -100,6 +100,31 @@
 
   function arr(x) { return Array.isArray(x) ? x : []; }
 
+  /**
+   * 가을야구 경기(live.postseason 의 라운드별 경기)를 정규시즌 경기와 같은 모양으로 — 날짜별 「경기 결과」와 구단 「최근 경기」에 함께 보이게.
+   * stage·stageName·n 이 붙는다. 위키 경기는 t1 이 원정·t2 가 홈이다(정규시즌 경기는 t1 이 이긴 팀) — 화면은 home 으로 좌우를 정한다.
+   */
+  function psGames(live) {
+    var ps = live && live.postseason;
+    if (!ps || typeof ps !== 'object' || ps.season !== live.season) return [];
+    var out = [];
+    arr(ps.rounds).forEach(function (r) {
+      var def = T.POSTSEASON.filter(function (d) { return r && d.key === r.key; })[0];
+      if (!def) return;
+      arr(r.games).forEach(function (x) {
+        if (!x || !BY_ID[x.t1] || !BY_ID[x.t2] || x.t1 === x.t2 || !/^\d{4}-\d{2}-\d{2}$/.test(x.date || '')) return;
+        if (typeof x.s1 !== 'number' || typeof x.s2 !== 'number' || !Number.isInteger(x.n)) return;
+        out.push({
+          id: x.date + '-' + def.key + x.n, date: x.date, stadium: typeof x.venue === 'string' ? x.venue : null,
+          home: x.home === x.t1 || x.home === x.t2 ? x.home : null,
+          t1: x.t1, s1: x.s1, t2: x.t2, s2: x.s2, source: /^https?:\/\//.test(x.url || '') ? x.url : null,
+          stage: def.key, stageName: def.short, n: x.n,
+        });
+      });
+    });
+    return out;
+  }
+
   function load() {
     var live = g.BaseballLive && typeof g.BaseballLive === 'object' ? g.BaseballLive : null;
     var pl = g.BaseballPlayers && typeof g.BaseballPlayers === 'object' ? g.BaseballPlayers : null;
@@ -107,7 +132,7 @@
     var rows = st ? st.rows.filter(function (r) { return BY_ID[r.team]; }).slice().sort(function (a, b) {
       return (a.rank - b.rank) || (b.pct - a.pct) || (b.win - a.win);
     }) : [];
-    var games = arr(live && live.games).filter(function (x) { return BY_ID[x.t1] && BY_ID[x.t2]; }).slice()
+    var games = arr(live && live.games).filter(function (x) { return BY_ID[x.t1] && BY_ID[x.t2]; }).concat(psGames(live))
       .sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
     var news = arr(live && live.news).filter(function (n) { return n && n.title && /^https?:\/\//i.test(n.url || ''); }).slice()
       .sort(function (a, b) { return new Date(b.publishedAt) - new Date(a.publishedAt); });
@@ -360,18 +385,23 @@
   }
   function gamesOn(date) { return S.games.filter(function (x) { return x.date === date; }); }
 
-  /** 한 구단 입장에서 본 경기 — { date, opp, my, their, result:'W'|'L'|'D', venue:'홈'|'원정'|'' } 최신순 */
-  function teamGames(id, n) {
+  /**
+   * 한 구단 입장에서 본 경기 — { date, opp, my, their, result:'W'|'L'|'D', venue:'홈'|'원정'|'', stage, stageName, n } 최신순.
+   * 가을야구 경기도 들어간다(stage 가 있다). regularOnly 면 정규시즌 경기만(순위표의 최근 5경기).
+   */
+  function teamGames(id, n, regularOnly) {
     var out = [];
     for (var i = 0; i < S.games.length && (!n || out.length < n); i++) {
       var x = S.games[i];
       if (x.t1 !== id && x.t2 !== id) continue;
+      if (regularOnly && x.stage) continue;
       var mine = x.t1 === id;
       var my = mine ? x.s1 : x.s2, their = mine ? x.s2 : x.s1;
       out.push({
         id: x.id, date: x.date, stadium: x.stadium || '', opp: mine ? x.t2 : x.t1, my: my, their: their,
         result: my > their ? 'W' : my < their ? 'L' : 'D',
         venue: x.home === id ? '홈' : x.home ? '원정' : '', source: x.source || null,
+        stage: x.stage || null, stageName: x.stageName || null, n: x.n || null,
       });
     }
     return out;

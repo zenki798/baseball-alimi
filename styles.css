@@ -451,6 +451,11 @@ main:focus { outline: none; }
 .tg-row .vs { flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px; }
 .tg-row .vs .nm { font-weight: 700; }
 .tg-row .venue { color: var(--faint); font-size: 12px; }
+.tg-row .vs .nm, .tg-row .stage { white-space: nowrap; }
+/* 가을야구 경기 표시 — 팀 「최근 경기」의 라운드 칩, 날짜별 「경기 결과」의 테두리 */
+.tg-row .stage { font-size: 11px; font-weight: 800; color: var(--accent); border: 1px solid currentColor; border-radius: 6px; padding: 0 5px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.game.ps { border-color: var(--accent); }
+.game.ps .where { color: var(--accent); font-weight: 700; }
 .tg-row .sc { font-weight: 800; font-variant-numeric: tabular-nums; }
 
 .staff { display: flex; flex-wrap: wrap; gap: 6px; }

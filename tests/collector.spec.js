@@ -274,6 +274,13 @@ test.describe('전적 기사 제목 → 경기 결과', () => {
     expect(g('[프로야구 광주전적] 가상팀 7-5 KIA', '2026-10-01T22:00:00+09:00', '')).toBeNull();
     expect(g('[프로야구 광주전적] KIA 7-5 KIA', '2026-10-01T22:00:00+09:00', '')).toBeNull();
   });
+
+  test('다른 종목 전적은 야구 경기가 아니다 — 프로농구 "삼성 81-76 kt"(2026-10-04 실제 제목, 이 한 건으로 수집이 하루 멈췄다)', () => {
+    expect(g('[프로농구 수원전적] 삼성 81-76 kt', '2026-10-04T18:35:47+09:00', '◇4일 전적(수원 kt소닉붐 아레나)')).toBeNull();
+    expect(g('[프로농구 창원전적] LG 80-70 KT', '2026-10-04T18:35:47+09:00', '◇4일 전적(창원체육관)')).toBeNull();
+    expect(g('[프로배구 대전전적] 삼성 3-1 한화', '2026-10-04T18:35:47+09:00', '')).toBeNull();
+    expect(g('[수원전적] kt 7-5 KIA', '2026-10-04T18:35:47+09:00', '')).toBeNull();   // 머리말이 없으면 종목을 모른다
+  });
 });
 
 test.describe('합치기 — 지난 자료 + 새 자료', () => {
@@ -320,6 +327,20 @@ test.describe('조립 — buildLive · buildPlayers (collect.js)', () => {
     expect(live.news[0].teams).toEqual(['kt']);          // 요약의 KIA 는 곁가지라 넣지 않는다
     /* id 는 추적 쿼리를 뗀 주소로 만든다 — 같은 기사면 늘 같은 id */
     expect(live.news[0].id).toBe(P.hashId('https://news.example.com/view/AKR1'));
+  });
+
+  test('이상한 경기 한 건은 그 경기만 빼고 나머지 자료는 그대로 쓴다 (한 건 때문에 전체를 버리지 않는다)', () => {
+    const odd = [{
+      feed: FEED, xml: rss([
+        { title: '[프로야구 수원전적] kt 81-76 삼성', date: 'Sun, 4 Oct 2026 18:35:47 +0900', desc: '▲ 수원전적(4일)' },
+        { title: '[프로야구 광주전적] kt 7-5 KIA', date: 'Thu, 1 Oct 2026 22:15:31 +0900', desc: '▲ 광주전적(1일)' },
+      ]),
+    }];
+    const logs = [];
+    const live = C.buildLive({ wikiText: W.STANDINGS, wikiRevision: '2026-10-01T14:00:00Z', feeds: odd, prev: null, now: new Date('2026-10-05T03:00:00Z'), season: 2026, log: (m) => logs.push(m) });
+    expect(live.games.map(x => x.id)).toEqual(['2026-10-01-kia-kt']);
+    expect(P.validateLive(live)).toEqual([]);
+    expect(logs.join('\n')).toContain('2026-10-04-kt-samsung');
   });
 
   test('이번 순위표가 검사에 걸리거나 기준일이 더 이르면 지난 순위표를 쓴다', () => {

@@ -148,6 +148,24 @@ test.describe('한국어 위키 「포스트시즌」·「한국시리즈」 문
     expect(P.validatePostseason(ps)).toEqual([]);
   });
 
+  test('무승부(가을야구는 15회까지 하고 비길 수 있다)도 경기로 센다 — 단 그날 지나서, 0:0 자리 표시는 아니다', () => {
+    const text = W.psArticle({
+      season: 2026, qualified: [],
+      wc: [G([1, '2026-10-06', 'doosan', 5, 'kia', 3]), G([2, '2026-10-07', 'doosan', 4, 'kia', 4])],
+    });
+    /* 경기 날(7일)에는 비긴 점수가 중계 중 편집일 수 있어 세지 않는다 */
+    expect(P.parsePostseason(text, null, 2026, '2026-10-07').rounds[0].games.map((x) => x.n)).toEqual([1]);
+    const ps = P.buildPostseason({ season: 2026, psText: text, ksText: null, standings: FINAL, today: '2026-10-08' });
+    const wc = ps.rounds[0];
+    expect(wc.games.map((x) => [x.n, x.s1, x.s2])).toEqual([[1, 5, 3], [2, 4, 4]]);
+    expect(wc.winner).toBe('kia');   // 4위는 비기기만 해도 올라간다
+    expect(wc.sides.map((s) => s.wins)).toEqual([0, 1]);
+    expect(P.validatePostseason(ps)).toEqual([]);
+    /* 팀만 채워 둔 0:0 은 지난 날짜여도 경기가 아니다 */
+    const blank = W.psArticle({ season: 2026, qualified: [], wc: [G([1, '2026-10-06', 'doosan', 0, 'kia', 0])] });
+    expect(P.parsePostseason(blank, null, 2026, '2026-10-08').rounds[0].games).toEqual([]);
+  });
+
   test('미리 적어 둔 앞날 경기, 지난해 날짜를 베껴 둔 칸은 세지 않는다', () => {
     const text = W.psArticle({ season: 2026, qualified: [], wc: [G([1, '2026-10-06', 'doosan', 5, 'kia', 3]), G([2, '2026-10-07', 'kia', 4, 'doosan', 1])] });
     expect(P.parsePostseason(text, null, 2026, '2026-10-06').rounds[0].games.map((g) => g.n)).toEqual([1]);

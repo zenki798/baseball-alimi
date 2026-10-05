@@ -378,7 +378,13 @@ function buildLive(o) {
     P.parseFeed(xml, feed, now).forEach(it => {
       if (feed.games) {
         const g = P.parseGameTitle(it.title, it.publishedAt, it.rawSummary);
-        if (g) { (g.stage ? psGames : games).push(Object.assign(g, { source: it.url })); return; }
+        if (g) {
+          /* 이상한 한 건은 그 경기만 뺀다. 2026-10-04 프로농구 점수(81-76) 한 건 때문에 검사가 자료 전체를 버려 하루 동안 갱신이 멈췄다 */
+          const bad = P.gameProblems(g);
+          if (bad.length) log('  경기 결과 한 건을 뺌 (' + bad.join(', ') + '): ' + g.id + ' — ' + it.title);
+          else (g.stage ? psGames : games).push(Object.assign(g, { source: it.url }));
+          return;
+        }
       }
       if (P.isListArticle(it.title) || !P.isBaseball(it.title, it.summary)) return;
       const id = P.hashId(P.canonicalUrl(it.url));

@@ -796,7 +796,7 @@ function parseCareerStats(wikitext, maxYear) {
  * - 시리즈 절(== 준플레이오프 ==)마다 "=== N차전 ===" 아래에 날짜 줄("2025년 10월 9일 - [[구장]]")과 {{라인스코어}}. 이긴 팀 옆에 ◄.
  *   한국시리즈 경기는 따로 있는 「<시즌>년 한국시리즈」 문서의 "== 한국시리즈 경기 ==" 절에 있다.
  * - 경기 전 문서에는 자리 표시("정규 시즌 5위팀", "10월 ??일", 점수 0)가 미리 들어 있다. 경기 중에 점수를 고쳐 가는 편집자도 있어서
- *   이긴 팀 표시(◄)가 있고 점수와 맞는 경기만 끝난 경기로 본다. 무승부는 연합뉴스 전적 기사로만 받는다.
+ *   이긴 팀 표시(◄)가 있고 점수와 맞는 경기만 끝난 경기로 본다. 무승부(◄ 없음)는 경기 다음 날부터 센다.
  * 해마다 문서 이름의 연도만 바뀐다(collect.js 가 시즌 연도로 부른다). 라운드 방식(최대 경기 수)은 teams.js POSTSEASON 한 곳에 있다.
  */
 const PS_HEADING = { wc: /^와일드카드\s*결정전$/, spo: /^준\s*플레이오프$/, po: /^플레이오프$/, ks: /^한국\s*시리즈$/ };
@@ -853,9 +853,13 @@ function parseSeriesGames(secText, season, today) {
     const home = psTeam(q['홈팀']);
     const as = Number(stripWiki(q['원정팀득점'] || '') || NaN);
     const hs = Number(stripWiki(q['홈팀득점'] || '') || NaN);
-    if (!away || !home || away === home || !Number.isInteger(as) || !Number.isInteger(hs) || as === hs) return;
+    if (!away || !home || away === home || !Number.isInteger(as) || !Number.isInteger(hs)) return;
     const mark = /◄/.test(q['원정팀'] || '') ? away : /◄/.test(q['홈팀'] || '') ? home : null;
-    if (mark !== (as > hs ? away : home)) return;   // 이긴 팀 표시가 없거나 점수와 어긋나면 아직 덜 적힌 경기
+    if (as === hs) {
+      /* 무승부 — 가을야구는 15회까지 하고 비길 수 있다. 비긴 경기에는 ◄ 가 없어서 경기 중 편집과 구별이 안 된다:
+         경기 날이 지난 뒤에만, 0:0(팀만 채운 자리 표시)이 아닐 때만 센다 */
+      if (mark || as === 0 || !today || date >= today) return;
+    } else if (mark !== (as > hs ? away : home)) return;   // 이긴 팀 표시가 없거나 점수와 어긋나면 아직 덜 적힌 경기
     const vm = plain.slice(dm.index + dm[0].length).match(/^\s*[-–—]\s*(.+)$/);
     const venue = vm ? truncate(vm[1].trim(), 30) : '';
     games.push({
@@ -1238,8 +1242,10 @@ function parseFeed(xml, feed, now) {
  * 홈 팀은 구장 이름으로 정한다(광주 = KIA). 잠실을 함께 쓰는 LG·두산끼리의 경기는 홈을 비워 둔다.
  * 포스트시즌: "[프로야구 준PO 2차전 전적] kt 2-0 키움", "[프로야구 PO 2차전 전적] 삼성 7-3 한화" (지난 시즌 기사, 2026-10-02 검색으로 확인).
  * 와일드카드·한국시리즈 제목은 찾지 못해 "WC"·"KS"·우리말 이름을 모두 받는다. 이런 제목은 stage(라운드)·n(몇 차전)을 달아 돌려주고
- * 정규시즌 경기 목록이 아니라 포스트시즌 대진(buildPostseason)으로 간다. "N차전"을 더블헤더로 읽지 않는다. */
-const GAME_TITLE = /^\[\s*(?:프로야구|KBO)?\s*([^\]]*?)\s*전적\s*\]\s*(\S+)\s+(\d{1,2})\s*[-–:]\s*(\d{1,2})\s+(\S+)\s*$/;
+ * 정규시즌 경기 목록이 아니라 포스트시즌 대진(buildPostseason)으로 간다. "N차전"을 더블헤더로 읽지 않는다.
+ * "프로야구"(또는 KBO) 머리말이 있어야 한다. 2026-10-04 프로농구가 개막하자 "[프로농구 수원전적] 삼성 81-76 kt" 가
+ * 야구 경기로 읽혔다(농구 삼성 썬더스·kt 소닉붐이 야구 구단 이름과 같다) — 머리말을 비워 둬도 되게 짰던 탓이다. */
+const GAME_TITLE = /^\[\s*(?:프로야구|KBO)\s*([^\]]*?)\s*전적\s*\]\s*(\S+)\s+(\d{1,2})\s*[-–:]\s*(\d{1,2})\s+(\S+)\s*$/;
 const PS_STAGE = [
   ['wc', /와일드\s*카드|(?<![A-Za-z])WC(?![A-Za-z])/i],
   ['spo', /준\s*(?:PO|플레이오프)/i],
@@ -1326,6 +1332,17 @@ const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 const TEAM_IDS = TEAMS.map(t => t.id);
 const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/;
 
+/** 경기 한 건 검사 — collect.js 가 새로 읽은 경기를 하나씩 거를 때도 쓴다(이상한 한 건 때문에 자료 전체를 버리지 않게) */
+function gameProblems(g) {
+  const p = [];
+  if (!g || typeof g !== 'object') return ['경기 자료 아님'];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(g.date || '')) p.push('경기 날짜 이상');
+  if (!TEAM_IDS.includes(g.t1) || !TEAM_IDS.includes(g.t2) || g.t1 === g.t2) p.push('경기 구단 이상');
+  if (!(Number.isInteger(g.s1) && Number.isInteger(g.s2) && g.s1 >= 0 && g.s2 >= 0 && g.s1 < 60 && g.s2 < 60)) p.push('경기 점수 이상');
+  if (g.home !== null && g.home !== undefined && g.home !== g.t1 && g.home !== g.t2) p.push('경기 홈 팀 이상');
+  return p;
+}
+
 function validateLive(live) {
   const p = [];
   if (!live || typeof live !== 'object') return ['자료가 비어 있음'];
@@ -1353,10 +1370,7 @@ function validateLive(live) {
     live.games.forEach(g => {
       if (ids.has(g.id)) p.push('경기 id 중복 ' + g.id);
       ids.add(g.id);
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(g.date)) p.push('경기 날짜 이상 ' + g.id);
-      if (!TEAM_IDS.includes(g.t1) || !TEAM_IDS.includes(g.t2) || g.t1 === g.t2) p.push('경기 구단 이상 ' + g.id);
-      if (!(Number.isInteger(g.s1) && Number.isInteger(g.s2) && g.s1 >= 0 && g.s2 >= 0 && g.s1 < 60 && g.s2 < 60)) p.push('경기 점수 이상 ' + g.id);
-      if (g.home !== null && g.home !== g.t1 && g.home !== g.t2) p.push('경기 홈 팀 이상 ' + g.id);
+      gameProblems(g).forEach(x => p.push(x + ' ' + g.id));
     });
   }
   if (!Array.isArray(live.news)) p.push('news 가 배열이 아님');
@@ -1451,5 +1465,5 @@ module.exports = {
   parseBirth, handOf, parseProfile, profileMatchesTeam, photoFileName, parseImageInfo, parseImageSize, FREE_LICENSE, IMAGE_HOST,
   teamsOf, isBaseball, topicsOf, isListArticle, parseFeed, parseGameTitle, teamByTitleName,
   mergeGames, mergeNews, NEWS_KEEP_HOURS, NEWS_MAX,
-  validateLive, validatePlayers,
+  validateLive, validatePlayers, gameProblems,
 };

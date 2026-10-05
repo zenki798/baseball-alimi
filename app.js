@@ -274,7 +274,7 @@
       if (i < B.POSTSEASON_CUT) cls.push('ps');
       if (i === B.POSTSEASON_CUT - 1) cls.push('cut');
       if (r.team === state.myTeam) cls.push('mine');
-      var form = B.teamGames(r.team, 5).slice().reverse();
+      var form = B.teamGames(r.team, 5, true).slice().reverse();   // 순위표는 정규시즌 경기만
       var badge = raceBadge(r.team);
       var teamCell = h('div', { class: 'team-cell' },
         teamLogo(r.team, 26),
@@ -367,12 +367,17 @@
     return v + ' 경기 ' + (gap > 0 ? '앞' : '뒤');
   }
 
+  /** 가을야구 경기 이름 "준PO 2차전" (정규시즌 경기면 빈 글자) */
+  function stageLabel(g) { return g.stage ? g.stageName + (g.n ? ' ' + g.n + '차전' : '') : ''; }
+
   function teamGameRow(g) {
     var opp = B.team(g.opp);
-    return h('li', { class: 'tg-row' },
+    return h('li', { class: 'tg-row' + (g.stage ? ' ps' : '') },
       h('span', { class: 'd' }, F.shortDay(g.date)),
       resChip(g.result),
-      h('span', { class: 'vs' }, teamLogo(g.opp, 20), h('span', { class: 'nm' }, opp.short + '전'), g.venue ? h('span', { class: 'venue' }, g.venue) : null),
+      h('span', { class: 'vs' }, teamLogo(g.opp, 20), h('span', { class: 'nm' }, opp.short + '전'),
+        g.stage ? h('span', { class: 'stage' }, stageLabel(g)) : null,
+        g.venue ? h('span', { class: 'venue' }, g.venue) : null),
       h('span', { class: 'sc' }, g.my + ' : ' + g.their));
   }
 
@@ -394,7 +399,7 @@
     var list = h('ul', { class: 'games', id: 'gamesList' });
     B.gamesOn(state.gamesDate).forEach(function (g) { list.appendChild(gameItem(g)); });
     el.appendChild(list);
-    el.appendChild(h('p', { class: 'note' }, '연합뉴스 전적 기사 제목에서 읽은 결과입니다. 경기 시작 전 일정·선발 투수는 아직 제공하지 않습니다.'));
+    el.appendChild(h('p', { class: 'note' }, '연합뉴스 전적 기사 제목에서 읽은 결과입니다(가을야구 경기는 위키백과 경기 기록과 함께). 경기 시작 전 일정·선발 투수는 아직 제공하지 않습니다.'));
     function swap() { el.parentNode.replaceChild(gamesCard(), el); }
     return el;
   }
@@ -410,12 +415,13 @@
       return h('div', { class: 'side' + (isRight ? ' right' : '') + (win ? ' win' : '') + (lose ? ' lose' : '') }, isRight ? kids.reverse() : kids);
     }
     var homeName = g.home ? B.team(g.home).short : '';
-    return h('li', { class: 'game', 'data-game': g.id },
+    return h('li', { class: 'game' + (g.stage ? ' ps' : ''), 'data-game': g.id },
       side(left, lw, rw, false),
       h('div', { class: 'score', 'aria-label': B.team(left.id).short + ' ' + left.s + ', ' + B.team(right.id).short + ' ' + right.s },
         h('span', { class: lw || left.s === right.s ? '' : 'lose' }, left.s), ' : ', h('span', { class: rw || left.s === right.s ? '' : 'lose' }, right.s)),
       side(right, rw, lw, true),
-      h('div', { class: 'where' }, (g.stadium ? g.stadium : '') + (homeName ? ' · ' + homeName + ' 홈' : '') + (left.s === right.s ? ' · 무승부' : '')));
+      h('div', { class: 'where' }, [stageLabel(g), g.stadium, homeName ? homeName + ' 홈' : '', left.s === right.s ? '무승부' : '']
+        .filter(Boolean).join(' · ')));
   }
 
   /* ---------- 가을야구 ----------
