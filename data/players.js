@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-12T09:48:20.431Z",
+  "generatedAt": "2026-10-13T09:28:42.927Z",
   "rosters": {
     "kia": {
       "asOf": "2026-09-17T06:58:57Z",
@@ -1116,7 +1116,7 @@ window.BaseballPlayers = {
       ]
     },
     "hanwha": {
-      "asOf": "2026-10-12T08:07:48Z",
+      "asOf": "2026-10-13T03:08:05Z",
       "source": {"name":"위키백과(한국어) 「틀:한화 이글스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%ED%95%9C%ED%99%94_%EC%9D%B4%EA%B8%80%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":null,"name":"류지현","wiki":"류지현"},
       "coaches": [
@@ -1191,7 +1191,6 @@ window.BaseballPlayers = {
         {"id":"hanwha-bzy5bg","number":null,"name":"이우재","wiki":"이우재 (야구 선수)","pos":"P","note":""},
         {"id":"hanwha-gzv9kn","number":null,"name":"김기중","wiki":"김기중 (야구 선수)","pos":"P","note":""},
         {"id":"hanwha-21kmbt","number":null,"name":"문승원","wiki":"문승원 (야구 선수)","pos":"P","note":""},
-        {"id":"hanwha-rfw4h6","number":null,"name":"와이스","wiki":"라이언와이스 (야구 선수)","pos":"P","note":""},
         {"id":"hanwha-1377vtw","number":13,"name":"최재훈","wiki":"최재훈 (야구 선수)","pos":"C","note":""},
         {"id":"hanwha-pnftbe","number":20,"name":"이재원","wiki":"이재원 (1988년)","pos":"C","note":""},
         {"id":"hanwha-mobk7k","number":32,"name":"장규현","wiki":"장규현","pos":"C","note":""},
@@ -1945,6 +1944,6 @@ window.BaseballPlayers = {
     {"wiki":"오재원 (2007년)","born":"2007-01-21","height":null,"weight":null,"throws":null,"bats":null,"positions":["좌익수","중견수","우익수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 1라운드 3순위(한화 이글스)","career":["한화 이글스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"이도훈 (2003년)","born":"2003-08-27","height":174,"weight":75,"throws":"우","bats":"우","positions":["외야수"],"nationality":"대한민국","proYear":2026,"draft":"육성선수 입단(한화 이글스)","career":["한화 이글스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"유민 (야구 선수)","born":"2003-01-20","height":188,"weight":86,"throws":"우","bats":"우","positions":["외야수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 2차 3라운드 21순위(한화 이글스)","career":["한화 이글스 (2026년 ~ 현재)"],"titles":[]},
-    {"wiki":"류지현","born":null,"height":176,"weight":70,"throws":"우","bats":"우","positions":["2루수","유격수"],"nationality":"대한민국","proYear":1994,"draft":"1994년 1차 지명(LG 트윈스)","career":["LG 트윈스 (1994년 ~ 2004년)","LG 트윈스 수비/주루코치 (2005년 ~ 2007년, 2012년 ~ 2015년)","LG 트윈스 작전/주루코치 (2009년 ~ 2011년, 2015년 ~ 2017년)","대한민국 야구 국가대표팀 내야/주루코치 (2017년 ~ 2018년)","LG 트윈스 수석코치 (2018년 ~ 2020년)","대한민국 야구 국가대표팀 작전코치 (2023년)","대한민국 야구 국가대표팀 수석·수비·주루코치 (2023년 ~ 2024년)","LG 트윈스 감독 (2021년 ~ 2022년)","대한민국 야구 국가대표팀 1군감독 (2025년 ~ 2026년)","한화 이글스 1군감독 (2027년 ~ 현재)"],"titles":["1994년 KBO 신인왕","1997년 올스타전 MVP","1998년 ~ 1999년 KBO 골든 글러브"],"photo":{"file":"류지현 감독.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg/330px-%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg","width":330,"height":425,"page":"https://commons.wikimedia.org/wiki/File:%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg/960px-%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg","width":960,"height":1238}}}
+    {"wiki":"류지현","born":null,"height":176,"weight":70,"throws":"우","bats":"우","positions":["2루수","유격수"],"nationality":"대한민국","proYear":1994,"draft":"1994년 1차 지명(LG 트윈스)","career":["LG 트윈스 (1994년 ~ 2004년)","LG 트윈스 수비/주루코치 (2005년 ~ 2007년, 2012년 ~ 2015년)","LG 트윈스 작전/주루코치 (2009년 ~ 2011년, 2015년 ~ 2017년)","대한민국 야구 국가대표팀 내야/주루코치 (2017년 ~ 2018년)","LG 트윈스 수석코치 (2018년 ~ 2020년)","대한민국 야구 국가대표팀 작전코치 (2023년)","대한민국 야구 국가대표팀 수석·수비·주루코치 (2023년 ~ 2024년)","LG 트윈스 1군 감독 (2021년 ~ 2022년)","대한민국 야구 국가대표팀 1군감독 (2025년 ~ 2026년)","한화 이글스 1군 감독 (2027년 ~ 현재)"],"titles":["1994년 KBO 신인왕","1997년 올스타전 MVP","1998년 ~ 1999년 KBO 골든 글러브"],"photo":{"file":"류지현 감독.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg/330px-%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg","width":330,"height":425,"page":"https://commons.wikimedia.org/wiki/File:%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg/960px-%EB%A5%98%EC%A7%80%ED%98%84_%EA%B0%90%EB%8F%85.jpg","width":960,"height":1238}}}
   ]
 };
