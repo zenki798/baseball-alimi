@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-13T09:28:42.927Z",
+  "generatedAt": "2026-10-14T06:14:05.673Z",
   "rosters": {
     "kia": {
       "asOf": "2026-09-17T06:58:57Z",
@@ -647,21 +647,21 @@ window.BaseballPlayers = {
       ]
     },
     "doosan": {
-      "asOf": "2026-10-09T13:42:31Z",
+      "asOf": "2026-10-13T11:06:15Z",
       "source": {"name":"위키백과(한국어) 「틀:두산 베어스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%EB%91%90%EC%82%B0_%EB%B2%A0%EC%96%B4%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":70,"name":"김원형","wiki":"김원형"},
       "coaches": [
         {"number":76,"name":"정재훈","wiki":"정재훈 (1980년)","role":"투수"},
         {"number":78,"name":"홍원기","wiki":"홍원기 (야구인)","role":"수석"},
         {"number":73,"name":"손시헌","wiki":"손시헌 (야구인)","role":"QC코치"},
-        {"number":71,"name":"이도형","wiki":"이도형 (야구인)","role":"수석"},
         {"number":74,"name":"조인성","wiki":"조인성 (야구인)","role":"배터리"},
         {"number":75,"name":"이진영","wiki":"이진영 (1980년)","role":"타격"},
         {"number":79,"name":"손지환","wiki":"손지환 (야구인)","role":"수비"},
-        {"number":80,"name":"조웅천","wiki":"조웅천","role":"불펜"},
         {"number":83,"name":"김동한","wiki":"김동한 (야구인)","role":"수비/작전"},
+        {"number":86,"name":"조중근","wiki":"조중근","role":"타격"},
         {"number":88,"name":"고토","wiki":"고토 고지 (야구인)","role":"타격"},
         {"number":89,"name":"임재현","wiki":"임재현 (1991년)","role":"주루"},
+        {"number":90,"name":"가득염","wiki":"가득염","role":"불펜"},
         {"number":null,"name":"천종민","wiki":"천종민","role":"-- 트레이닝"},
         {"number":null,"name":"조광희","wiki":"조광희 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"유종수","wiki":"유종수 (야구인)","role":"-- 트레이닝"}
