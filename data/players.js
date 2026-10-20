@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-19T20:14:44.476Z",
+  "generatedAt": "2026-10-20T19:19:13.181Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-16T15:48:13Z",
@@ -1094,7 +1094,7 @@ window.BaseballPlayers = {
       ]
     },
     "hanwha": {
-      "asOf": "2026-10-19T01:05:55Z",
+      "asOf": "2026-10-20T06:33:34Z",
       "source": {"name":"위키백과(한국어) 「틀:한화 이글스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%ED%95%9C%ED%99%94_%EC%9D%B4%EA%B8%80%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":76,"name":"류지현","wiki":"류지현"},
       "coaches": [
@@ -1106,7 +1106,7 @@ window.BaseballPlayers = {
         {"number":85,"name":"정현석","wiki":"정현석 (야구인)","role":"타격"},
         {"number":90,"name":"김정민","wiki":"김정민 (야구인)","role":"배터리"},
         {"number":91,"name":"추승우","wiki":"추승우","role":"작전/3루 주루"},
-        {"number":null,"name":"윤규진","wiki":"윤규진","role":"-- 불펜"},
+        {"number":74,"name":"윤규진","wiki":"윤규진","role":"불펜"},
         {"number":null,"name":"김연규","wiki":"김연규 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"김형욱","wiki":"김형욱 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"최우성","wiki":"최우성 (야구인)","role":"-- 트레이닝"}
@@ -1158,7 +1158,7 @@ window.BaseballPlayers = {
         {"id":"hanwha-12ldtyj","number":7,"name":"황희성","wiki":"황희성","pos":"P","note":""},
         {"id":"hanwha-1f4irbv","number":null,"name":"민주홍","wiki":"민주홍 (야구 선수)","pos":"P","note":""},
         {"id":"hanwha-yvf0r4","number":null,"name":"이대겸","wiki":"이대겸 (야구 선수)","pos":"P","note":""},
-        {"id":"hanwha-1n8z8zj","number":null,"name":"이준우","wiki":"이준우 (야구 선수,2007년)","pos":"P","note":""},
+        {"id":"hanwha-143u68q","number":null,"name":"이준우","wiki":"이준우 (2007년생 야구 선수)","pos":"P","note":""},
         {"id":"hanwha-vvsa23","number":null,"name":"박찬희","wiki":"박찬희 (야구 선수)","pos":"P","note":""},
         {"id":"hanwha-yas0n3","number":null,"name":"최수홍","wiki":"최수홍 (야구 선수)","pos":"P","note":""},
         {"id":"hanwha-15pl4k3","number":null,"name":"성재우","wiki":"성재우 (야구 선수)","pos":"P","note":""},
@@ -1198,7 +1198,6 @@ window.BaseballPlayers = {
         {"id":"hanwha-ebp47b","number":4,"name":"김준수","wiki":"김준수 (2007년)","pos":"IF","note":""},
         {"id":"hanwha-1nsm0c7","number":null,"name":"전현동","wiki":"전현동 (야구 선수)","pos":"IF","note":""},
         {"id":"hanwha-3iywvl","number":null,"name":"서승운","wiki":"서승운 (야구 선수)","pos":"IF","note":""},
-        {"id":"hanwha-1mhqskb","number":null,"name":"김혜성","wiki":"김혜성 (야구 선수)","pos":"IF","note":""},
         {"id":"hanwha-1jv5z62","number":9,"name":"임종찬","wiki":"임종찬","pos":"OF","note":""},
         {"id":"hanwha-1c8eqzl","number":10,"name":"이진영","wiki":"이진영 (1997년)","pos":"OF","note":""},
         {"id":"hanwha-rwumpi","number":17,"name":"권광민","wiki":"권광민","pos":"OF","note":""},
@@ -1216,12 +1215,7 @@ window.BaseballPlayers = {
         {"id":"hanwha-w3sbi3","number":113,"name":"김동휘","wiki":"김동휘 (2000년)","pos":"OF","note":"","dev":true},
         {"id":"hanwha-1r2qg1i","number":114,"name":"최윤호","wiki":"최윤호 (2000년)","pos":"OF","note":"","dev":true},
         {"id":"hanwha-mjbnik","number":5,"name":"이재환","wiki":"이재환 (2006년)","pos":"OF","note":""},
-        {"id":"hanwha-tnoi5c","number":6,"name":"박주진","wiki":"박주진","pos":"OF","note":""},
-        {"id":"hanwha-1s0fw42","number":null,"name":"빅터레이예스","wiki":"레이예스 (야구 선수)","pos":"OF","note":""},
-        {"id":"hanwha-c2geyr","number":null,"name":"구자욱","wiki":"구자욱  (야구 선수)","pos":"OF","note":""},
-        {"id":"hanwha-1ph8t6g","number":null,"name":"최지훈","wiki":"최지훈 (야구 선수)","pos":"OF","note":""},
-        {"id":"hanwha-1t2ly50","number":null,"name":"김호령","wiki":"김호령","pos":"OF","note":""},
-        {"id":"hanwha-n61oyl","number":null,"name":"홍창기","wiki":"홍창기","pos":"OF","note":""}
+        {"id":"hanwha-tnoi5c","number":6,"name":"박주진","wiki":"박주진","pos":"OF","note":""}
       ],
       "military": []
     }
@@ -1335,7 +1329,7 @@ window.BaseballPlayers = {
     {"wiki":"김민석 (2005년)","born":"2005-07-22","height":181,"weight":93,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 10라운드 97순위(kt wiz)","career":["kt wiz (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"한승택","born":"1994-06-21","height":174,"weight":83,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2013,"draft":"2013년 3라운드 23순위(한화 이글스)","career":["한화 이글스 (2013년)","KIA 타이거즈 (2014년 ~ 2025년)","경찰 야구단 (2014년 ~ 2015년)","kt wiz (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"강현우 (야구 선수)","born":"2001-04-13","height":180,"weight":90,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 2차 1라운드 2순위(kt wiz)","career":["kt wiz (2020년 ~ 현재)"],"titles":[]},
-    {"wiki":"오윤석 (야구 선수)","born":"1992-02-24","height":180,"weight":87,"throws":"우","bats":"우","positions":["유틸리티 내야수","투수"],"nationality":"대한민국","proYear":2014,"draft":"육성선수 입단(롯데 자이언츠)","career":["롯데 자이언츠 (2014년 ~ 2021년)","상무 야구단 (2016년 ~ 2017년)","kt wiz (2021년 ~ 현재)"],"titles":[]},
+    {"wiki":"오윤석 (야구 선수)","born":"1992-02-24","height":180,"weight":87,"throws":"우","bats":"우","positions":["유틸리티 내야수"],"nationality":"대한민국","proYear":2014,"draft":"육성선수 입단(롯데 자이언츠)","career":["롯데 자이언츠 (2014년 ~ 2021년)","상무 야구단 (2016년 ~ 2017년)","kt wiz (2021년 ~ 현재)"],"titles":[]},
     {"wiki":"강민성 (1999년)","born":"1999-12-08","height":180,"weight":85,"throws":"우","bats":"우","positions":["3루수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 2차 6라운드 51순위(kt wiz)","career":["kt wiz (2019년 ~ 현재)"],"titles":[]},
     {"wiki":"이강민 (야구 선수)","born":"2007-01-27","height":181,"weight":82,"throws":"우","bats":"우","positions":["유격수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 2라운드 16순위(kt wiz)","career":["kt wiz (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"김상수 (1990년생 야구 선수)","born":"1990-03-23","height":175,"weight":68,"throws":"우","bats":"우","positions":["유격수","2루수","3루수"],"nationality":"대한민국","proYear":2009,"draft":"2009년 1차 지명(삼성 라이온즈)","career":["삼성 라이온즈 (2009년 ~ 현재)"],"titles":["2014년 KBO 도루왕"]},
@@ -1827,7 +1821,7 @@ window.BaseballPlayers = {
     {"wiki":"원성준","born":"2000-03-31","height":181,"weight":80,"throws":"우","bats":"좌","positions":["중견수"],"nationality":"대한민국","proYear":2024,"draft":"육성선수 입단(키움 히어로즈)","career":["키움 히어로즈 (2024년 ~ 현재)"],"titles":[]},
     {"wiki":"이형종 (1989년)","born":"1989-06-07","height":183,"weight":87,"throws":"우","bats":"우","positions":["중견수","좌익수","우익수","1루수","투수"],"nationality":"대한민국","proYear":2008,"draft":"2008년 1차 지명(LG 트윈스)","career":["LG 트윈스 (2008년 ~ 2022년)","키움 히어로즈 (2023년 ~ 현재)"],"titles":[]},
     {"wiki":"박찬혁","born":"2003-04-25","height":180,"weight":87,"throws":"우","bats":"우","positions":["좌익수","중견수","우익수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 2차 1라운드 6순위(키움 히어로즈)","career":["키움 히어로즈 (2022년 ~ 현재)","질롱 코리아 (2022년 ~ 2023년)"],"titles":[]},
-    {"wiki":"박주홍 (2001년)","born":"2001-04-16","height":187,"weight":87,"throws":"좌","bats":"좌","positions":["좌익수","우익수","중견수","1루수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 1차 지명(키움 히어로즈)","career":["키움 히어로즈 (2020년 ~ 현재)","질롱 코리아 (2022년 ~ 2023년)"],"titles":[]},
+    {"wiki":"박주홍 (2001년)","born":"2001-04-16","height":187,"weight":87,"throws":"좌","bats":"좌","positions":["좌익수","중견수","우익수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 1차 지명(키움 히어로즈)","career":["키움 히어로즈 (2020년 ~ 현재)","질롱 코리아 (2022년 ~ 2023년)"],"titles":[]},
     {"wiki":"박채울","born":"2004-11-20","height":187,"weight":88,"throws":"우","bats":"우","positions":["외야수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 8라운드 79순위(키움 히어로즈)","career":["키움 히어로즈 (2024년 ~ 현재)"],"titles":[]},
     {"wiki":"박수종 (야구 선수)","born":"1999-02-25","height":179,"weight":82,"throws":"우","bats":"우","positions":["중견수","우익수","좌익수"],"nationality":"대한민국","proYear":2022,"draft":"육성선수 입단(키움 히어로즈)","career":["키움 히어로즈 (2022년 ~ 현재)"],"titles":[]},
     {"wiki":"설종진","born":"1973-06-16","height":177,"weight":75,"throws":"좌","bats":"좌","positions":["투수","외야수"],"nationality":"대한민국","proYear":1996,"draft":"1996년 2차 2라운드 11순위(현대 유니콘스)","career":["현대 유니콘스 (1996년 ~ 2001년)","현대 유니콘스 매니저 (2002년 ~ 2007년)","넥센 히어로즈 매니저 (2008년 ~ 2016년)","넥센 히어로즈 운영2팀 팀장 (2017년 ~ 2018년)","넥센 히어로즈 3군 투수코치 (2017년 ~ 2018년)","고양 히어로즈 감독 (2020년 ~ 2025년)","키움 히어로즈 감독 대행 (2025년)","키움 히어로즈 감독 (2026년 ~ 현재)"],"titles":[]},
