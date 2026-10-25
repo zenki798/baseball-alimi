@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-24T14:35:40.847Z",
+  "generatedAt": "2026-10-25T14:24:35.488Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-23T07:44:06Z",
@@ -1053,7 +1053,7 @@ window.BaseballPlayers = {
       ]
     },
     "hanwha": {
-      "asOf": "2026-10-23T07:19:36Z",
+      "asOf": "2026-10-25T04:28:22Z",
       "source": {"name":"위키백과(한국어) 「틀:한화 이글스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%ED%95%9C%ED%99%94_%EC%9D%B4%EA%B8%80%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":76,"name":"류지현","wiki":"류지현"},
       "coaches": [
@@ -1065,7 +1065,7 @@ window.BaseballPlayers = {
         {"number":85,"name":"정현석","wiki":"정현석 (야구인)","role":"타격"},
         {"number":90,"name":"김정민","wiki":"김정민 (야구인)","role":"배터리"},
         {"number":91,"name":"추승우","wiki":"추승우","role":"작전/3루 주루"},
-        {"number":74,"name":"윤규진","wiki":"윤규진","role":"불펜"},
+        {"number":null,"name":"윤규진","wiki":"윤규진","role":"-- 불펜"},
         {"number":null,"name":"김연규","wiki":"김연규 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"김형욱","wiki":"김형욱 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"최우성","wiki":"최우성 (야구인)","role":"-- 트레이닝"},
