@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-26T14:19:40.384Z",
+  "generatedAt": "2026-10-27T10:38:22.887Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-23T07:44:06Z",
