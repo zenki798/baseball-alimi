@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-28T13:01:17.969Z",
+  "generatedAt": "2026-10-29T16:11:49.648Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-23T07:44:06Z",
@@ -230,7 +230,7 @@ window.BaseballPlayers = {
       ]
     },
     "lg": {
-      "asOf": "2026-10-23T07:16:43Z",
+      "asOf": "2026-10-29T07:29:39Z",
       "source": {"name":"위키백과(한국어) 「틀:LG 트윈스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ALG_%ED%8A%B8%EC%9C%88%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":85,"name":"염경엽","wiki":"염경엽"},
       "coaches": [
@@ -239,15 +239,16 @@ window.BaseballPlayers = {
         {"number":75,"name":"김용의","wiki":"김용의","role":"1루/외야수비"},
         {"number":76,"name":"윤진호","wiki":"윤진호 (야구인)","role":"수비"},
         {"number":81,"name":"김정준","wiki":"김정준 (야구인)","role":"수석"},
-        {"number":82,"name":"최경철","wiki":"최경철","role":"배터리"},
-        {"number":83,"name":"정수성","wiki":"정수성 (야구인)","role":"작전"},
+        {"number":null,"name":"--","wiki":null,"role":"배터리"},
+        {"number":null,"name":"--","wiki":null,"role":"작전"},
         {"number":88,"name":"김용일","wiki":"김용일 (야구인)","role":"수석트레이닝"},
-        {"number":93,"name":"장진용","wiki":"장진용","role":"불펜"},
+        {"number":null,"name":"--","wiki":null,"role":"불펜"},
         {"number":96,"name":"배요한","wiki":"배요한","role":"컨디셔닝"},
         {"number":97,"name":"모창민","wiki":"모창민","role":"타격보조"},
         {"number":98,"name":"박종곤","wiki":"박종곤","role":"컨디셔닝"},
         {"number":1,"name":"안영태","wiki":"안영태","role":"컨디셔닝"},
-        {"number":2,"name":"고정환","wiki":"고정환","role":"컨디셔닝"}
+        {"number":2,"name":"고정환","wiki":"고정환","role":"컨디셔닝"},
+        {"number":null,"name":"손혁","wiki":"손혁","role":"-- 투수"}
       ],
       "players": [
         {"id":"lg-e5umev","number":0,"name":"김유영","wiki":"김유영 (야구 선수)","pos":"P","note":""},
@@ -709,7 +710,7 @@ window.BaseballPlayers = {
       ]
     },
     "lotte": {
-      "asOf": "2026-10-28T07:48:23Z",
+      "asOf": "2026-10-29T10:41:50Z",
       "source": {"name":"위키백과(한국어) 「틀:롯데 자이언츠 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%EB%A1%AF%EB%8D%B0_%EC%9E%90%EC%9D%B4%EC%96%B8%EC%B8%A0_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":null,"name":"이동욱","wiki":"이동욱 (야구인)"},
       "coaches": [
@@ -725,6 +726,7 @@ window.BaseballPlayers = {
         {"number":90,"name":"정경배","wiki":"정경배","role":"1군 타격코치"},
         {"number":93,"name":"용덕한","wiki":"용덕한","role":"배터리"},
         {"number":94,"name":"이성곤","wiki":"이성곤","role":"타격보조"},
+        {"number":null,"name":"김민성","wiki":"김민성 (1988년)","role":"-- 수비"},
         {"number":null,"name":"허문회","wiki":"허문회","role":"-- 수석"}
       ],
       "players": [
@@ -1334,7 +1336,7 @@ window.BaseballPlayers = {
     {"wiki":"백승현 (야구 선수)","born":"1995-05-26","height":183,"weight":78,"throws":"우","bats":"우","positions":["투수","유격수","3루수","2루수"],"nationality":"대한민국","proYear":2015,"draft":"2015년 2차 3라운드 30순위(LG 트윈스)","career":["LG 트윈스 (2015년 ~ 현재)","질롱 코리아 (2019년 ~ 2020년)"],"titles":[]},
     {"wiki":"양우진 (야구 선수)","born":"2007-06-05","height":190,"weight":98,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 1라운드 8순위(LG 트윈스)","career":["LG 트윈스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"김영우 (야구 선수)","born":"2005-01-14","height":187,"weight":88,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2025,"draft":"2025년 1라운드 10순위(LG 트윈스)","career":["LG 트윈스 (2025년 ~ 현재)"],"titles":[]},
-    {"wiki":"존 케네디 (야구 선수)","born":"1994-09-20","height":201,"weight":111,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"호주","proYear":2017,"draft":"국제 아마추어 자유계약 / (애틀랜타 브레이브스)","career":["LG 트윈스 (2026년 ~ 현재)"],"titles":[],"photo":{"file":"Jon Kennedy 横浜DeNAベイスターズ vs 2026 World Baseball Classic Team Australia 横浜スタジアム 2026年2月28日の横浜 202602281432 DSCN1378.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg/330px-Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg","width":330,"height":235,"page":"https://commons.wikimedia.org/wiki/File:Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg","author":"ウィ貴公子","license":"CC BY-SA 4.0","licenseUrl":"https://creativecommons.org/licenses/by-sa/4.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg/960px-Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg","width":960,"height":682}}},
+    {"wiki":"존 케네디 (야구 선수)","born":"1994-09-20","height":201,"weight":111,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"호주","proYear":2017,"draft":"국제 아마추어 자유계약 / (애틀랜타 브레이브스)","career":["멜버른 에이시스 (2012년 ~ 2024년)","애틀랜타 브레이브스 산하 마이너 (2016년 ~ 2019년)","도치기 골든 브레이브스 (2019년)","흐로시 브르노 (2022년)","캔버라 캐벌리 (2024년 ~ 2025년)","브리즈번 밴디츠 (2025년 ~ 현재)","LG 트윈스 (2026년 ~ 현재)"],"titles":[],"photo":{"file":"Jon Kennedy 横浜DeNAベイスターズ vs 2026 World Baseball Classic Team Australia 横浜スタジアム 2026年2月28日の横浜 202602281432 DSCN1378.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg/330px-Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg","width":330,"height":235,"page":"https://commons.wikimedia.org/wiki/File:Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg","author":"ウィ貴公子","license":"CC BY-SA 4.0","licenseUrl":"https://creativecommons.org/licenses/by-sa/4.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg/960px-Jon_Kennedy_%E6%A8%AA%E6%B5%9CDeNA%E3%83%99%E3%82%A4%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BA_vs_2026_World_Baseball_Classic_Team_Australia_%E6%A8%AA%E6%B5%9C%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%A2%E3%83%A0_2026%E5%B9%B42%E6%9C%8828%E6%97%A5%E3%81%AE%E6%A8%AA%E6%B5%9C_202602281432_DSCN1378.jpg","width":960,"height":682}}},
     {"wiki":"이믿음","born":"2000-07-18","height":188,"weight":86,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2021,"draft":"2021년 2차 4라운드 37순위(LG 트윈스)","career":["LG 트윈스(2024년~현재)"],"titles":[]},
     {"wiki":"허준혁 (1999년)","born":"1999-07-02","height":180,"weight":85,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 2차 5라운드 47순위(LG 트윈스)","career":["LG 트윈스 (2022년 ~ 현재)","상무 야구단 (2023년 ~ 2024년)"],"titles":[]},
     {"wiki":"박동원","born":"1990-04-07","height":178,"weight":92,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2009,"draft":"2009년 2차 3라운드 19순위(히어로즈)","career":["넥센 히어로즈 (2009년~2018년)","상무 야구단 (2011년~2012년)","키움 히어로즈 (2019년~2022년)","KIA 타이거즈 (2022년)","LG 트윈스(2023년~현재)"],"titles":[],"photo":{"file":"Park Dong-Won.png","caption":"박동원(2022년)","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Park_Dong-Won.png/330px-Park_Dong-Won.png","width":330,"height":373,"page":"https://commons.wikimedia.org/wiki/File:Park_Dong-Won.png","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/2/2c/Park_Dong-Won.png","width":960,"height":1085}}},
@@ -1428,7 +1430,7 @@ window.BaseballPlayers = {
     {"wiki":"이우성","born":"1994-07-17","height":182,"weight":95,"throws":"우","bats":"우","positions":["좌익수","중견수","우익수","지명타자"],"nationality":"대한민국","proYear":2013,"draft":"2013년 2라운드 15순위(두산 베어스)","career":["두산 베어스 (2013년 ~ 2018년)","상무 야구단 (2014년 ~ 2015년)","NC 다이노스 (2018년 ~ 2019년, 2025년 ~ 현재)","KIA 타이거즈 (2019년 ~ 2025년)"],"titles":[],"photo":{"file":"Lee Woo-sung, Doosan Bears, December 2, 2012.jpg","caption":"두산 베어스 시절","thumb":"https://upload.wikimedia.org/wikipedia/commons/d/d2/Lee_Woo-sung%2C_Doosan_Bears%2C_December_2%2C_2012.jpg","width":330,"height":490,"page":"https://commons.wikimedia.org/wiki/File:Lee_Woo-sung,_Doosan_Bears,_December_2,_2012.jpg","author":"덕문 - 티스토리 / Tistory","license":"CC BY-SA 4.0","licenseUrl":"https://creativecommons.org/licenses/by-sa/4.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/d/d2/Lee_Woo-sung%2C_Doosan_Bears%2C_December_2%2C_2012.jpg","width":960,"height":1424}}},
     {"wiki":"오장한","born":"2002-05-20","height":185,"weight":90,"throws":"우","bats":"좌","positions":["우익수","좌익수"],"nationality":"대한민국","proYear":2021,"draft":"2021년 2차 3라운드 26순위(NC 다이노스)","career":["NC 다이노스 (2021년 ~ 현재)","질롱 코리아 (2022년 ~ 2023년)","상무 야구단 (2024년 ~ 2025년)"],"titles":[]},
     {"wiki":"김범준 (야구 선수)","born":"2000-04-20","height":183,"weight":90,"throws":"우","bats":"우","positions":["외야수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 5라운드 47순위(NC 다이노스)","career":["NC 다이노스 (2019년 ~ 현재)"],"titles":[]},
-    {"wiki":"손아섭","born":"1988-03-18","height":174,"weight":84,"throws":"우","bats":"좌","positions":["좌익수","중견수","우익수"],"nationality":"대한민국","proYear":2007,"draft":"2007년 2차 4순위(롯데 자이언츠)","career":["롯데 자이언츠 (2007년 ~ 2021년)","NC 다이노스 (2022년 ~ 2025년, 2027년 ~ 현재)","한화 이글스 (2025년 ~ 2026년)","두산 베어스 (2026년)"],"titles":["2011년~2014년, 2017년 KBO 골든글러브 외야수 부문","2012년~2013년, 2017년, 2023년 KBO 안타왕","2023년 KBO 타율왕, 골든 글러브 지명타자 부문"],"photo":{"file":"Son Ah-Seop2023.webp","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Son_Ah-Seop2023.webp/330px-Son_Ah-Seop2023.webp","width":330,"height":330,"page":"https://commons.wikimedia.org/wiki/File:Son_Ah-Seop2023.webp","author":"Dinosnc","license":"CC0","licenseUrl":"http://creativecommons.org/publicdomain/zero/1.0/deed.en","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Son_Ah-Seop2023.webp/960px-Son_Ah-Seop2023.webp","width":960,"height":960}}},
+    {"wiki":"손아섭","born":"1988-03-18","height":174,"weight":84,"throws":"우","bats":"좌","positions":["좌익수","우익수","지명타자"],"nationality":"대한민국","proYear":2007,"draft":"2007년 2차 4순위(롯데 자이언츠)","career":["롯데 자이언츠 (2007년 ~ 2021년)","NC 다이노스 (2022년 ~ 2025년, 2027년 ~ 현재)","한화 이글스 (2025년 ~ 2026년)","두산 베어스 (2026년)"],"titles":["2011년~2014년, 2017년 KBO 골든글러브 외야수 부문","2012년~2013년, 2017년, 2023년 KBO 안타왕","2023년 KBO 타율왕, 골든 글러브 지명타자 부문"],"photo":{"file":"Son Ah-Seop2023.webp","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Son_Ah-Seop2023.webp/330px-Son_Ah-Seop2023.webp","width":330,"height":330,"page":"https://commons.wikimedia.org/wiki/File:Son_Ah-Seop2023.webp","author":"Dinosnc","license":"CC0","licenseUrl":"http://creativecommons.org/publicdomain/zero/1.0/deed.en","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Son_Ah-Seop2023.webp/960px-Son_Ah-Seop2023.webp","width":960,"height":960}}},
     {"wiki":"이호준 (1976년)","born":"1976-02-08","height":187,"weight":95,"throws":"우","bats":"우","positions":["1루수","지명타자","외야수","투수"],"nationality":"대한민국","proYear":1994,"draft":"1994년 고졸우선지명(해태 타이거즈)","career":["해태 타이거즈(1994년~2000년)","SK 와이번스(2000년~2012년)","NC 다이노스(2013년~2017년)","요미우리 자이언츠 연수코치(2018년)","NC 다이노스 타격코치(2019년~2021년)","LG 트윈스 타격코치(2022년~2023년)","LG 트윈스 QC코치(2024년)","NC 다이노스 감독 (2025년 ~ 현재)"],"titles":[],"photo":{"file":"이호준 코치.jpg","caption":"NC 다이노스 선수 시절","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/%EC%9D%B4%ED%98%B8%EC%A4%80_%EC%BD%94%EC%B9%98.jpg/330px-%EC%9D%B4%ED%98%B8%EC%A4%80_%EC%BD%94%EC%B9%98.jpg","width":330,"height":413,"page":"https://commons.wikimedia.org/wiki/File:%EC%9D%B4%ED%98%B8%EC%A4%80_%EC%BD%94%EC%B9%98.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/e/e4/%EC%9D%B4%ED%98%B8%EC%A4%80_%EC%BD%94%EC%B9%98.jpg","width":960,"height":1200}}},
     {"wiki":"김민 (야구 선수)","born":"1999-04-14","height":185,"weight":88,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 1차 지명(kt wiz)","career":["kt wiz (2018년 ~ 2024년)","상무 야구단 (2021년 ~ 2022년)","SSG 랜더스 (2025년 ~ 현재)"],"titles":[]},
     {"wiki":"이기순 (야구 선수)","born":"2003-05-14","height":174,"weight":74,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 2차 5라운드 42순위(SSG 랜더스)","career":["SSG 랜더스 (2022년 ~ 현재)","상무 야구단 (2024년 ~ 2025년)"],"titles":[]},
