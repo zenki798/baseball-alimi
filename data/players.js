@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-10-29T16:11:49.648Z",
+  "generatedAt": "2026-10-30T14:14:50.546Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-23T07:44:06Z",
@@ -353,7 +353,7 @@ window.BaseballPlayers = {
       ]
     },
     "nc": {
-      "asOf": "2026-10-28T08:01:29Z",
+      "asOf": "2026-10-30T07:12:58Z",
       "source": {"name":"위키백과(한국어) 「틀:NC 다이노스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ANC_%EB%8B%A4%EC%9D%B4%EB%85%B8%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":27,"name":"이호준","wiki":"이호준 (1976년)"},
       "coaches": [
@@ -710,7 +710,7 @@ window.BaseballPlayers = {
       ]
     },
     "lotte": {
-      "asOf": "2026-10-29T10:41:50Z",
+      "asOf": "2026-10-29T16:47:13Z",
       "source": {"name":"위키백과(한국어) 「틀:롯데 자이언츠 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%EB%A1%AF%EB%8D%B0_%EC%9E%90%EC%9D%B4%EC%96%B8%EC%B8%A0_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":null,"name":"이동욱","wiki":"이동욱 (야구인)"},
       "coaches": [
@@ -723,7 +723,7 @@ window.BaseballPlayers = {
         {"number":83,"name":"이병규","wiki":"이병규 (1983년)","role":"타격"},
         {"number":86,"name":"이현곤","wiki":"이현곤","role":"수비"},
         {"number":89,"name":"문규현","wiki":"문규현 (야구인)","role":"수비코치"},
-        {"number":90,"name":"정경배","wiki":"정경배","role":"1군 타격코치"},
+        {"number":null,"name":"--","wiki":null,"role":"1군 타격코치"},
         {"number":93,"name":"용덕한","wiki":"용덕한","role":"배터리"},
         {"number":94,"name":"이성곤","wiki":"이성곤","role":"타격보조"},
         {"number":null,"name":"김민성","wiki":"김민성 (1988년)","role":"-- 수비"},
