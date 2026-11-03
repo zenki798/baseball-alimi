@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-02T17:27:18.845Z",
+  "generatedAt": "2026-11-03T15:14:18.347Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-23T07:44:06Z",
@@ -353,7 +353,7 @@ window.BaseballPlayers = {
       ]
     },
     "nc": {
-      "asOf": "2026-10-30T07:12:58Z",
+      "asOf": "2026-11-03T07:43:08Z",
       "source": {"name":"위키백과(한국어) 「틀:NC 다이노스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ANC_%EB%8B%A4%EC%9D%B4%EB%85%B8%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":27,"name":"이호준","wiki":"이호준 (1976년)"},
       "coaches": [
@@ -387,7 +387,7 @@ window.BaseballPlayers = {
         {"id":"nc-1c0qulo","number":38,"name":"홍재문","wiki":"홍재문","pos":"P","note":""},
         {"id":"nc-bfs1fv","number":40,"name":"이준혁","wiki":"이준혁 (야구 선수)","pos":"P","note":""},
         {"id":"nc-odr1a0","number":41,"name":"류진욱","wiki":"류진욱","pos":"P","note":""},
-        {"id":"nc-16i9gym","number":43,"name":"신영우","wiki":"신영우","pos":"P","note":""},
+        {"id":"nc-11a2pwp","number":43,"name":"신영우","wiki":"신영우 (야구 선수)","pos":"P","note":""},
         {"id":"nc-z7v869","number":45,"name":"송명기","wiki":"송명기","pos":"P","note":""},
         {"id":"nc-yilrts","number":46,"name":"손주환","wiki":"손주환 (야구 선수)","pos":"P","note":""},
         {"id":"nc-pgq2os","number":47,"name":"조민석","wiki":"조민석","pos":"P","note":""},
@@ -1380,7 +1380,7 @@ window.BaseballPlayers = {
     {"wiki":"홍재문","born":"2004-07-09","height":183,"weight":95,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2025,"draft":"2025년 4라운드 37순위(NC 다이노스)","career":["NC 다이노스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"이준혁 (야구 선수)","born":"2003-06-30","height":184,"weight":87,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 2차 1라운드 10순위(NC 다이노스)","career":["NC 다이노스 (2022년 ~ 현재)"],"titles":[]},
     {"wiki":"류진욱","born":"1996-10-10","height":189,"weight":88,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2015,"draft":"2015년 2차 2라운드 21순위(NC 다이노스)","career":["NC 다이노스 (2015년 ~ 현재)"],"titles":[]},
-    {"wiki":"신영우","born":"2004-04-21","height":182,"weight":86,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2023,"draft":"2023년 1라운드 4순위(NC 다이노스)","career":["NC 다이노스 (2023년 ~ 현재)","WBSC U-18 야구 월드컵 국가대표 (2022년)"],"titles":[]},
+    {"wiki":"신영우 (야구 선수)","born":"2004-04-21","height":182,"weight":86,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2023,"draft":"2023년 1라운드 4순위(NC 다이노스)","career":["NC 다이노스 (2023년 ~ 현재)","WBSC U-18 야구 월드컵 국가대표 (2022년)"],"titles":[]},
     {"wiki":"송명기","born":"2000-08-09","height":191,"weight":93,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 2차 1라운드 7순위(NC 다이노스)","career":["NC 다이노스 (2019년 ~ 현재)","상무 야구단 (2024년 ~ 2026년)"],"titles":[]},
     {"wiki":"손주환 (야구 선수)","born":"2002-01-05","height":177,"weight":85,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 6라운드 55순위(NC 다이노스)","career":["NC 다이노스 (2024년 ~ 현재)"],"titles":[]},
     {"wiki":"조민석","born":"1998-12-21","height":180,"weight":81,"throws":"우","bats":"양","positions":["투수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 2차 9라운드 90순위(NC 다이노스)","career":["NC 다이노스(2022년~)","상무 야구단(2024년~2025년)"],"titles":[]},
