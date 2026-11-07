@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-06T18:31:10.233Z",
+  "generatedAt": "2026-11-07T16:38:34.065Z",
   "rosters": {
     "kia": {
       "asOf": "2026-10-23T07:44:06Z",
@@ -1283,7 +1283,7 @@ window.BaseballPlayers = {
     {"wiki":"오윤석 (야구 선수)","born":"1992-02-24","height":180,"weight":87,"throws":"우","bats":"우","positions":["유틸리티 내야수"],"nationality":"대한민국","proYear":2014,"draft":"육성선수 입단(롯데 자이언츠)","career":["롯데 자이언츠 (2014년 ~ 2021년)","상무 야구단 (2016년 ~ 2017년)","kt wiz (2021년 ~ 현재)"],"titles":[]},
     {"wiki":"강민성 (1999년)","born":"1999-12-08","height":180,"weight":85,"throws":"우","bats":"우","positions":["3루수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 2차 6라운드 51순위(kt wiz)","career":["kt wiz (2019년 ~ 현재)"],"titles":[]},
     {"wiki":"이강민 (야구 선수)","born":"2007-01-27","height":181,"weight":82,"throws":"우","bats":"우","positions":["유격수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 2라운드 16순위(kt wiz)","career":["kt wiz (2026년 ~ 현재)"],"titles":[]},
-    {"wiki":"김상수 (1990년생 야구 선수)","born":"1990-03-23","height":175,"weight":68,"throws":"우","bats":"우","positions":["유격수","2루수","3루수"],"nationality":"대한민국","proYear":2009,"draft":"2009년 1차 지명(삼성 라이온즈)","career":["삼성 라이온즈 (2009년 ~ 현재)"],"titles":["2014년 KBO 도루왕"]},
+    {"wiki":"김상수 (1990년생 야구 선수)","born":"1990-03-23","height":175,"weight":68,"throws":"우","bats":"우","positions":["유격수","2루수","3루수"],"nationality":"대한민국","proYear":2009,"draft":"2009년 1차 지명(삼성 라이온즈)","career":["삼성 라이온즈 (2009년 ~ 2022년)","kt wiz (2023년 ~ 현재)"],"titles":["2014년 KBO 도루왕"]},
     {"wiki":"류현인","born":"2000-11-08","height":174,"weight":80,"throws":"우","bats":"좌","positions":["3루수","2루수","유격수"],"nationality":"대한민국","proYear":2023,"draft":"2023년 7라운드 70순위(kt wiz)","career":["kt wiz (2023년 ~ 현재)","상무 피닉스 야구단 (2024년 ~ 2025년)"],"titles":[]},
     {"wiki":"허경민","born":"1990-08-26","height":176,"weight":69,"throws":"우","bats":"우","positions":["3루수","2루수","유격수"],"nationality":"대한민국","proYear":2009,"draft":"2009년 2차 1라운드 7순위(두산 베어스)","career":["두산 베어스 (2009년 ~ 2024년)","경찰 야구단 (2010년 ~ 2011년)","kt wiz (2025년 ~ 현재)"],"titles":["2018년 KBO 골든글러브 3루수 부문, 조아제약 프로야구대상 조아 바이톤상","2023년 KBO 수비상"],"photo":{"file":"2016 10 04 단상인사 1 허경민.jpg","caption":"두산 베어스 시절","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/2016_10_04_%EB%8B%A8%EC%83%81%EC%9D%B8%EC%82%AC_1_%ED%97%88%EA%B2%BD%EB%AF%BC.jpg/330px-2016_10_04_%EB%8B%A8%EC%83%81%EC%9D%B8%EC%82%AC_1_%ED%97%88%EA%B2%BD%EB%AF%BC.jpg","width":330,"height":390,"page":"https://commons.wikimedia.org/wiki/File:2016_10_04_%EB%8B%A8%EC%83%81%EC%9D%B8%EC%82%AC_1_%ED%97%88%EA%B2%BD%EB%AF%BC.jpg","author":"WiiWii","license":"CC BY 4.0","licenseUrl":"https://creativecommons.org/licenses/by/4.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/e/e0/2016_10_04_%EB%8B%A8%EC%83%81%EC%9D%B8%EC%82%AC_1_%ED%97%88%EA%B2%BD%EB%AF%BC.jpg","width":960,"height":1135}}},
     {"wiki":"안인산","born":"2001-02-27","height":181,"weight":95,"throws":"우","bats":"우","positions":["내야수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 2차 3라운드 21순위(NC 다이노스)","career":["NC 다이노스 (2020년 ~ 2025년)","kt wiz (2026년 ~ 현재)"],"titles":[]},
