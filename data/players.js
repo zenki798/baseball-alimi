@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-12T11:53:48.559Z",
+  "generatedAt": "2026-11-13T08:03:34.879Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-11T06:50:33Z",
@@ -120,17 +120,15 @@ window.BaseballPlayers = {
       ]
     },
     "kt": {
-      "asOf": "2026-11-12T04:10:06Z",
+      "asOf": "2026-11-13T03:33:37Z",
       "source": {"name":"위키백과(한국어) 「틀:KT 위즈 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3AKT_%EC%9C%84%EC%A6%88_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":71,"name":"이강철","wiki":"이강철 (야구인)"},
       "coaches": [
         {"number":77,"name":"김태한","wiki":"김태한 (야구인)","role":"수석"},
-        {"number":73,"name":"박경수","wiki":"박경수 (야구 선수)","role":"QC"},
-        {"number":null,"name":"--","wiki":null,"role":""},
+        {"number":73,"name":"박경수","wiki":"박경수 (야구 선수)","role":"타격"},
         {"number":75,"name":"장재중","wiki":"장재중","role":"배터리"},
         {"number":76,"name":"박기혁","wiki":"박기혁","role":"외야/주루"},
         {"number":78,"name":"김호","wiki":"김호 (야구인)","role":"수비"},
-        {"number":81,"name":"유한준","wiki":"유한준 (야구인)","role":"타격"},
         {"number":82,"name":"제춘모","wiki":"제춘모","role":"투수"},
         {"number":84,"name":"최만호","wiki":"최만호","role":"작전/3루 주루"},
         {"number":87,"name":"전병두","wiki":"전병두","role":"불펜"}
@@ -480,7 +478,7 @@ window.BaseballPlayers = {
       ]
     },
     "ssg": {
-      "asOf": "2026-11-12T05:26:58Z",
+      "asOf": "2026-11-13T03:14:15Z",
       "source": {"name":"위키백과(한국어) 「틀:SSG 랜더스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ASSG_%EB%9E%9C%EB%8D%94%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":71,"name":"이숭용","wiki":"이숭용"},
       "coaches": [
