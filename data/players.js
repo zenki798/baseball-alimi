@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-13T08:03:34.879Z",
+  "generatedAt": "2026-11-14T09:28:48.435Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-11T06:50:33Z",
@@ -120,7 +120,7 @@ window.BaseballPlayers = {
       ]
     },
     "kt": {
-      "asOf": "2026-11-13T03:33:37Z",
+      "asOf": "2026-11-14T01:48:59Z",
       "source": {"name":"위키백과(한국어) 「틀:KT 위즈 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3AKT_%EC%9C%84%EC%A6%88_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":71,"name":"이강철","wiki":"이강철 (야구인)"},
       "coaches": [
@@ -823,7 +823,7 @@ window.BaseballPlayers = {
       ]
     },
     "samsung": {
-      "asOf": "2026-11-10T14:46:44Z",
+      "asOf": "2026-11-14T03:59:24Z",
       "source": {"name":"위키백과(한국어) 「틀:삼성 라이온즈 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%EC%82%BC%EC%84%B1_%EB%9D%BC%EC%9D%B4%EC%98%A8%EC%A6%88_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":70,"name":"박진만","wiki":"박진만"},
       "coaches": [
@@ -835,7 +835,8 @@ window.BaseballPlayers = {
         {"number":92,"name":"정병곤","wiki":"정병곤","role":"주루"},
         {"number":93,"name":"이종욱","wiki":"이종욱 (야구인)","role":"외야/작전"},
         {"number":78,"name":"이흥련","wiki":"이흥련","role":"배터리"},
-        {"number":98,"name":"채상병","wiki":"채상병","role":"야수총괄"}
+        {"number":98,"name":"채상병","wiki":"채상병","role":"야수총괄"},
+        {"number":null,"name":"백정현","wiki":"백정현","role":"-- 투수"}
       ],
       "players": [
         {"id":"samsung-jx7t45","number":1,"name":"이호성","wiki":"이호성 (2004년)","pos":"P","note":""},
@@ -847,7 +848,6 @@ window.BaseballPlayers = {
         {"id":"samsung-1eqdlyp","number":26,"name":"이승현","wiki":"이승현 (1991년)","pos":"P","note":""},
         {"id":"samsung-dfhpjg","number":27,"name":"김태훈","wiki":"김태훈 (1992년생 야구 선수)","pos":"P","note":""},
         {"id":"samsung-jumo1f","number":28,"name":"이승민","wiki":"이승민 (2000년)","pos":"P","note":""},
-        {"id":"samsung-1y65hbx","number":29,"name":"백정현","wiki":"백정현","pos":"P","note":""},
         {"id":"samsung-1j7rcdv","number":37,"name":"최하늘","wiki":"최하늘","pos":"P","note":""},
         {"id":"samsung-woecy0","number":38,"name":"임기영","wiki":"임기영","pos":"P","note":""},
         {"id":"samsung-mntpss","number":41,"name":"이호범","wiki":"이호범 (야구 선수)","pos":"P","note":""},
@@ -1636,13 +1636,12 @@ window.BaseballPlayers = {
     {"wiki":"이호성 (2004년)","born":"2004-08-14","height":184,"weight":87,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2023,"draft":"2023년 1라운드 8순위(삼성 라이온즈)","career":["삼성 라이온즈 (2023년 ~ )","브리즈번 밴디츠 (2025년)"],"titles":[]},
     {"wiki":"육선엽","born":"2005-07-13","height":190,"weight":90,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 1라운드 4순위(삼성 라이온즈)","career":["삼성 라이온즈 (2024년 ~ 현재)","브리즈번 밴디츠 (2024년)"],"titles":[],"photo":{"file":"육선엽 선수.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/%EC%9C%A1%EC%84%A0%EC%97%BD_%EC%84%A0%EC%88%98.jpg/330px-%EC%9C%A1%EC%84%A0%EC%97%BD_%EC%84%A0%EC%88%98.jpg","width":330,"height":383,"page":"https://commons.wikimedia.org/wiki/File:%EC%9C%A1%EC%84%A0%EC%97%BD_%EC%84%A0%EC%88%98.jpg","author":"LionsTV","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/%EC%9C%A1%EC%84%A0%EC%97%BD_%EC%84%A0%EC%88%98.jpg/960px-%EC%9C%A1%EC%84%A0%EC%97%BD_%EC%84%A0%EC%88%98.jpg","width":960,"height":1114}}},
     {"wiki":"최지광","born":"1998-03-13","height":173,"weight":88,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2017,"draft":"2017년 2차 1라운드 9순위(삼성 라이온즈)","career":["삼성 라이온즈 (2017년 ~ 현재)","상무 야구단 (2022년 ~ 2023년)"],"titles":[]},
-    {"wiki":"이재희 (야구 선수)","born":"2001-10-11","height":187,"weight":88,"throws":"우","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2021,"draft":"2021년 2차 1라운드 3순위(삼성 라이온즈)","career":["삼성 라이온즈 (2021년 ~ 현재)","상무 야구단 (2023년 ~ 2024년)"],"titles":[]},
+    {"wiki":"이재희 (야구 선수)","born":"2001-10-11","height":187,"weight":88,"throws":"우","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2021,"draft":"2021년 2차 1라운드 3순위(삼성 라이온즈)","career":["삼성 라이온즈 (2021년 ~ 현재)","상무 야구단 (2023년 ~ 2024년)"],"titles":[],"photo":{"file":"이재희 선수.jpg","caption":"이재희(2021년)","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/%EC%9D%B4%EC%9E%AC%ED%9D%AC_%EC%84%A0%EC%88%98.jpg/330px-%EC%9D%B4%EC%9E%AC%ED%9D%AC_%EC%84%A0%EC%88%98.jpg","width":330,"height":391,"page":"https://commons.wikimedia.org/wiki/File:%EC%9D%B4%EC%9E%AC%ED%9D%AC_%EC%84%A0%EC%88%98.jpg","author":"LionsTV","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/d/d8/%EC%9D%B4%EC%9E%AC%ED%9D%AC_%EC%84%A0%EC%88%98.jpg","width":960,"height":1139}}},
     {"wiki":"원태인","born":"2000-04-06","height":183,"weight":92,"throws":"우","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 1차 지명(삼성 라이온즈)","career":["삼성 라이온즈 (2019년~2026)"],"titles":[],"photo":{"file":"Won Tae-in (ZGbHvfTK0V4).png","caption":"원태인 (2025년)","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Won_Tae-in_%28ZGbHvfTK0V4%29.png/330px-Won_Tae-in_%28ZGbHvfTK0V4%29.png","width":330,"height":330,"page":"https://commons.wikimedia.org/wiki/File:Won_Tae-in_(ZGbHvfTK0V4).png","author":"LionsTV","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/f/f6/Won_Tae-in_%28ZGbHvfTK0V4%29.png","width":960,"height":960}}},
     {"wiki":"최원태","born":"1997-01-07","height":184,"weight":104,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2015,"draft":"2015년 1차 지명(넥센 히어로즈)","career":["넥센 히어로즈 (2015년 ~ 2018년)","키움 히어로즈 (2019년 ~ 2023년)","LG 트윈스 (2023년 ~ 2024년)","삼성 라이온즈 (2025년 ~ 현재)"],"titles":[],"photo":{"file":"최원태 선수.jpg","caption":"키움 히어로즈 시절","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/%EC%B5%9C%EC%9B%90%ED%83%9C_%EC%84%A0%EC%88%98.jpg/330px-%EC%B5%9C%EC%9B%90%ED%83%9C_%EC%84%A0%EC%88%98.jpg","width":330,"height":426,"page":"https://commons.wikimedia.org/wiki/File:%EC%B5%9C%EC%9B%90%ED%83%9C_%EC%84%A0%EC%88%98.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/%EC%B5%9C%EC%9B%90%ED%83%9C_%EC%84%A0%EC%88%98.jpg/960px-%EC%B5%9C%EC%9B%90%ED%83%9C_%EC%84%A0%EC%88%98.jpg","width":960,"height":1240}}},
     {"wiki":"이승현 (1991년)","born":"1991-11-20","height":181,"weight":92,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2010,"draft":"2010년 2라운드 16순위(LG 트윈스)","career":["LG 트윈스 (2010년 ~ 2016년)","삼성 라이온즈 (2017년 ~ 현재)"],"titles":[]},
     {"wiki":"김태훈 (1992년생 야구 선수)","born":"1992-03-02","height":187,"weight":101,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2012,"draft":"2012년 2차 9라운드 79순위(넥센 히어로즈)","career":["넥센 히어로즈 (2012년 ~ 2018년)","경찰 야구단 (2016년 ~ 2017년)","키움 히어로즈 (2019년 ~ 2023년)","삼성 라이온즈 (2023년 ~ 현재)"],"titles":[]},
     {"wiki":"이승민 (2000년)","born":"2000-08-26","height":172,"weight":79,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 2차 4라운드 35순위(삼성 라이온즈)","career":["삼성 라이온즈 (2020년 ~ 현재)","상무 야구단 (2022년 ~ 2023년)"],"titles":[]},
-    {"wiki":"백정현","born":"1987-07-13","height":184,"weight":80,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2007,"draft":"2007년 2차 1라운드 8순위(삼성 라이온즈)","career":["삼성 라이온즈 (2007년~)"],"titles":[]},
     {"wiki":"최하늘","born":"1999-03-26","height":190,"weight":99,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 2차 7라운드 63순위(롯데 자이언츠)","career":["롯데 자이언츠 (2018년 ~ 2021년)","상무 야구단 (2020년 ~ 2021년)","삼성 라이온즈 (2022년 ~ 현재)"],"titles":[]},
     {"wiki":"임기영","born":"1993-04-16","height":184,"weight":86,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2012,"draft":"2012년 2라운드 18순위(한화 이글스)","career":["한화 이글스 (2012년 ~ 2014년)","KIA 타이거즈 (2015년 ~ 2025년)","상무 야구단 (2015년 ~ 2016년)","삼성 라이온즈 (2026년 ~ 현재)"],"titles":["2017년 조아제약 프로야구 대상 기량 발전상"]},
     {"wiki":"양창섭","born":"1999-09-22","height":182,"weight":85,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 2차 1라운드 2순위(삼성 라이온즈)","career":["삼성 라이온즈 (2018년 ~ 현재)"],"titles":[],"photo":{"file":"양창섭 선수.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/%EC%96%91%EC%B0%BD%EC%84%AD_%EC%84%A0%EC%88%98.jpg/330px-%EC%96%91%EC%B0%BD%EC%84%AD_%EC%84%A0%EC%88%98.jpg","width":330,"height":390,"page":"https://commons.wikimedia.org/wiki/File:%EC%96%91%EC%B0%BD%EC%84%AD_%EC%84%A0%EC%88%98.jpg","author":"LionsTV","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/%EC%96%91%EC%B0%BD%EC%84%AD_%EC%84%A0%EC%88%98.jpg/960px-%EC%96%91%EC%B0%BD%EC%84%AD_%EC%84%A0%EC%88%98.jpg","width":960,"height":1133}}},
