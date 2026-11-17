@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-16T07:20:59.623Z",
+  "generatedAt": "2026-11-17T09:15:42.857Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-11T06:50:33Z",
@@ -229,7 +229,7 @@ window.BaseballPlayers = {
       ]
     },
     "lg": {
-      "asOf": "2026-11-14T11:26:18Z",
+      "asOf": "2026-11-17T05:43:44Z",
       "source": {"name":"위키백과(한국어) 「틀:LG 트윈스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ALG_%ED%8A%B8%EC%9C%88%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":85,"name":"염경엽","wiki":"염경엽"},
       "coaches": [
@@ -247,6 +247,7 @@ window.BaseballPlayers = {
         {"number":98,"name":"박종곤","wiki":"박종곤","role":"컨디셔닝"},
         {"number":1,"name":"안영태","wiki":"안영태","role":"컨디셔닝"},
         {"number":2,"name":"고정환","wiki":"고정환","role":"컨디셔닝"},
+        {"number":null,"name":"김재걸","wiki":"김재걸","role":""},
         {"number":null,"name":"손혁","wiki":"손혁","role":"-- 투수"},
         {"number":null,"name":"유원상","wiki":"유원상","role":"-- 투수"},
         {"number":null,"name":"최성훈","wiki":"최성훈 (야구 선수)","role":"-- 투수"}
