@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-19T07:58:32.384Z",
+  "generatedAt": "2026-11-20T07:22:34.012Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-19T01:56:03Z",
@@ -478,7 +478,7 @@ window.BaseballPlayers = {
       ]
     },
     "ssg": {
-      "asOf": "2026-11-19T01:55:11Z",
+      "asOf": "2026-11-20T00:01:58Z",
       "source": {"name":"위키백과(한국어) 「틀:SSG 랜더스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ASSG_%EB%9E%9C%EB%8D%94%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":71,"name":"이숭용","wiki":"이숭용"},
       "coaches": [
@@ -578,8 +578,7 @@ window.BaseballPlayers = {
         {"id":"ssg-1uf5nc8","number":100,"name":"이원준","wiki":"이원준 (2006년)","pos":"OF","note":"","dev":true},
         {"id":"ssg-unvmnc","number":101,"name":"박세직","wiki":"박세직 (야구 선수)","pos":"OF","note":"","dev":true},
         {"id":"ssg-1w5z0kt","number":106,"name":"이승빈","wiki":"이승빈 (야구 선수)","pos":"OF","note":"","dev":true},
-        {"id":"ssg-1qijqdb","number":null,"name":"정현승","wiki":"정현승","pos":"OF","note":""},
-        {"id":"ssg-17v9imd","number":null,"name":"하인즈","wiki":"리스 하인즈","pos":"OF","note":""}
+        {"id":"ssg-1qijqdb","number":null,"name":"정현승","wiki":"정현승","pos":"OF","note":""}
       ],
       "military": [
         {"name":"백준서","wiki":"백준서 (야구 선수)"},
@@ -1047,12 +1046,12 @@ window.BaseballPlayers = {
       ]
     },
     "hanwha": {
-      "asOf": "2026-11-11T23:29:17Z",
+      "asOf": "2026-11-20T04:20:09Z",
       "source": {"name":"위키백과(한국어) 「틀:한화 이글스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%ED%95%9C%ED%99%94_%EC%9D%B4%EA%B8%80%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":76,"name":"류지현","wiki":"류지현"},
       "coaches": [
         {"number":62,"name":"강인권","wiki":"강인권","role":"1군/수석코치"},
-        {"number":null,"name":"--","wiki":null,"role":"투수"},
+        {"number":74,"name":"진종길","wiki":"진종길","role":"수비"},
         {"number":80,"name":"고동진","wiki":"고동진 (야구인)","role":"3루 주루"},
         {"number":83,"name":"김우석","wiki":"김우석 (1975년)","role":"수비"},
         {"number":84,"name":"이지풍","wiki":"이지풍","role":"트레이닝"},
@@ -1064,8 +1063,7 @@ window.BaseballPlayers = {
         {"number":null,"name":"김연규","wiki":"김연규 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"김형욱","wiki":"김형욱 (야구인)","role":"-- 트레이닝"},
         {"number":null,"name":"최우성","wiki":"최우성 (야구인)","role":"-- 트레이닝"},
-        {"number":null,"name":"김광삼","wiki":"김광삼","role":"-- 투수"},
-        {"number":null,"name":"진종길","wiki":"진종길","role":"-- 수비"}
+        {"number":null,"name":"김광삼","wiki":"김광삼","role":"-- 투수"}
       ],
       "players": [
         {"id":"hanwha-hhoh8t","number":1,"name":"문동주","wiki":"문동주 (야구 선수)","pos":"P","note":""},
@@ -1136,7 +1134,7 @@ window.BaseballPlayers = {
         {"id":"hanwha-xm5mt4","number":126,"name":"김지현","wiki":"김지현 (야구 선수)","pos":"C","note":"","dev":true},
         {"id":"hanwha-1k04x1x","number":121,"name":"정용익","wiki":"정용익 (야구 선수)","pos":"C","note":"","dev":true},
         {"id":"hanwha-1s8jzy7","number":129,"name":"최재영","wiki":"최재영 (야구 선수1999년)","pos":"C","note":"","dev":true},
-        {"id":"hanwha-dwqnpz","number":null,"name":"김우성","wiki":"김우성 (야구 선수)","pos":"C","note":""},
+        {"id":"hanwha-dwqnpz","number":135,"name":"김우성","wiki":"김우성 (야구 선수)","pos":"C","note":"","dev":true},
         {"id":"hanwha-jq0ezv","number":2,"name":"정민규","wiki":"정민규 (야구 선수)","pos":"IF","note":""},
         {"id":"hanwha-1fejuly","number":3,"name":"최원준","wiki":"최원준 (2004년)","pos":"IF","note":""},
         {"id":"hanwha-1w3wbln","number":4,"name":"이지성","wiki":"이지성 (야구 선수)","pos":"IF","note":""},
