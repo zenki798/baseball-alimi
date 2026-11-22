@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-21T03:59:52.044Z",
+  "generatedAt": "2026-11-22T00:22:28.634Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-19T01:56:03Z",
@@ -705,7 +705,7 @@ window.BaseballPlayers = {
       ]
     },
     "lotte": {
-      "asOf": "2026-11-20T08:05:13Z",
+      "asOf": "2026-11-21T23:53:53Z",
       "source": {"name":"위키백과(한국어) 「틀:롯데 자이언츠 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%EB%A1%AF%EB%8D%B0_%EC%9E%90%EC%9D%B4%EC%96%B8%EC%B8%A0_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":70,"name":"이동욱","wiki":"이동욱 (야구인)"},
       "coaches": [
@@ -788,7 +788,7 @@ window.BaseballPlayers = {
         {"id":"lotte-1tm3u94","number":52,"name":"노진혁","wiki":"노진혁","pos":"IF","note":""},
         {"id":"lotte-1cauqrd","number":53,"name":"박승욱","wiki":"박승욱 (야구 선수)","pos":"IF","note":""},
         {"id":"lotte-9ayls","number":60,"name":"박찬형","wiki":"박찬형 (야구 선수)","pos":"IF","note":""},
-        {"id":"lotte-1bcpkae","number":63,"name":"이서준","wiki":"이서준 (2007년생 야구 선수)","pos":"IF","note":""},
+        {"id":"lotte-1egc5lg","number":63,"name":"이서준","wiki":"이서준 (야구 선수)","pos":"IF","note":""},
         {"id":"lotte-1pl1077","number":108,"name":"박지훈","wiki":"박지훈 (2002년)","pos":"IF","note":"","dev":true},
         {"id":"lotte-13knptc","number":114,"name":"이지훈","wiki":"이지훈 (2003년 1월)","pos":"IF","note":"","dev":true},
         {"id":"lotte-zl85yf","number":119,"name":"홍서연","wiki":"홍서연 (야구 선수)","pos":"IF","note":"","dev":true},
@@ -1613,7 +1613,7 @@ window.BaseballPlayers = {
     {"wiki":"노진혁","born":"1989-07-15","height":184,"weight":80,"throws":"우","bats":"좌","positions":["유격수","3루수","1루수"],"nationality":"대한민국","proYear":2012,"draft":"2012년 특별우선지명 20순위(NC 다이노스)","career":["NC 다이노스 (2012년 ~ 2022년)","상무 야구단 (2016년 ~ 2017년)","롯데 자이언츠 (2023년 ~ 현재)"],"titles":[],"photo":{"file":"노진혁 선수.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/%EB%85%B8%EC%A7%84%ED%98%81_%EC%84%A0%EC%88%98.jpg/330px-%EB%85%B8%EC%A7%84%ED%98%81_%EC%84%A0%EC%88%98.jpg","width":330,"height":447,"page":"https://commons.wikimedia.org/wiki/File:%EB%85%B8%EC%A7%84%ED%98%81_%EC%84%A0%EC%88%98.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/%EB%85%B8%EC%A7%84%ED%98%81_%EC%84%A0%EC%88%98.jpg/960px-%EB%85%B8%EC%A7%84%ED%98%81_%EC%84%A0%EC%88%98.jpg","width":960,"height":1301}}},
     {"wiki":"박승욱 (야구 선수)","born":"1992-12-04","height":184,"weight":83,"throws":"우","bats":"좌","positions":["유틸리티 내야수"],"nationality":"대한민국","proYear":2012,"draft":"2012년 3라운드 31순위(SK 와이번스)","career":["SK 와이번스 (2012년 ~ 2019년)","kt wiz (2019년 ~ 2021년)","롯데 자이언츠 (2022년 ~ 현재)"],"titles":[]},
     {"wiki":"박찬형 (야구 선수)","born":"2002-10-17","height":175,"weight":78,"throws":"우","bats":"좌","positions":["내야수"],"nationality":null,"proYear":2025,"draft":"육성선수 입단(롯데 자이언츠)","career":["롯데 자이언츠 (2025년 ~ 현재)"],"titles":[]},
-    {"wiki":"이서준 (2007년생 야구 선수)","born":"2007-10-10","height":183,"weight":85,"throws":"우","bats":"우","positions":["내야수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 3라운드 24순위(롯데 자이언츠)","career":["NC 다이노스 (2026년 ~ 현재)"],"titles":[]},
+    {"wiki":"이서준 (야구 선수)","born":"2007-10-10","height":183,"weight":85,"throws":"우","bats":"우","positions":["내야수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 3라운드 24순위(롯데 자이언츠)","career":["NC 다이노스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"강성우 (2005년)","born":"2005-04-12","height":184,"weight":77,"throws":"우","bats":"우","positions":["내야수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 5라운드 43순위(롯데 자이언츠)","career":["롯데 자이언츠 (2024년 ~ 현재)","상무 야구단 (2025년 ~ 2026년)"],"titles":[]},
     {"wiki":"황성빈","born":"1997-12-19","height":172,"weight":76,"throws":"우","bats":"좌","positions":["중견수","우익수","좌익수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 2차 5라운드 44순위(롯데 자이언츠)","career":["롯데 자이언츠 (2020년 ~ 현재)"],"titles":[],"photo":{"file":"Hwang Seong-bin 2024.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Hwang_Seong-bin_2024.jpg/330px-Hwang_Seong-bin_2024.jpg","width":330,"height":495,"page":"https://commons.wikimedia.org/wiki/File:Hwang_Seong-bin_2024.jpg","author":"Seohae1999","license":"CC BY-SA 4.0","licenseUrl":"https://creativecommons.org/licenses/by-sa/4.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Hwang_Seong-bin_2024.jpg/960px-Hwang_Seong-bin_2024.jpg","width":960,"height":1440}}},
     {"wiki":"신윤후","born":"1996-01-05","height":177,"weight":77,"throws":"우","bats":"우","positions":["2루수","유격수","3루수","우익수","중견수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 2차 10라운드 98순위(롯데 자이언츠)","career":["롯데 자이언츠 (2019년 ~ 현재)"],"titles":[]},
