@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-22T21:18:07.977Z",
+  "generatedAt": "2026-11-23T22:41:13.566Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-19T01:56:03Z",
@@ -936,7 +936,7 @@ window.BaseballPlayers = {
       ]
     },
     "kiwoom": {
-      "asOf": "2026-11-20T08:05:43Z",
+      "asOf": "2026-11-23T09:49:52Z",
       "source": {"name":"위키백과(한국어) 「틀:키움 히어로즈 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%ED%82%A4%EC%9B%80_%ED%9E%88%EC%96%B4%EB%A1%9C%EC%A6%88_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":81,"name":"설종진","wiki":"설종진"},
       "coaches": [
@@ -992,7 +992,7 @@ window.BaseballPlayers = {
         {"id":"kiwoom-dv2pg6","number":117,"name":"김유빈","wiki":"김유빈 (2007년 3월)","pos":"P","note":"","dev":true},
         {"id":"kiwoom-1dwh5ii","number":120,"name":"주승빈","wiki":"주승빈","pos":"P","note":"","dev":true},
         {"id":"kiwoom-mv3jqs","number":null,"name":"이종민","wiki":"이종민 (2001년)","pos":"P","note":""},
-        {"id":"kiwoom-cocrrn","number":null,"name":"후쿠타니","wiki":"후쿠타니 고지","pos":"P","note":""},
+        {"id":"kiwoom-cocrrn","number":null,"name":"고지","wiki":"후쿠타니 고지","pos":"P","note":""},
         {"id":"kiwoom-vysu00","number":null,"name":"정철원","wiki":"정철원","pos":"P","note":""},
         {"id":"kiwoom-141i17o","number":12,"name":"김건희","wiki":"김건희 (야구 선수)","pos":"C","note":""},
         {"id":"kiwoom-ml33ya","number":32,"name":"김재현","wiki":"김재현 (1993년)","pos":"C","note":""},
@@ -1222,7 +1222,7 @@ window.BaseballPlayers = {
     {"wiki":"김민재 (2003년)","born":"2003-07-08","height":188,"weight":85,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 8라운드(KIA 타이거즈)","career":["KIA 타이거즈 (2024년 ~ 현재)","상무 야구단 (2025년 ~ 2026년)"],"titles":[]},
     {"wiki":"주효상","born":"1997-11-11","height":182,"weight":85,"throws":"우","bats":"좌","positions":["포수"],"nationality":"대한민국","proYear":2016,"draft":"2016년 1차 지명(넥센 히어로즈)","career":["넥센 히어로즈(2016년 ~ 2018년)","키움 히어로즈(2019년 ~ 2022년)","KIA 타이거즈(2023년 ~ 현재)"],"titles":[],"photo":{"file":"Nexen Heroes Joo Hyo-Sang 20180802.jpg","caption":"2018년 넥센 히어로즈 시절","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Nexen_Heroes_Joo_Hyo-Sang_20180802.jpg/330px-Nexen_Heroes_Joo_Hyo-Sang_20180802.jpg","width":330,"height":249,"page":"https://commons.wikimedia.org/wiki/File:Nexen_Heroes_Joo_Hyo-Sang_20180802.jpg","author":"Trainholic","license":"CC BY-SA 3.0","licenseUrl":"https://creativecommons.org/licenses/by-sa/3.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Nexen_Heroes_Joo_Hyo-Sang_20180802.jpg/960px-Nexen_Heroes_Joo_Hyo-Sang_20180802.jpg","width":960,"height":725}}},
     {"wiki":"한준수","born":"1999-02-13","height":184,"weight":95,"throws":"우","bats":"좌","positions":["포수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 1차 지명(KIA 타이거즈)","career":["KIA 타이거즈 (2018년 ~ 현재)"],"titles":[]},
-    {"wiki":"김태군 (야구 선수)","born":"1989-12-30","height":182,"weight":92,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2008,"draft":"2008년 2차 3라운드 17순위(LG 트윈스)","career":["LG 트윈스 (2008년 ~ 2012년)","NC 다이노스 (2013년 ~ 2021년)","경찰 야구단 (2018년 ~ 2019년)","삼성 라이온즈 (2022년 ~ 2023년)","KIA 타이거즈 (2023년 ~ 현재)"],"titles":[]},
+    {"wiki":"김태군 (야구 선수)","born":"1989-12-30","height":182,"weight":92,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2008,"draft":"2008년 2차 3라운드 17순위(LG 트윈스)","career":["삼성 라이온즈 (2008년 ~ 현재)"],"titles":[]},
     {"wiki":"박민 (야구 선수)","born":"2001-06-05","height":183,"weight":85,"throws":"우","bats":"우","positions":["3루수","유격수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 2차 1라운드 6순위(KIA 타이거즈)","career":["KIA 타이거즈(2020년 ~ 현재)","상무 야구단(2022년 ~ 2023년)","캔버라 캐벌리(2023년 ~ 2024년)"],"titles":[]},
     {"wiki":"김선빈 (야구 선수)","born":"1989-12-18","height":165,"weight":66,"throws":"좌","bats":"좌","positions":["유격수","2루수"],"nationality":"대한민국","proYear":2008,"draft":"2008년 2차 6라운드 43순위(KIA 타이거즈)","career":["KIA 타이거즈 (2008년 ~ 현재)","상무 야구단 (2015년 ~ 2016년)"],"titles":["2017년 KBO 타격왕, KBO 골든글러브 유격수 부문","2024년 한국시리즈 MVP"]},
     {"wiki":"김도영 (2003년)","born":"2003-10-02","height":183,"weight":85,"throws":"우","bats":"우","positions":["3루수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 1차 지명(KIA 타이거즈)","career":["KIA 타이거즈 (2022년~)"],"titles":[]},
@@ -1500,7 +1500,6 @@ window.BaseballPlayers = {
     {"wiki":"정현승","born":"2001-10-24","height":180,"weight":80,"throws":"좌","bats":"좌","positions":["외야수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 6라운드 60순위(SSG 랜더스)","career":["SSG 랜더스 (2024년 ~ 현재)","상무 야구단 (2025년 ~ 2026년)"],"titles":[]},
     {"wiki":"이숭용","born":"1971-03-10","height":185,"weight":86,"throws":"좌","bats":"좌","positions":["1루수","중견수"],"nationality":"대한민국","proYear":1994,"draft":"1994년 2차 1라운드 1순위(태평양 돌핀스)","career":["태평양 돌핀스 (1994년 ~ 1995년)","현대 유니콘스 (1996년 ~ 2007년)","우리 히어로즈· / 히어로즈 (2008년 ~ 2011년)","kt 위즈 타격코치 (2014년 ~ 2016년, 2018년 ~ 2019년)","kt 위즈 2군 타격코치 (2017년 ~ 2018년)","XTM 야구 해설위원 (2012년 ~ 2013년)","kt 위즈 단장 (2019년 ~ 2021년)","kt 위즈 육성총괄 (2022년 ~ 2023년)","SSG 랜더스 감독 (2024년 ~ 현재)"],"titles":["2007년 KBO 페어플레이상"],"photo":{"file":"이숭용감독.png","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png/330px-%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png","width":330,"height":474,"page":"https://commons.wikimedia.org/wiki/File:%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/f/f8/%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png","width":960,"height":1380}}},
     {"wiki":"박치국","born":"1998-03-10","height":177,"weight":78,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2017,"draft":"2017년 2차 1라운드 10순위(두산 베어스)","career":["두산 베어스 (2017년 ~ 현재)"],"titles":[]},
-    {"wiki":"김동주 (야구 선수)","born":"2002-02-14","height":190,"weight":90,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2021,"draft":"2021년 2차 1라운드 10순위(두산 베어스)","career":["두산 베어스 (2021년 ~ 현재)","상무 야구단 (2024년 ~ 2026년)"],"titles":[]},
     {"wiki":"타카다 타쿠토","born":"2002-09-18","height":178,"weight":80,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"일본","proYear":2020,"draft":"6라운드 / (요코하마 DeNA 베이스타스)","career":["요코하마 DeNA 베이스타스 (2021년 ~ 2024년)","두산 베어스 (2026년 ~ 현재)"],"titles":[],"photo":{"file":"Yokohama DeNA Baystars Takada.56.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Yokohama_DeNA_Baystars_Takada.56.jpg/330px-Yokohama_DeNA_Baystars_Takada.56.jpg","width":330,"height":367,"page":"https://commons.wikimedia.org/wiki/File:Yokohama_DeNA_Baystars_Takada.56.jpg","author":"HrkTwikiS","license":"CC BY 4.0","licenseUrl":"https://creativecommons.org/licenses/by/4.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Yokohama_DeNA_Baystars_Takada.56.jpg/960px-Yokohama_DeNA_Baystars_Takada.56.jpg","width":960,"height":1069}}},
     {"wiki":"최주형","born":"2006-08-19","height":174,"weight":74,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 2라운드 17순위(두산 베어스)","career":["두산 베어스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"김정우 (야구 선수)","born":"1999-05-15","height":183,"weight":87,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 1차 지명(SK 와이번스)","career":["SK 와이번스 (2018년 ~ 2020년)","상무 야구단 (2020년 ~ 2021년)","SSG 랜더스 (2021년 ~ 2023년)","두산 베어스 (2023년 ~ 현재)"],"titles":[]},
