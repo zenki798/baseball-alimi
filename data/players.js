@@ -2,7 +2,7 @@
    명단·프로필은 한국어 위키백과(CC BY-SA 4.0). 경기와 관계없는 신상(출신지·연봉·가족)은 담지 않는다. */
 window.BaseballPlayers = {
   "version": 1,
-  "generatedAt": "2026-11-25T02:48:56.072Z",
+  "generatedAt": "2026-11-26T04:27:37.413Z",
   "rosters": {
     "kia": {
       "asOf": "2026-11-19T01:56:03Z",
@@ -229,7 +229,7 @@ window.BaseballPlayers = {
       ]
     },
     "lg": {
-      "asOf": "2026-11-17T05:43:44Z",
+      "asOf": "2026-11-26T01:39:58Z",
       "source": {"name":"위키백과(한국어) 「틀:LG 트윈스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ALG_%ED%8A%B8%EC%9C%88%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":85,"name":"염경엽","wiki":"염경엽"},
       "coaches": [
@@ -307,6 +307,7 @@ window.BaseballPlayers = {
         {"id":"lg-9bxf2r","number":112,"name":"박준기","wiki":"박준기 (야구 선수)","pos":"C","note":"","dev":true},
         {"id":"lg-idlw9o","number":115,"name":"심기정","wiki":"심기정","pos":"C","note":"","dev":true},
         {"id":"lg-2ue30u","number":122,"name":"배강","wiki":"배강","pos":"C","note":"","dev":true},
+        {"id":"lg-1wptmda","number":null,"name":"김민식","wiki":"김민식 (1989년)","pos":"C","note":""},
         {"id":"lg-1eyl8rg","number":2,"name":"문보경","wiki":"문보경","pos":"IF","note":""},
         {"id":"lg-cwsfto","number":4,"name":"신민재","wiki":"신민재 (야구 선수)","pos":"IF","note":""},
         {"id":"lg-8eh8ez","number":6,"name":"구본혁","wiki":"구본혁 (야구 선수)","pos":"IF","note":""},
@@ -478,7 +479,7 @@ window.BaseballPlayers = {
       ]
     },
     "ssg": {
-      "asOf": "2026-11-24T21:52:38Z",
+      "asOf": "2026-11-25T03:34:19Z",
       "source": {"name":"위키백과(한국어) 「틀:SSG 랜더스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3ASSG_%EB%9E%9C%EB%8D%94%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":71,"name":"이숭용","wiki":"이숭용"},
       "coaches": [
@@ -497,7 +498,8 @@ window.BaseballPlayers = {
         {"number":123,"name":"길강남","wiki":"길강남","role":"컨디셔닝"},
         {"number":124,"name":"송재환","wiki":"송재환 (야구인)","role":""},
         {"number":125,"name":"김상용","wiki":"김상용 (야구인)","role":"컨디셔닝"},
-        {"number":null,"name":"홍세완","wiki":"홍세완","role":"-- 타격"}
+        {"number":null,"name":"홍세완","wiki":"홍세완","role":"-- 타격"},
+        {"number":null,"name":"최경철","wiki":"최경철","role":""}
       ],
       "players": [
         {"id":"ssg-12picvq","number":1,"name":"김민","wiki":"김민 (야구 선수)","pos":"P","note":""},
@@ -595,7 +597,7 @@ window.BaseballPlayers = {
       ]
     },
     "doosan": {
-      "asOf": "2026-11-24T20:39:18Z",
+      "asOf": "2026-11-25T13:53:15Z",
       "source": {"name":"위키백과(한국어) 「틀:두산 베어스 명단」","url":"https://ko.wikipedia.org/wiki/%ED%8B%80%3A%EB%91%90%EC%82%B0_%EB%B2%A0%EC%96%B4%EC%8A%A4_%EB%AA%85%EB%8B%A8","license":"CC BY-SA 4.0"},
       "manager": {"number":70,"name":"김원형","wiki":"김원형"},
       "coaches": [
@@ -616,7 +618,7 @@ window.BaseballPlayers = {
       ],
       "players": [
         {"id":"doosan-1xcthu7","number":1,"name":"박치국","wiki":"박치국","pos":"P","note":""},
-        {"id":"doosan-zdjl6d","number":4,"name":"김동주","wiki":"김동주 (야구 선수)","pos":"P","note":""},
+        {"id":"doosan-nmvy0t","number":4,"name":"김동주","wiki":"김동주 (2002년)","pos":"P","note":""},
         {"id":"doosan-t2ahi7","number":12,"name":"타카다","wiki":"타카다 타쿠토","pos":"P","note":""},
         {"id":"doosan-18sr0wg","number":15,"name":"최주형","wiki":"최주형","pos":"P","note":""},
         {"id":"doosan-1d9w8c5","number":16,"name":"김정우","wiki":"김정우 (야구 선수)","pos":"P","note":""},
@@ -632,7 +634,6 @@ window.BaseballPlayers = {
         {"id":"doosan-p43m8","number":43,"name":"이주엽","wiki":"이주엽","pos":"P","note":""},
         {"id":"doosan-1h2he8h","number":45,"name":"이용찬","wiki":"이용찬 (야구 선수)","pos":"P","note":""},
         {"id":"doosan-lw8m5c","number":47,"name":"곽빈","wiki":"곽빈","pos":"P","note":""},
-        {"id":"doosan-phbkoh","number":48,"name":"벤자민","wiki":"웨스 벤자민","pos":"P","note":""},
         {"id":"doosan-15yzhhs","number":49,"name":"박신지","wiki":"박신지","pos":"P","note":""},
         {"id":"doosan-1vxy1x","number":50,"name":"이영하","wiki":"이영하 (야구 선수)","pos":"P","note":""},
         {"id":"doosan-e8avif","number":55,"name":"김유성","wiki":"김유성 (2002년)","pos":"P","note":""},
@@ -665,7 +666,6 @@ window.BaseballPlayers = {
         {"id":"doosan-cvz5up","number":11,"name":"김동준","wiki":"김동준 (2002년)","pos":"IF","note":""},
         {"id":"doosan-1n53mn0","number":13,"name":"이유찬","wiki":"이유찬 (야구 선수)","pos":"IF","note":""},
         {"id":"doosan-rgk9ex","number":23,"name":"강승호","wiki":"강승호","pos":"IF","note":""},
-        {"id":"doosan-e7mikl","number":36,"name":"세베리노","wiki":"유니오 세베리노","pos":"IF","note":""},
         {"id":"doosan-15iovrl","number":37,"name":"박지훈","wiki":"박지훈 (2000년)","pos":"IF","note":""},
         {"id":"doosan-221hgk","number":52,"name":"박준순","wiki":"박준순","pos":"IF","note":""},
         {"id":"doosan-1tc7gvl","number":53,"name":"양석환","wiki":"양석환","pos":"IF","note":""},
@@ -1349,6 +1349,7 @@ window.BaseballPlayers = {
     {"wiki":"김성우 (야구 선수)","born":"2003-11-15","height":180,"weight":85,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 7라운드 67순위(LG 트윈스)","career":["LG 트윈스 (2022년 ~ 현재)","상무 야구단 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"전경원","born":"1999-03-18","height":184,"weight":95,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 2차 5라운드 45순위(SK 와이번스)","career":["SK 와이번스 (2018년 ~ 2020년)","상무 야구단 (2020년 ~ 2021년)","SSG 랜더스 (2022년 ~ 2024년)","LG 트윈스 (2025년 ~ 현재)"],"titles":[]},
     {"wiki":"이주헌 (야구 선수)","born":"2003-03-04","height":185,"weight":92,"throws":"우","bats":"우","positions":["포수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 3라운드 27순위(LG 트윈스)","career":["LG 트윈스 (2022년 ~ 현재)"],"titles":[]},
+    {"wiki":"김민식 (1989년)","born":"1989-06-28","height":180,"weight":80,"throws":"우","bats":"좌","positions":["포수","지명타자"],"nationality":"대한민국","proYear":2012,"draft":"2012년 2라운드 11순위(SK 와이번스)","career":["SK 와이번스 (2012년 ~ 2017년)","상무 야구단 (2013년 ~ 2014년)","KIA 타이거즈 (2017년 ~ 2022년)","SSG 랜더스 (2022년 ~ 2026년)","LG 트윈스 (2027년 ~ 현재)"],"titles":[]},
     {"wiki":"문보경","born":"2000-07-19","height":182,"weight":88,"throws":"우","bats":"좌","positions":["1루수","3루수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 2차 3라운드 25순위(LG 트윈스)","career":["LG 트윈스 (2019년~현재)"],"titles":[]},
     {"wiki":"신민재 (야구 선수)","born":"1996-01-21","height":171,"weight":76,"throws":"우","bats":"좌","positions":["내야수","2루수","3루수","유격수"],"nationality":"대한민국","proYear":2015,"draft":"육성선수 입단(두산 베어스)","career":["두산 베어스 (2015년~2017년)","LG 트윈스 (2018년~현재)"],"titles":[]},
     {"wiki":"구본혁 (야구 선수)","born":"1997-01-11","height":175,"weight":68,"throws":"우","bats":"우","positions":["유격수","2루수","3루수"],"nationality":"대한민국","proYear":2019,"draft":"2019년 2차 6라운드 55순위(LG 트윈스)","career":["LG 트윈스 (2019년 ~ 현재)","상무 야구단 (2022년 ~ 2023년)"],"titles":[]},
@@ -1501,6 +1502,7 @@ window.BaseballPlayers = {
     {"wiki":"정현승","born":"2001-10-24","height":180,"weight":80,"throws":"좌","bats":"좌","positions":["외야수"],"nationality":"대한민국","proYear":2024,"draft":"2024년 6라운드 60순위(SSG 랜더스)","career":["SSG 랜더스 (2024년 ~ 현재)","상무 야구단 (2025년 ~ 2026년)"],"titles":[]},
     {"wiki":"이숭용","born":"1971-03-10","height":185,"weight":86,"throws":"좌","bats":"좌","positions":["1루수","중견수"],"nationality":"대한민국","proYear":1994,"draft":"1994년 2차 1라운드 1순위(태평양 돌핀스)","career":["태평양 돌핀스 (1994년 ~ 1995년)","현대 유니콘스 (1996년 ~ 2007년)","우리 히어로즈· / 히어로즈 (2008년 ~ 2011년)","kt 위즈 타격코치 (2014년 ~ 2016년, 2018년 ~ 2019년)","kt 위즈 2군 타격코치 (2017년 ~ 2018년)","XTM 야구 해설위원 (2012년 ~ 2013년)","kt 위즈 단장 (2019년 ~ 2021년)","kt 위즈 육성총괄 (2022년 ~ 2023년)","SSG 랜더스 감독 (2024년 ~ 현재)"],"titles":["2007년 KBO 페어플레이상"],"photo":{"file":"이숭용감독.png","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png/330px-%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png","width":330,"height":474,"page":"https://commons.wikimedia.org/wiki/File:%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/f/f8/%EC%9D%B4%EC%88%AD%EC%9A%A9%EA%B0%90%EB%8F%85.png","width":960,"height":1380}}},
     {"wiki":"박치국","born":"1998-03-10","height":177,"weight":78,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2017,"draft":"2017년 2차 1라운드 10순위(두산 베어스)","career":["두산 베어스 (2017년 ~ 현재)"],"titles":[]},
+    {"wiki":"김동주 (2002년)","born":"2002-02-14","height":190,"weight":90,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2021,"draft":"2021년 2차 1라운드 10순위(두산 베어스)","career":["두산 베어스 (2021년 ~ 현재)","상무 야구단 (2024년 ~ 2026년)"],"titles":[]},
     {"wiki":"타카다 타쿠토","born":"2002-09-18","height":178,"weight":80,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"일본","proYear":2020,"draft":"6라운드 / (요코하마 DeNA 베이스타스)","career":["요코하마 DeNA 베이스타스 (2021년 ~ 2024년)","두산 베어스 (2026년 ~ 현재)"],"titles":[],"photo":{"file":"Yokohama DeNA Baystars Takada.56.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Yokohama_DeNA_Baystars_Takada.56.jpg/330px-Yokohama_DeNA_Baystars_Takada.56.jpg","width":330,"height":367,"page":"https://commons.wikimedia.org/wiki/File:Yokohama_DeNA_Baystars_Takada.56.jpg","author":"HrkTwikiS","license":"CC BY 4.0","licenseUrl":"https://creativecommons.org/licenses/by/4.0","large":{"url":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Yokohama_DeNA_Baystars_Takada.56.jpg/960px-Yokohama_DeNA_Baystars_Takada.56.jpg","width":960,"height":1069}}},
     {"wiki":"최주형","born":"2006-08-19","height":174,"weight":74,"throws":"좌","bats":"좌","positions":["투수"],"nationality":"대한민국","proYear":2026,"draft":"2026년 2라운드 17순위(두산 베어스)","career":["두산 베어스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"김정우 (야구 선수)","born":"1999-05-15","height":183,"weight":87,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 1차 지명(SK 와이번스)","career":["SK 와이번스 (2018년 ~ 2020년)","상무 야구단 (2020년 ~ 2021년)","SSG 랜더스 (2021년 ~ 2023년)","두산 베어스 (2023년 ~ 현재)"],"titles":[]},
@@ -1516,7 +1518,6 @@ window.BaseballPlayers = {
     {"wiki":"이주엽","born":"2001-03-26","height":188,"weight":90,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 1차 지명(두산 베어스)","career":["두산 베어스 (2020년 ~ 현재)"],"titles":[]},
     {"wiki":"이용찬 (야구 선수)","born":"1989-01-02","height":185,"weight":85,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2007,"draft":"2007년 1차 지명(두산 베어스)","career":["두산 베어스 (2007년 ~ 2020년, 2026년 ~ 현재)","상무 야구단 (2015년 ~ 2016년)","연천 미라클 (2021년)","NC 다이노스 (2021년 ~ 2025년)"],"titles":["2009년 KBO 신인왕·구원왕"]},
     {"wiki":"곽빈","born":"1999-05-28","height":187,"weight":95,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 1차 지명(두산 베어스)","career":["두산 베어스 (2018년 ~ 현재)"],"titles":[],"photo":{"file":"곽빈 야구 선수.jpg","caption":"곽빈(2022년)","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/%EA%B3%BD%EB%B9%88_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg/330px-%EA%B3%BD%EB%B9%88_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg","width":330,"height":441,"page":"https://commons.wikimedia.org/wiki/File:%EA%B3%BD%EB%B9%88_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/7/76/%EA%B3%BD%EB%B9%88_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg","width":960,"height":1282}}},
-    {"wiki":"웨스 벤자민","born":"1993-07-26","height":188,"weight":95,"throws":"좌","bats":"우","positions":["투수"],"nationality":"미국","proYear":2020,"draft":"5라운드 156순위 / (텍사스 레인저스)","career":["텍사스 레인저스 (2020년~2021년)","시카고 화이트삭스 (2022년)","kt wiz (2022년~2024년)","두산 베어스 (2026년~)"],"titles":[],"photo":{"file":"웨스 Benjamin KT.jpg","caption":"kt wiz 시절","thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/%EC%9B%A8%EC%8A%A4_Benjamin_KT.jpg/330px-%EC%9B%A8%EC%8A%A4_Benjamin_KT.jpg","width":330,"height":477,"page":"https://commons.wikimedia.org/wiki/File:%EC%9B%A8%EC%8A%A4_Benjamin_KT.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/8/88/%EC%9B%A8%EC%8A%A4_Benjamin_KT.jpg","width":960,"height":1389}}},
     {"wiki":"박신지","born":"1999-07-16","height":185,"weight":75,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2018,"draft":"2018년 2차 1라운드 10순위(두산 베어스)","career":["두산 베어스 (2018년 ~ 현재)","상무 야구단 (2020년 ~ 2021년)"],"titles":[],"photo":{"file":"Park Shin-zi, 2025 (cropped).jpg","caption":null,"thumb":"https://upload.wikimedia.org/wikipedia/commons/0/00/Park_Shin-zi%2C_2025_%28cropped%29.jpg","width":330,"height":440,"page":"https://commons.wikimedia.org/wiki/File:Park_Shin-zi,_2025_(cropped).jpg","author":"두산 베어스","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/0/00/Park_Shin-zi%2C_2025_%28cropped%29.jpg","width":960,"height":1279}}},
     {"wiki":"이영하 (야구 선수)","born":"1997-11-01","height":192,"weight":91,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2016,"draft":"2016년 1차 지명(두산 베어스)","career":["두산 베어스 (2016년 ~ 현재)"],"titles":[]},
     {"wiki":"김유성 (2002년)","born":"2002-01-01","height":190,"weight":98,"throws":"우","bats":"우","positions":["투수"],"nationality":"대한민국","proYear":2023,"draft":"2023년 2라운드 19순위(두산 베어스)","career":["두산 베어스 (2023년 ~ 현재)"],"titles":[]},
@@ -1543,7 +1544,6 @@ window.BaseballPlayers = {
     {"wiki":"김동준 (2002년)","born":"2002-09-04","height":193,"weight":100,"throws":"좌","bats":"좌","positions":["외야수"],"nationality":"대한민국","proYear":2022,"draft":"2022년 1라운드 9순위(두산 베어스)","career":["두산 베어스 (2022년 ~ 현재)"],"titles":[]},
     {"wiki":"이유찬 (야구 선수)","born":"1998-08-05","height":175,"weight":68,"throws":"우","bats":"우","positions":["유격수","2루수","3루수","좌익수","중견수"],"nationality":"대한민국","proYear":2017,"draft":"2017년 2차 5라운드 50순위(두산 베어스)","career":["두산 베어스 (2017년 ~ 현재)","상무 야구단 (2021년 ~ 2022년)"],"titles":[]},
     {"wiki":"강승호","born":"1994-02-09","height":178,"weight":88,"throws":"우","bats":"우","positions":["유틸리티 내야수"],"nationality":"대한민국","proYear":2013,"draft":"2013년 2차 1라운드 3순위(LG 트윈스)","career":["LG 트윈스 (2013년 ~ 2018년)","경찰 야구단 (2014년 ~ 2015년)","SK 와이번스 (2018년 ~ 2019년, 2020년)","두산 베어스 (2021년 ~ 현재)"],"titles":[],"photo":{"file":"강승호 야구 선수.jpg","caption":null,"thumb":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/%EA%B0%95%EC%8A%B9%ED%98%B8_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg/330px-%EA%B0%95%EC%8A%B9%ED%98%B8_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg","width":330,"height":443,"page":"https://commons.wikimedia.org/wiki/File:%EA%B0%95%EC%8A%B9%ED%98%B8_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg","author":"OSEN SPORTS","license":"CC BY 3.0","licenseUrl":"https://creativecommons.org/licenses/by/3.0","large":{"url":"https://upload.wikimedia.org/wikipedia/commons/2/24/%EA%B0%95%EC%8A%B9%ED%98%B8_%EC%95%BC%EA%B5%AC_%EC%84%A0%EC%88%98.jpg","width":960,"height":1288}}},
-    {"wiki":"유니오 세베리노","born":"1999-10-03","height":183,"weight":85,"throws":"우","bats":"우","positions":["내야수"],"nationality":"도미니카 공화국","proYear":2017,"draft":"2017년 국제 아마추어 자유계약 / (미네소타 트윈스)","career":["두산 베어스 (2026년 ~ 현재)"],"titles":[]},
     {"wiki":"박지훈 (2000년)","born":"2000-09-07","height":183,"weight":80,"throws":"우","bats":"우","positions":["유틸리티 내야수","우익수"],"nationality":"대한민국","proYear":2020,"draft":"2020년 2차 5라운드 49순위(두산 베어스)","career":["두산 베어스 (2020년 ~ 현재)"],"titles":[]},
     {"wiki":"박준순","born":"2006-07-13","height":180,"weight":79,"throws":"우","bats":"우","positions":["내야수"],"nationality":"대한민국","proYear":2025,"draft":"2025년 1라운드 6순위(두산 베어스)","career":["두산 베어스 (2025년~현재)"],"titles":[]},
     {"wiki":"양석환","born":"1991-07-15","height":185,"weight":90,"throws":"우","bats":"우","positions":["2루수","3루수"],"nationality":"대한민국","proYear":2014,"draft":"2014년 2차 3라운드 28순위(LG 트윈스)","career":["LG 트윈스(2014년 ~ 2021년)","상무 야구단(2019년 ~ 2020년)","두산 베어스(2021년 ~ 현재)"],"titles":[]},
